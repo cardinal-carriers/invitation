@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>New event · Vellum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<link rel="stylesheet" href="envelope.css">
+<style>
+/* The preview is the point of this screen: the letter exists from the first
+   keystroke, and you watch it become real. It stays put across all three steps. */
+.preview-hd{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);
+  margin-bottom:var(--s4)}
+.preview-note{text-align:center;font-size:var(--t-xs);color:var(--ink-2);margin-top:var(--s4);
+  min-height:2.6em;line-height:1.5}
+.step-hd{margin-bottom:var(--s6)}
+.step-hd p{color:var(--ink-2);margin-top:8px;max-width:var(--measure)}
+.paste{margin-top:var(--s5)}
+.paste summary{font-size:var(--t-sm);color:var(--wax);cursor:pointer;font-weight:600;
+  list-style:none;display:inline-flex;align-items:center;gap:7px;padding:6px 0}
+.paste summary::-webkit-details-marker{display:none}
+.paste summary::before{content:'+';font-size:15px;line-height:1}
+.paste[open] summary::before{content:'–'}
+.paste .body{padding-top:var(--s3)}
+.hint{font-size:var(--t-xs);color:var(--ink-2);margin-top:var(--s3)}
+.brand-sm{display:flex;align-items:center;gap:9px;font-family:var(--disp);font-size:19px;
+  font-weight:600;letter-spacing:-.03em;color:var(--ink);text-decoration:none}
+.brand-sm .wax-mark{width:23px;height:23px;flex:none;border-radius:50%;display:grid;
+  place-items:center;color:#fff;font-size:11px;font-family:var(--disp);
+  background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--wax) 58%,#fff),var(--wax));
+  box-shadow:inset 0 -2px 4px rgba(0,0,0,.22),inset 0 2px 4px rgba(255,255,255,.3)}
+.task-bar .sep{color:var(--ink-3)}
+.task-bar .what{font-size:var(--t-sm);color:var(--ink-2)}
+/* An unfilled slot on the preview card. */
+.tbd{opacity:.3;font-style:italic}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="task">
+  <header class="task-bar">
+    <a class="brand-sm" href="dashboard.html"><span class="wax-mark" aria-hidden="true">V</span>Vellum</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span class="what">New event</span>
+    <span class="spacer"></span>
+    <a class="btn btn--quiet btn--sm" href="dashboard.html">Save and finish later</a>
+  </header>
+
+  <main class="task-main" id="main">
+    <ol class="steps" id="steps">
+      <li class="now"><span class="dot" aria-hidden="true"></span><span>The occasion</span></li>
+      <li><span class="dot" aria-hidden="true"></span><span>The card</span></li>
+      <li><span class="dot" aria-hidden="true"></span><span>Who's coming</span></li>
+    </ol>
+
+    <div class="split">
+      <div>
+        <!-- ---------- 1. the occasion ---------- -->
+        <section data-step="1">
+          <div class="step-hd">
+            <h1 class="h1">What are you hosting?</h1>
+            <p>Only the date and a name are needed to get going. Everything here can be
+               changed right up until you post the letters.</p>
+          </div>
+
+          <section class="desk">
+            <div class="desk-bd">
+              <fieldset class="fieldset">
+                <legend class="label" style="margin-bottom:var(--s3)">The occasion</legend>
+                <div class="seg" data-seg="type" role="group">
+                  <button type="button" data-type="wedding" aria-pressed="false">Wedding</button>
+                  <button type="button" data-type="shower" aria-pressed="true">Baby shower</button>
+                </div>
+              </fieldset>
+
+              <div class="form-grid" style="margin-top:var(--s6)">
+                <div class="field span-2">
+                  <label class="label" for="title">Event name<span class="req">*</span></label>
+                  <input class="input" id="title" placeholder="A baby shower for Amara" autocomplete="off">
+                  <p class="help">Just for you — guests never see this.</p>
+                </div>
+                <div class="field">
+                  <label class="label" for="date">Date<span class="req">*</span></label>
+                  <input class="input" id="date" type="date">
+                </div>
+                <div class="field">
+                  <label class="label" for="time">Start time</label>
+                  <input class="input" id="time" type="time" value="14:00">
+                </div>
+                <div class="field span-2">
+                  <label class="label" for="addr">Where</label>
+                  <input class="input" id="addr" placeholder="14 Thornbury Lane, Ottawa, ON">
+                  <p class="help">Becomes a map link on the invitation. You can add it later.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- ---------- 2. the card ---------- -->
+        <section data-step="2" hidden>
+          <div class="step-hd">
+            <h1 class="h1">What the card says.</h1>
+            <p>Two lines and a seal. The wording is set in the same hand a printer would use.</p>
+          </div>
+
+          <section class="desk">
+            <div class="desk-bd">
+              <div class="form-grid">
+                <div class="field">
+                  <label class="label" for="occ">Line on the card</label>
+                  <input class="input" id="occ" value="a baby shower">
+                  <p class="help">Set in handwriting, so keep it short.</p>
+                </div>
+                <div class="field">
+                  <label class="label" for="hon">Who it's for</label>
+                  <input class="input" id="hon" placeholder="honouring Amara">
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="desk" style="margin-top:var(--s6)">
+            <div class="desk-hd"><h2 class="h3">Wax</h2></div>
+            <div class="desk-bd">
+              <div class="swatches" id="waxes" role="group" aria-label="Wax colour"></div>
+            </div>
+          </section>
+
+          <section class="desk" style="margin-top:var(--s6)">
+            <div class="desk-hd">
+              <h2 class="h3">Seal</h2>
+              <span class="muted body-sm">Pressed into the wax</span>
+            </div>
+            <div class="desk-bd">
+              <div class="dies" id="dieList" role="group" aria-label="Seal die"></div>
+              <div class="field" id="monoField" style="margin-top:var(--s5)" hidden>
+                <label class="label" for="mono">Letter</label>
+                <input class="input" id="mono" maxlength="2" value="A" style="max-width:110px">
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- ---------- 3. who's coming ---------- -->
+        <section data-step="3" hidden>
+          <div class="step-hd">
+            <h1 class="h1">Who's coming?</h1>
+            <p>Type a name, press Enter, type the next. Nothing is sent until you say so —
+               adding someone here just puts them on the list.</p>
+          </div>
+
+          <section class="desk">
+            <div class="desk-bd">
+              <form class="add-row" id="addRow">
+                <span class="mark" data-icon="plus" aria-hidden="true"></span>
+                <label class="sr" for="gName">Guest's name</label>
+                <input class="input nm" id="gName" placeholder="Name" autocomplete="off">
+                <label class="sr" for="gContact">Email or phone number</label>
+                <input class="input contact" id="gContact" placeholder="Email or phone" autocomplete="off">
+                <button class="btn btn--ghost btn--sm" type="submit">Add</button>
+              </form>
+              <p class="hint">Press Enter to add and keep typing. Add contact details later if
+                you don't have them yet.</p>
+
+              <details class="paste">
+                <summary>Paste a list instead</summary>
+                <div class="body">
+                  <label class="sr" for="pasteBox">Paste names, one per line</label>
+                  <textarea class="textarea" id="pasteBox" rows="5"
+                    placeholder="Eleanor Vance, eleanor@vance.ca&#10;Jonah Okafor, jonah.okafor@gmail.com&#10;Aunt Margery"></textarea>
+                  <p class="help" style="margin-top:var(--s3)">One person per line. A comma or a
+                    tab separates the name from the email or phone number.</p>
+                  <button class="btn btn--ghost btn--sm" id="pasteGo" style="margin-top:var(--s3)">
+                    Add these</button>
+                </div>
+              </details>
+
+              <div id="rosterWrap" hidden>
+                <p class="roster-count">
+                  <span class="fig" id="rCount">0</span>
+                  <span class="of" id="rNote">on the list</span>
+                </p>
+                <div class="roster" id="roster"></div>
+              </div>
+
+              <div class="empty" id="rosterEmpty" style="padding:var(--s8) var(--s4) var(--s4)">
+                <p class="muted body-sm">Nobody on the list yet.</p>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+
+      <!-- the letter, coming into existence -->
+      <aside class="sticky">
+        <div class="preview-hd">
+          <h2 class="label">The letter so far</h2>
+        </div>
+        <section class="desk">
+          <div class="desk-bd">
+            <div class="scene" id="prev" role="button" tabindex="0" aria-expanded="false"
+                 aria-label="Play the opening"></div>
+            <p class="preview-note" id="prevNote">It fills in as you type.</p>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="task-ft">
+    <button class="btn btn--ghost" id="back" hidden>Back</button>
+    <span class="spacer"></span>
+    <button class="btn btn--quiet" id="skip" hidden>Skip — add guests later</button>
+    <button class="btn btn--wax" id="next">Next</button>
+  </footer>
+</div>
+
+<script src="dies.js"></script>
+<script src="app.js"></script>
+<script src="envelope.js"></script>
+<script>
+const env = Envelope.mount('#prev', {
+  ret: { name:'Theo Vance', l1:'14 Thornbury Lane', l2:'Ottawa ON&nbsp; K1N 6N5' },
+  to:  { name:'Your guest', l1:'', l2:'' },
+  die: 'm-pram'
+}).showOpen();
+const $ = id => document.getElementById(id);
+
+/* The empty desk hands the type over in the URL, so the first choice a host
+   made is already made when they arrive. */
+const wanted = new URLSearchParams(location.search).get('type');
+if (wanted) setType(wanted);
+
+function setType(t){
+  document.querySelectorAll('[data-seg="type"] button')
+    .forEach(b => b.setAttribute('aria-pressed', String(b.dataset.type === t)));
+  const wedding = t === 'wedding';
+  $('occ').value = wedding ? 'a wedding' : 'a baby shower';
+  $('hon').placeholder = wedding ? 'Amara & Theo' : 'honouring Amara';
+  $('title').placeholder = wedding ? 'Amara & Theo are getting married' : 'A baby shower for Amara';
+  env.setDie(wedding ? 'm-rings' : 'm-pram');
+  document.querySelectorAll('.die-btn').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.die === (wedding ? 'm-rings' : 'm-pram'))));
+  syncCard();
+}
+document.querySelector('[data-seg="type"]').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (b) setType(b.dataset.type);
+});
+
+/* ---- everything writes through to the envelope ---- */
+/** An empty slot on the card looks empty, rather than borrowing someone
+    else's details. */
+const slot = t => `<span class="tbd">${t}</span>`;
+
+function syncCard(){
+  env.set('card.occasion', $('occ').value || slot('the occasion'));
+  env.set('card.name', $('hon').value
+    ? $('hon').value.replace(' ', '<br>')
+    : slot("who it's for"));
+  const d = $('date').value, t = $('time').value;
+  const when = d ? new Date(d + 'T00:00').toLocaleDateString('en-CA',
+    {weekday:'long', month:'long', day:'numeric'}) : slot('the date');
+  const at = t ? new Date('2000-01-01T' + t).toLocaleTimeString('en-CA',
+    {hour:'numeric', minute:'2-digit'}).toLowerCase() : '';
+  const where = $('addr').value.split(',').slice(0, 2).join(',') || slot('the place');
+  env.set('card.meta', `${when}${at ? ' · ' + at : ''}<br>${where}`);
+}
+['occ','hon','date','time','addr'].forEach(id => $(id).addEventListener('input', syncCard));
+$('mono').addEventListener('input', e => {
+  const v = (e.target.value || 'A').toUpperCase();
+  document.querySelectorAll('.mono-t').forEach(n => n.textContent = v);
+});
+syncCard();
+
+/* ---- wax & dies ---- */
+const WAXES = [
+  ['Terracotta','#B4736C'], ['Rose gold','#D8A199'], ['Burgundy','#7E2A3C'],
+  ['Antique gold','#C0913F'], ['Post red','#B93A2E'], ['Sage','#7E9070'],
+  ['Dusty blue','#71889D'], ['Ivory','#DFD3BC'], ['Ink','#33302C'], ['Navy','#2F4258']
+];
+$('waxes').innerHTML = WAXES.map(([n, c], i) =>
+  `<button type="button" class="sw" style="background:${c}" data-c="${c}"
+     aria-pressed="${i === 0}" aria-label="${n}" title="${n}"></button>`).join('');
+$('waxes').addEventListener('click', e => {
+  const b = e.target.closest('.sw'); if (!b) return;
+  $('waxes').querySelectorAll('.sw').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  $('prev').style.setProperty('--wax', b.dataset.c);
+});
+$('dieList').innerHTML = DIES.map(([id, name]) =>
+  `<button type="button" class="die-btn" data-die="${id}" aria-pressed="${id === 'm-pram'}">
+     <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#${id}" width="100" height="100"/></svg>
+     <span>${name}</span></button>`).join('');
+$('dieList').addEventListener('click', e => {
+  const b = e.target.closest('.die-btn'); if (!b) return;
+  $('dieList').querySelectorAll('.die-btn').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  env.setDie(b.dataset.die);
+  $('monoField').hidden = b.dataset.die !== 'm-mono';
+});
+
+/* ---- the guest list, built one line at a time ---- */
+const guests = [];
+function addGuest(name, contact){
+  name = (name || '').trim();
+  if (!name) return false;
+  contact = (contact || '').trim();
+  /* Dedupe on contact, matching what the importer does — the same person typed
+     twice is the commonest mistake at this stage. */
+  if (contact && guests.some(g => g.contact.toLowerCase() === contact.toLowerCase())) {
+    toast(`${name} is already on the list`);
+    return false;
+  }
+  guests.unshift({ name, contact });
+  drawRoster();
+  /* The envelope readdresses to whoever was just added, so it is obvious that
+     every guest gets their own letter. */
+  env.set('to.name', name);
+  $('prevNote').textContent = `Addressed to ${name}. Everyone gets their own.`;
+  return true;
+}
+function drawRoster(){
+  $('rosterWrap').hidden = guests.length === 0;
+  $('rosterEmpty').hidden = guests.length > 0;
+  $('rCount').textContent = guests.length;
+  $('rNote').textContent = guests.length === 1 ? 'on the list' : 'on the list';
+  const noContact = guests.filter(g => !g.contact).length;
+  if (noContact) $('rNote').textContent += ` · ${noContact} still need an email or phone`;
+  $('roster').innerHTML = guests.map((g, i) => `
+    <div class="roster-row">
+      <span class="who-mark" aria-hidden="true">${g.name.trim().charAt(0).toUpperCase()}</span>
+      <span class="who">
+        <span class="nm">${g.name}</span>
+        <span class="sub${g.contact ? '' : ' warn'}">${g.contact || 'No email or phone yet'}</span>
+      </span>
+      <button class="btn btn--quiet btn--icon" data-rm="${i}"
+        aria-label="Remove ${g.name}">${icon('x')}</button>
+    </div>`).join('');
+}
+$('addRow').addEventListener('submit', e => {
+  e.preventDefault();
+  if (addGuest($('gName').value, $('gContact').value)) {
+    $('gName').value = ''; $('gContact').value = '';
+  }
+  $('gName').focus();
+});
+$('roster').addEventListener('click', e => {
+  const b = e.target.closest('[data-rm]'); if (!b) return;
+  guests.splice(+b.dataset.rm, 1);
+  drawRoster();
+});
+$('pasteGo').addEventListener('click', () => {
+  const lines = $('pasteBox').value.split('\n').map(l => l.trim()).filter(Boolean);
+  let added = 0;
+  lines.forEach(line => {
+    const [name, contact] = line.split(/\s*[,\t]\s*|\s{2,}/);
+    if (addGuest(name, contact)) added++;
+  });
+  $('pasteBox').value = '';
+  toast(added ? `Added ${added} ${added === 1 ? 'person' : 'people'}` : 'Nothing to add');
+});
+
+/* ---- the three steps ---- */
+let step = 1;
+const NOTES = {
+  1:'It fills in as you type.',
+  2:'This is what comes out of the envelope.',
+  3:'Everyone gets their own, addressed to them.'
+};
+function show(n){
+  step = n;
+  document.querySelectorAll('[data-step]').forEach(s => s.hidden = +s.dataset.step !== n);
+  document.querySelectorAll('#steps li').forEach((li, i) => {
+    li.classList.toggle('done', i + 1 < n);
+    li.classList.toggle('now', i + 1 === n);
+  });
+  $('back').hidden = n === 1;
+  $('skip').hidden = n !== 3;
+  $('next').textContent = n === 3 ? 'Done — open the event' : 'Next';
+  $('next').insertAdjacentHTML('afterbegin', n === 3 ? icon('check') : '');
+  if (!(n === 3 && guests.length)) $('prevNote').textContent = NOTES[n];
+  /* Show the side of the envelope the step is actually about. */
+  n === 3 ? env.reset() : env.showOpen();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+/* Step 1 asks for the two things an event cannot exist without. */
+function validate(){
+  const missing = ['title','date'].filter(id => !$(id).value.trim());
+  document.querySelectorAll('.field--err').forEach(f => f.classList.remove('field--err'));
+  document.querySelectorAll('.err').forEach(e => e.remove());
+  if (!missing.length) return true;
+  missing.forEach(id => {
+    const field = $(id).closest('.field');
+    field.classList.add('field--err');
+    field.insertAdjacentHTML('beforeend',
+      `<p class="err">${icon('alert')}${id === 'title' ? 'Give the event a name.' : 'Pick a date.'}</p>`);
+  });
+  $(missing[0]).focus();
+  return false;
+}
+$('next').onclick = () => {
+  if (step === 1 && !validate()) return;
+  if (step === 3) { location.href = 'event.html'; return; }
+  show(step + 1);
+};
+$('back').onclick = () => show(step - 1);
+$('skip').onclick = () => location.href = 'guests-empty.html';
+show(1);
+</script>
+</body>
+</html>

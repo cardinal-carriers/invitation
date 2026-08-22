@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guest list · Vellum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<style>
+.list td.tick-col,.list th.tick-col{width:34px;padding-right:0}
+.list .track{--tw:var(--sage)}
+.no-contact{font-style:italic;color:var(--maybe)}
+</style>
+</head>
+<body data-nav="guests">
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <nav class="rail" aria-label="Main"></nav>
+
+  <div class="main">
+    <header class="topbar">
+      <p class="crumb"><a href="dashboard.html">Desk</a> <span aria-hidden="true">›</span>
+        <a href="event.html">A baby shower for Amara</a> <span aria-hidden="true">›</span>
+        <b>Guest list</b></p>
+      <span class="spacer"></span>
+      <button class="btn btn--ghost btn--sm" id="importBtn" data-icon="upload">Import a list</button>
+      <button class="btn btn--wax btn--sm" id="addBtn" data-icon="plus">Add a guest</button>
+    </header>
+
+    <main class="page page--wide" id="main">
+
+      <div class="page-hd">
+        <div>
+          <span class="label">Guest list</span>
+          <h1 class="h1">148 on the list</h1>
+          <p>Two guests have no email or phone number, so their letters can't be posted yet.</p>
+        </div>
+      </div>
+
+      <section class="desk">
+        <div class="toolbar">
+          <div class="search">
+            <span data-icon="search" aria-hidden="true"></span>
+            <label class="sr" for="q">Search guests</label>
+            <input class="input" id="q" type="search" placeholder="Search by name or email">
+          </div>
+          <div class="seg" data-seg="filter" role="group" aria-label="Filter the list">
+            <button type="button" aria-pressed="true"  data-filter="all">Everyone</button>
+            <button type="button" aria-pressed="false" data-filter="unsent">Not sent</button>
+            <button type="button" aria-pressed="false" data-filter="noreply">No reply</button>
+            <button type="button" aria-pressed="false" data-filter="yes">Coming</button>
+            <button type="button" aria-pressed="false" data-filter="no">Can't come</button>
+          </div>
+          <span class="spacer" style="margin-left:auto"></span>
+          <button class="btn btn--quiet btn--sm" data-icon="download"
+                  onclick="toast('Exported 148 guests')">Export</button>
+        </div>
+
+        <div class="desk-bd" id="addWrap" hidden style="border-bottom:var(--perf)">
+          <form class="add-row" id="addRow">
+            <span class="mark" data-icon="plus" aria-hidden="true"></span>
+            <label class="sr" for="gName">Guest's name</label>
+            <input class="input nm" id="gName" placeholder="Name" autocomplete="off">
+            <label class="sr" for="gContact">Email or phone number</label>
+            <input class="input contact" id="gContact" placeholder="Email or phone" autocomplete="off">
+            <button class="btn btn--ghost btn--sm" type="submit">Add</button>
+          </form>
+          <p class="help" style="margin-top:var(--s3)">Press Enter to add and keep typing.
+            <button class="btn btn--quiet btn--sm" id="addDone" type="button">Done adding</button></p>
+        </div>
+
+        <div class="bulk" data-selection hidden>
+          <span class="n"><span data-selection-count>0</span> selected</span>
+          <button class="btn btn--ghost btn--sm" data-icon="send" onclick="toast('Letters posted')">Send to these</button>
+          <button class="btn btn--ghost btn--sm" data-icon="edit">Tag</button>
+          <button class="btn btn--danger btn--sm" data-icon="trash">Remove</button>
+        </div>
+
+        <div class="table-scroll">
+          <table class="list">
+            <thead>
+              <tr>
+                <th class="tick-col" scope="col">
+                  <label class="check"><input type="checkbox" data-check-all="rows">
+                    <span class="sr">Select every guest</span></label>
+                </th>
+                <th scope="col">Guest</th>
+                <th scope="col">Party</th>
+                <th scope="col">Where the letter is</th>
+                <th scope="col">Reply</th>
+                <th scope="col"><span class="sr">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+        <div class="empty" id="none" hidden>
+          <svg class="art" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
+               aria-hidden="true"><rect x="2" y="5" width="20" height="15" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+          <h2 class="h3">Nobody matches that</h2>
+          <p>Try a shorter search, or clear the filter to see all 148.</p>
+          <button class="btn btn--ghost" id="clearAll">Show everyone</button>
+        </div>
+
+        <div class="desk-ft">
+          <span class="muted body-sm" id="count">Showing 148 guests</span>
+          <span class="muted body-sm">Duplicates are merged on email and phone as you import.</span>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- ---------- import ---------- -->
+<dialog id="importDlg" aria-labelledby="imp-h">
+  <div class="dlg-hd">
+    <div>
+      <h2 class="h3" id="imp-h">Import a guest list</h2>
+      <p>A CSV or a paste from a spreadsheet. Name is required; email or phone is
+         needed before that guest's letter can go out.</p>
+    </div>
+    <button class="btn btn--quiet btn--icon" data-icon="x" aria-label="Close" id="impX"></button>
+  </div>
+  <div class="dlg-bd">
+    <div class="drop" id="drop">
+      <span data-icon="upload" aria-hidden="true"></span>
+      <p class="h3">Drop a CSV here</p>
+      <p>or <button class="btn btn--quiet btn--sm" style="padding:2px 4px">choose a file</button></p>
+    </div>
+    <p class="banner" style="margin-top:var(--s5)" data-icon="info">
+      <span>We'll match <b>name</b>, <b>email</b>, <b>phone</b> and <b>party size</b> columns by their
+      headers, and show you what we found before anything is added.</span>
+    </p>
+  </div>
+  <div class="dlg-ft">
+    <button class="btn btn--ghost" id="impCancel">Cancel</button>
+    <button class="btn btn--wax" id="impGo">Read the file</button>
+  </div>
+</dialog>
+
+<script src="app.js"></script>
+<script>
+/* The list. In production this is one query; here it stands in for it so the
+   filters, counts and empty state are real rather than drawn. */
+const GUESTS = [
+  ['Eleanor Vance','eleanor@vance.ca',        2,'replied','yes'],
+  ['Jonah Okafor','jonah.okafor@gmail.com',   1,'replied','yes'],
+  ['Priya Raman','priya.raman@outlook.com',   1,'replied','maybe'],
+  ['Marcus Ilves','m.ilves@proton.me',        1,'replied','no'],
+  ['Sofia Delacroix','sofia.d@gmail.com',     2,'replied','yes'],
+  ['Hana Kobayashi','hana.k@icloud.com',      2,'opened',null],
+  ['Tomás Ferreira','tomas@ferreira.pt',      1,'opened',null],
+  ['Nadia Haddad','nadia.haddad@gmail.com',   2,'opened',null],
+  ['Ruth Abrahams','ruth.abrahams@shaw.ca',   1,'posted',null],
+  ['Bill Tremblay','+1 613 555 0148',         2,'posted',null],
+  ['Grace Osei','grace.osei@gmail.com',       1,'posted',null],
+  ['Aunt Margery','',                         1,'written',null],
+  ['Dev Sandhu','',                           2,'written',null],
+  ['Yusuf Demir','yusuf.demir@gmail.com',     1,'replied','yes']
+];
+
+const STOPS = ['written','posted','opened','replied'];
+const STOP_LABEL = { written:'Written, not sent', posted:'In the post',
+                     opened:'Opened, no reply yet', replied:'Replied' };
+const REPLY = {
+  yes:  ['pill--yes','Coming'],
+  no:   ['pill--no',"Can't come"],
+  maybe:['pill--maybe','Hoping to']
+};
+
+/** The four-stop track for one letter. */
+function track(state, reply){
+  const idx = STOPS.indexOf(state);
+  const tone = reply === 'no' ? ' track--no' : '';
+  const stops = STOPS.map((_, i) => {
+    const cls = [i <= idx ? 'done' : '', i === idx && idx < 3 ? 'now' : ''].filter(Boolean).join(' ');
+    return `<span class="stop ${cls}">${i ? '<span class="seg-line"></span>' : ''}<span class="tick"></span></span>`;
+  }).join('');
+  return `<span class="track${tone}" role="img" aria-label="${STOP_LABEL[state]}">${stops}</span>`;
+}
+
+const initial = n => n.replace(/^(Aunt|Uncle) /, '').charAt(0);
+const TINT = ['', ' who-mark--sky', ' who-mark--sage', ' who-mark--ochre'];
+
+function row(g, i){
+  const [name, contact, party, state, reply] = g;
+  const [cls, label] = REPLY[reply] || [];
+  return `<tr data-state="${state}" data-reply="${reply || ''}" data-name="${name.toLowerCase()} ${contact.toLowerCase()}">
+    <td class="tick-col"><label class="check"><input type="checkbox">
+      <span class="sr">Select ${name}</span></label></td>
+    <td><div class="who">
+      <span class="who-mark${TINT[i % 4]}" aria-hidden="true">${initial(name)}</span>
+      <span><span class="nm">${name}</span>
+        <span class="sub${contact ? '' : ' no-contact'}">${contact || 'No email or phone yet'}</span></span>
+    </div></td>
+    <td>${party}</td>
+    <td>${track(state, reply)}</td>
+    <td>${reply ? `<span class="pill ${cls}"><i></i>${label}</span>`
+                : `<span class="pill pill--waiting"><i></i>${STOP_LABEL[state]}</span>`}</td>
+    <td class="r"><button class="btn btn--quiet btn--icon" data-icon="dots"
+      aria-label="More for ${name}"></button></td>
+  </tr>`;
+}
+
+const tbody = document.getElementById('rows');
+tbody.innerHTML = GUESTS.map(row).join('');
+tbody.querySelectorAll('[data-icon]').forEach(el => el.insertAdjacentHTML('afterbegin', icon(el.dataset.icon)));
+
+/* ---- search + filter, working together ---- */
+let filter = 'all';
+const q = document.getElementById('q');
+
+function matches(tr){
+  if (!tr.dataset.name.includes(q.value.toLowerCase().trim())) return false;
+  const state = tr.dataset.state, reply = tr.dataset.reply;
+  return filter === 'all'     ? true
+       : filter === 'unsent'  ? state === 'written'
+       : filter === 'noreply' ? state !== 'replied' && state !== 'written'
+       : reply === filter;
+}
+function apply(){
+  let shown = 0;
+  tbody.querySelectorAll('tr').forEach(tr => {
+    const ok = matches(tr);
+    tr.hidden = !ok;
+    if (ok) shown++;
+  });
+  document.getElementById('none').hidden = shown > 0;
+  document.querySelector('.table-scroll').hidden = shown === 0;
+  document.getElementById('count').textContent =
+    shown === GUESTS.length ? `Showing all ${GUESTS.length} guests` : `Showing ${shown} of ${GUESTS.length}`;
+}
+q.addEventListener('input', apply);
+document.querySelector('[data-seg="filter"]').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  filter = b.dataset.filter; apply();
+});
+document.getElementById('clearAll').onclick = () => {
+  q.value = ''; filter = 'all';
+  document.querySelectorAll('[data-seg="filter"] button')
+    .forEach(b => b.setAttribute('aria-pressed', b.dataset.filter === 'all'));
+  apply();
+};
+
+/* ---- adding one at a time ---- */
+const addWrap = document.getElementById('addWrap');
+document.getElementById('addBtn').onclick = () => {
+  addWrap.hidden = false;
+  document.getElementById('gName').focus();
+};
+document.getElementById('addDone').onclick = () => { addWrap.hidden = true; };
+document.getElementById('addRow').addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('gName');
+  const contact = document.getElementById('gContact');
+  if (!name.value.trim()) { name.focus(); return; }
+  /* Newest first, so you can see what you just typed without hunting for it. */
+  tbody.insertAdjacentHTML('afterbegin',
+    row([name.value.trim(), contact.value.trim(), 1, 'written', null], 0));
+  tbody.querySelectorAll('tr:first-child [data-icon]')
+    .forEach(el => el.insertAdjacentHTML('afterbegin', icon(el.dataset.icon)));
+  toast(`${name.value.trim()} added`);
+  name.value = ''; contact.value = '';
+  name.focus();
+  apply();
+});
+
+/* ---- import ---- */
+const dlg = document.getElementById('importDlg');
+document.getElementById('importBtn').onclick = () => dlg.showModal();
+document.getElementById('impX').onclick =
+document.getElementById('impCancel').onclick = () => dlg.close();
+document.getElementById('impGo').onclick = () => { dlg.close(); toast('Read 62 rows — 3 were already on the list'); };
+const drop = document.getElementById('drop');
+['dragenter','dragover'].forEach(t => drop.addEventListener(t, e => {
+  e.preventDefault(); drop.classList.add('over');
+}));
+['dragleave','drop'].forEach(t => drop.addEventListener(t, () => drop.classList.remove('over')));
+</script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vellum — the whole site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<style>
+.wrap{max-width:1080px;margin:0 auto;padding:var(--s9) var(--s7) var(--s11)}
+.hd{border-bottom:var(--perf);padding-bottom:var(--s7);margin-bottom:var(--s8)}
+.hd .lede{margin-top:var(--s5)}
+.group{margin-top:var(--s9)}
+.group > .label{margin-bottom:var(--s2)}
+.group > p{color:var(--ink-2);font-size:14.5px;max-width:var(--measure);margin-bottom:var(--s5)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:var(--s5)}
+.card{display:flex;flex-direction:column;gap:7px;padding:var(--s5);border-radius:var(--r-card);
+  background:var(--paper);border:1px solid var(--line);box-shadow:var(--e1);
+  text-decoration:none;color:inherit;transition:transform .18s,box-shadow .18s,border-color .18s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--e2);border-color:var(--line-2)}
+.card .top{display:flex;align-items:center;gap:10px}
+.card .top svg{width:17px;height:17px;color:var(--wax);flex:none}
+.card .nm{font-family:var(--disp);font-size:19px;font-weight:600;letter-spacing:-.02em}
+.card p{font-size:var(--t-sm);color:var(--ink-2);line-height:1.55}
+.card .file{font-size:var(--t-xs);color:var(--ink-3);margin-top:auto;padding-top:var(--s3)}
+.card--lead{grid-column:span 2;background:var(--paper);border-color:var(--wax);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--wax) 13%,transparent),var(--e2)}
+@media(max-width:640px){
+  .wrap{padding:var(--s7) var(--s5) var(--s9)}
+  .card--lead{grid-column:span 1}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hd">
+    <span class="tag">Phase 0 · complete</span>
+    <h1 class="display" style="margin-top:var(--s5)">The whole site,<br>
+      <span class="hand" style="font-size:.8em">one direction.</span></h1>
+    <p class="lede">
+      Paper &amp; Ribbon, extended from a landing page into every screen the product needs.
+      Static HTML, one file per screen, sharing one stylesheet. No build step — open any
+      file straight from disk.
+    </p>
+  </header>
+
+  <section class="group" style="margin-top:0">
+    <p class="label">Start here</p>
+    <p>The rule that lets a handmade, tilted, handwritten identity survive a table of 148 rows.</p>
+    <div class="cards">
+      <a class="card card--lead" href="system.html">
+        <span class="top"><span class="nm">The system</span></span>
+        <p>Tokens, type, components, and the vocabulary the whole product speaks.
+           This is what Phase 1 gets built from.</p>
+        <span class="file">system.html · vellum.css</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="group">
+    <p class="label">The first ten minutes</p>
+    <p>The path from a signed-in host with nothing, to letters ready to post. Follow it in
+       order — each screen hands off to the next.</p>
+    <div class="cards">
+      <a class="card" href="desk-empty.html">
+        <span class="top"><span class="nm">An empty desk</span></span>
+        <p>What a host sees before anything exists. Two blank cards, because that is what an
+           empty desk actually has on it.</p>
+        <span class="file">desk-empty.html</span>
+      </a>
+      <a class="card" href="new-event.html">
+        <span class="top"><span class="nm">Making the event</span></span>
+        <p>Three steps — the occasion, the card, who's coming — with the envelope filling in
+           beside you as you type. Ends in the full editor.</p>
+        <span class="file">new-event.html</span>
+      </a>
+      <a class="card" href="guests-empty.html">
+        <span class="top"><span class="nm">The first guests</span></span>
+        <p>Type a name, press Enter, type the next. Or paste a list. Duplicates are caught on
+           email as you go.</p>
+        <span class="file">guests-empty.html</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="group">
+    <p class="label">What a guest gets</p>
+    <p>No account, no navigation, no product chrome. One letter, addressed to one person.</p>
+    <div class="cards">
+      <a class="card card--lead" href="invite.html">
+        <span class="top"><span class="nm">The letter</span></span>
+        <p>The envelope arrives sealed and turns over before it opens, exactly as one does
+           in your hands. Then the invitation, and a reply card the guest fills in — with a
+           ruled M-line, in handwriting, postmarked when they send it.</p>
+        <span class="file">invite.html · /i/[token]</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="group">
+    <p class="label">What a host works in</p>
+    <p>The desk the letters are made on. Same palette, same faces, no tilt and no handwriting.</p>
+    <div class="cards">
+      <a class="card" href="dashboard.html">
+        <span class="top"><span class="nm">Desk</span></span>
+        <p>How many are coming, where all 148 letters have got to, and what's still to do.</p>
+        <span class="file">dashboard.html</span>
+      </a>
+      <a class="card" href="event.html">
+        <span class="top"><span class="nm">The invitation</span></span>
+        <p>Details, the card, and the gift lists. Every field writes straight through to a
+           live envelope beside it.</p>
+        <span class="file">event.html</span>
+      </a>
+      <a class="card" href="guests.html">
+        <span class="top"><span class="nm">Guest list</span></span>
+        <p>Search, filters and CSV import that actually run. Guests with no way to receive
+           a letter are called out, not hidden.</p>
+        <span class="file">guests.html</span>
+      </a>
+      <a class="card" href="send.html">
+        <span class="top"><span class="nm">Send</span></span>
+        <p>Who, how and when, itemised on a counter slip before anything irreversible happens.</p>
+        <span class="file">send.html</span>
+      </a>
+      <a class="card" href="rsvps.html">
+        <span class="top"><span class="nm">Replies</span></span>
+        <p>Every answer, every note, and the one number that leaves this screen and goes to
+           a caterer.</p>
+        <span class="file">rsvps.html</span>
+      </a>
+      <a class="card" href="settings.html">
+        <span class="top"><span class="nm">Settings</span></span>
+        <p>Account, how you hear about replies, reminders, plan, and how the gift-link
+           commission works.</p>
+        <span class="file">settings.html</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="group">
+    <p class="label">Where this came from</p>
+    <div class="cards">
+      <a class="card" href="../05-paper-ribbon.html">
+        <span class="top"><span class="nm">The landing page</span></span>
+        <p>The Phase 0 direction that was chosen. Unchanged.</p>
+        <span class="file">../05-paper-ribbon.html</span>
+      </a>
+      <a class="card" href="../envelope-animations.html">
+        <span class="top"><span class="nm">The opening study</span></span>
+        <p>Nine seal dies and a full customiser. The envelope here is inherited from it,
+           not rebuilt.</p>
+        <span class="file">../envelope-animations.html</span>
+      </a>
+      <a class="card" href="../index.html">
+        <span class="top"><span class="nm">All five directions</span></span>
+        <p>The original exploration the direction was picked from.</p>
+        <span class="file">../index.html</span>
+      </a>
+    </div>
+  </section>
+</div>
+
+<script src="app.js"></script>
+<script>
+/* Each card takes the icon of the thing it leads to. */
+const MARK = { 'system.html':'gear', 'desk-empty.html':'desk',
+  'new-event.html':'plus', 'guests-empty.html':'users', 'invite.html':'opened', 'dashboard.html':'desk',
+  'event.html':'card', 'guests.html':'users', 'send.html':'send', 'rsvps.html':'reply',
+  'settings.html':'gear', '../05-paper-ribbon.html':'card', '../envelope-animations.html':'opened',
+  '../index.html':'copy' };
+document.querySelectorAll('.card').forEach(a => {
+  const name = MARK[a.getAttribute('href')];
+  if (name) a.querySelector('.top').insertAdjacentHTML('afterbegin', icon(name));
+});
+</script>
+</body>
+</html>

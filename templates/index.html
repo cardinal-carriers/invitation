@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vellum — Design Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F5F1;--card:#fff;--ink:#1B1917;--muted:#84796F;--line:#E6E1D9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1220px;margin:0 auto;padding:0 32px}
+.mono{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(42px,6vw,74px);line-height:1.05;letter-spacing:-.02em;margin:18px 0 0}
+h1 em{color:#8C9C7E}
+header{padding:84px 0 56px;border-bottom:1px solid var(--line)}
+header p{max-width:560px;margin-top:22px;color:var(--muted);font-size:17px}
+.meta{display:flex;gap:34px;margin-top:34px;flex-wrap:wrap}
+.meta div .k{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.meta div .v{font-size:15px;margin-top:3px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:30px;padding:56px 0 90px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.tpl{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:inherit;transition:.3s;display:flex;flex-direction:column}
+.tpl:hover{transform:translateY(-6px);box-shadow:0 28px 54px -32px rgba(27,25,23,.55)}
+.swatchbar{height:200px;display:grid;place-items:center;position:relative;overflow:hidden}
+.swatchbar .name{font-size:34px;line-height:1.05;text-align:center;padding:0 20px}
+.dots{position:absolute;left:16px;bottom:14px;display:flex;gap:7px}
+.dots i{width:15px;height:15px;border-radius:50%;display:block;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.body{padding:26px 26px 28px;flex:1;display:flex;flex-direction:column}
+.n{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--muted)}
+.body h2{font-size:22px;font-weight:500;letter-spacing:-.02em;margin:10px 0 8px}
+.body p{color:var(--muted);font-size:15px;flex:1}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
+.chip{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:5px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+.open{margin-top:20px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:7px}
+footer{border-top:1px solid var(--line);padding:40px 0 70px;color:var(--muted);font-size:14px}
+.note{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px 28px;margin-bottom:20px}
+.note h3{font-size:16px;font-weight:500;margin-bottom:8px}
+.note ul{margin:8px 0 0 18px;color:var(--muted);font-size:15px}
+.note li{margin:5px 0}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <span class="mono">Vellum · Phase 0 · Design exploration</span>
+  <h1>Five directions for<br>an <em>e-invitation</em> platform.</h1>
+  <p>Each template is a complete landing page with a working envelope-opening animation, so the signature moment can be judged directly. Same content in all five — only the design language changes.</p>
+  <div class="meta">
+    <div><div class="k">Product</div><div class="v">Wedding &amp; baby shower e-invites</div></div>
+    <div><div class="k">Deliverable</div><div class="v">5 static HTML templates</div></div>
+    <div><div class="k">Next</div><div class="v">Pick one → build Phase 1</div></div>
+  </div>
+</div></header>
+
+<div class="wrap"><div class="grid">
+
+  <a class="tpl" href="site/index.html" style="border-color:#B4736C">
+    <div class="swatchbar" style="background:linear-gradient(150deg,#FCF7EE,#E8D9C0)">
+      <div class="name" style="font-family:'Cormorant Garamond',serif;color:#3A322B">The whole <em style="color:#B4736C">site</em></div>
+      <div class="dots"><i style="background:#FCF7EE"></i><i style="background:#E8D9C0"></i><i style="background:#C1615C"></i><i style="background:#B4736C"></i><i style="background:#A8B79A"></i></div>
+    </div>
+    <div class="body">
+      <span class="n">05b · every screen</span>
+      <h2>Paper &amp; Ribbon, made operable</h2>
+      <p>The chosen direction extended past the landing page into the whole product: the guest's letter with its reply card, and the host's desk, invitation editor, guest list, send flow, replies and settings. One shared stylesheet, one design-system page, no build step.</p>
+      <div class="chips"><span class="chip">Design system</span><span class="chip">Guest invite</span><span class="chip">6 host screens</span><span class="chip">Postal track</span></div>
+      <div class="open">Open the set →</div>
+    </div>
+  </a>
+
+  <a class="tpl" href="envelope-animations.html" style="border-color:#D89B94">
+    <div class="swatchbar" style="background:linear-gradient(150deg,#FCF7EE,#F1E3CE)">
+      <div class="name" style="font-family:'Cormorant Garamond',serif;color:#3A322B">Opening <em style="color:#B4736C">Studies</em></div>
+      <div class="dots"><i style="background:#E8D9C0"></i><i style="background:#D89B94"></i><i style="background:#B4736C"></i><i style="background:#9FBACB"></i><i style="background:#A8B79A"></i></div>
+    </div>
+    <div class="body">
+      <span class="n">05a · chosen direction</span>
+      <h2>Five envelope-opening animations</h2>
+      <p>Paper &amp; Ribbon was picked, so this is the deep dive on the signature moment. Five distinct opening sequences, a live customiser for envelope / liner / seal / card / stamp, and correct postal anatomy — stamp and addresses on the front, flap and seal on the back, so the envelope turns over before it opens.</p>
+      <div class="chips"><span class="chip">Classic Post</span><span class="chip">Wax Break</span><span class="chip">Ribbon Pull</span><span class="chip">Unfolding Letter</span><span class="chip">On the Table</span></div>
+      <div class="open">Open the studies →</div>
+    </div>
+  </a>
+
+  <a class="tpl" href="01-ivory-sage.html">
+    <div class="swatchbar" style="background:#FBF9F3">
+      <div class="name" style="font-family:'Cormorant Garamond',serif;color:#232620">Ivory &amp; <em style="color:#5A6A4E">Sage</em></div>
+      <div class="dots"><i style="background:#FBF9F3"></i><i style="background:#DCE3D4"></i><i style="background:#8C9C7E"></i><i style="background:#5A6A4E"></i><i style="background:#232620"></i></div>
+    </div>
+    <div class="body">
+      <span class="n">01</span>
+      <h2>Classic stationery, editorial calm</h2>
+      <p>High-contrast serif, hairline rules, botanical line art and a lot of white space. Reads like a printed wedding suite. The safest choice for a wedding-first brand.</p>
+      <div class="chips"><span class="chip">Cormorant Garamond</span><span class="chip">Jost</span><span class="chip">Centered</span><span class="chip">Wax seal</span></div>
+      <div class="open">Open template →</div>
+    </div>
+  </a>
+
+  <a class="tpl" href="02-terracotta.html">
+    <div class="swatchbar" style="background:#FDF8F1">
+      <div class="name" style="font-family:'Inter',sans-serif;font-weight:500;letter-spacing:-.04em;color:#2C1F18">Terracotta <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;color:#C8734F">Modern</span></div>
+      <div class="dots"><i style="background:#FDF8F1"></i><i style="background:#F6E4D6"></i><i style="background:#D9A441"></i><i style="background:#C8734F"></i><i style="background:#5E6650"></i></div>
+    </div>
+    <div class="body">
+      <span class="n">02</span>
+      <h2>Warm, bold and contemporary</h2>
+      <p>Big geometric sans, rounded bento cards, a scrolling ticker and a clay-and-ochre palette. Feels like a modern product brand rather than a stationer. Most "startup".</p>
+      <div class="chips"><span class="chip">Outfit</span><span class="chip">Instrument Serif</span><span class="chip">Bento grid</span><span class="chip">Marquee</span></div>
+      <div class="open">Open template →</div>
+    </div>
+  </a>
+
+  <a class="tpl" href="03-blush-minimal.html">
+    <div class="swatchbar" style="background:#fff;border-bottom:1px solid var(--line)">
+      <div class="name" style="font-family:'Inter',sans-serif;font-weight:300;letter-spacing:-.045em;color:#141210">Blush <span style="color:#D9B7AE">Minimal</span></div>
+      <div class="dots"><i style="background:#fff"></i><i style="background:#FAF8F7"></i><i style="background:#EEDCD7"></i><i style="background:#A79C95"></i><i style="background:#141210"></i></div>
+    </div>
+    <div class="body">
+      <span class="n">03</span>
+      <h2>Swiss grid, quiet and precise</h2>
+      <p>A strict 12-column layout with monospace labels, numbered index rows and near-zero ornament. Very restrained — the design gets out of the way of the invitation.</p>
+      <div class="chips"><span class="chip">Inter</span><span class="chip">JetBrains Mono</span><span class="chip">Index list</span><span class="chip">No seal</span></div>
+      <div class="open">Open template →</div>
+    </div>
+  </a>
+
+  <a class="tpl" href="04-midnight-linen.html">
+    <div class="swatchbar" style="background:linear-gradient(150deg,#1A1814,#12110D)">
+      <div class="name" style="font-family:'Cormorant Garamond',serif;color:#EEE7D9">Midnight <em style="color:#C9A96A">Linen</em></div>
+      <div class="dots"><i style="background:#12110D"></i><i style="background:#211E19"></i><i style="background:#8B8072"></i><i style="background:#C9A96A"></i><i style="background:#EEE7D9"></i></div>
+    </div>
+    <div class="body">
+      <span class="n">04</span>
+      <h2>Dark, gold-foiled, black tie</h2>
+      <p>Didone display type, champagne foil accents and glow. Strongest sense of occasion and the best-looking envelope of the five — but reads formal-evening, less baby shower.</p>
+      <div class="chips"><span class="chip">Bodoni Moda</span><span class="chip">Montserrat</span><span class="chip">Dark mode</span><span class="chip">Gold seal</span></div>
+      <div class="open">Open template →</div>
+    </div>
+  </a>
+
+  <a class="tpl" href="05-paper-ribbon.html">
+    <div class="swatchbar" style="background:#FCF7EE">
+      <div class="name" style="font-family:'Cormorant Garamond',serif;color:#3A322B">Paper &amp; <em style="color:#B4736C">Ribbon</em></div>
+      <div class="dots"><i style="background:#FCF7EE"></i><i style="background:#F0D9A0"></i><i style="background:#9FBACB"></i><i style="background:#A8B79A"></i><i style="background:#D89B94"></i></div>
+    </div>
+    <div class="body">
+      <span class="n">05</span>
+      <h2>Tactile, handmade, friendly</h2>
+      <p>Kraft envelope with a stamp and postmark, washi tape, tilted cards and a handwritten accent face. The most baby-shower-friendly, and still holds up for weddings.</p>
+      <div class="chips"><span class="chip">Fraunces</span><span class="chip">Karla</span><span class="chip">Caveat</span><span class="chip">Stamp + postmark</span></div>
+      <div class="open">Open template →</div>
+    </div>
+  </a>
+
+  <div class="note" style="align-self:start">
+    <h3>How to judge these</h3>
+    <ul>
+      <li><b>Envelope moment</b> — this is the product's signature. Which one would you want to receive?</li>
+      <li><b>Range</b> — it has to carry both a black-tie wedding and a Saturday-afternoon baby shower.</li>
+      <li><b>Longevity</b> — the card art changes per event; the chrome around it shouldn't fight it.</li>
+    </ul>
+    <h3 style="margin-top:18px">Mixing is fine</h3>
+    <ul>
+      <li>e.g. <b>01</b>'s type with <b>02</b>'s layout, or <b>04</b>'s envelope on a light background.</li>
+      <li>Tell me what you like from each and I'll produce a single merged direction.</li>
+    </ul>
+    <h3 style="margin-top:18px">Then</h3>
+    <ul>
+      <li>Lock the design system and start Phase 1 (see <b>docs/plan.md</b>).</li>
+    </ul>
+  </div>
+
+</div></div>
+
+<footer><div class="wrap">Vellum · design exploration · templates are static HTML, no build step — open any file directly.</div></footer>
+</body>
+</html>

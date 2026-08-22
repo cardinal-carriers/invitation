@@ -1,0 +1,164 @@
+/* ==========================================================================
+   VELLUM — the envelope
+   Lifted from templates/envelope-animations.html (v4, "Classic Post") and
+   re-pointed at the vellum.css tokens. Nothing here was redesigned: the
+   opening was already settled in Phase 0, so it is inherited, not rebuilt.
+
+   Postal anatomy is correct. Stamp, postmark and addresses live on the
+   FRONT; flap and seal live on the BACK. So the envelope turns over before
+   it opens, exactly as one does in your hands.
+
+   Sequence:  lift → turn over → seal breaks → flap falls → card rises
+   ========================================================================== */
+
+.scene{
+  position:relative;width:100%;max-width:560px;margin:0 auto;container-type:inline-size;
+  perspective:1800px;perspective-origin:50% 40%;
+  --u:1s;                       /* one beat. scale the whole sequence here.  */
+  --env:var(--kraft); --env-dk:var(--kraft-dk); --accent:var(--sage);
+  /* the beats */
+  --tLift:0s;                  --dLift:calc(var(--u)*.55); --eLift:cubic-bezier(.3,.9,.3,1);
+  --tFlip:calc(var(--u)*.35);  --dFlip:calc(var(--u)*1.1);  --eFlip:cubic-bezier(.62,.02,.38,.98);
+  --tSeal:calc(var(--u)*1.45); --dSeal:calc(var(--u)*.45);  --eSeal:ease-in;
+  --tFlap:calc(var(--u)*1.7);  --dFlap:calc(var(--u)*.9);   --eFlap:cubic-bezier(.55,.05,.25,1);
+  --tCard:calc(var(--u)*2.36); --dCard:calc(var(--u)*1.15); --eCard:cubic-bezier(.26,.9,.3,1);
+}
+/* Height reserved for the whole opened composition: the envelope (69.4% of
+   width) plus the card once it has risen clear of it. Measured, not guessed —
+   any more than this and the resting envelope floats in dead space. */
+.scene::before{content:'';display:block;padding-top:126%}
+.scene--sm{max-width:300px}
+
+.env{position:absolute;left:0;right:0;bottom:3%;aspect-ratio:1.44/1;transform-style:preserve-3d;
+  font-size:2.5cqw;cursor:pointer;transition:transform var(--dLift) var(--eLift) var(--tLift)}
+@supports not (container-type:inline-size){.env{font-size:13px}}
+.env-shadow{position:absolute;left:9%;right:9%;bottom:0;height:3.2%;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(120,95,65,.34),transparent 70%);filter:blur(5px);
+  transition:transform var(--dLift) ease,opacity var(--dLift) ease}
+
+.flip{position:absolute;inset:0;transform-style:preserve-3d;
+  transition:transform var(--dFlip) var(--eFlip) var(--tFlip)}
+.face{position:absolute;inset:0;border-radius:.6em;transform-style:preserve-3d;
+  transition:visibility 0s calc(var(--tFlip) + var(--dFlip)/2)}
+.front{transform:translateZ(1px);
+  background-image:var(--fibre),var(--grain),var(--fleck),
+    linear-gradient(155deg,color-mix(in srgb,var(--env) 90%,#fff),var(--env));
+  background-size:var(--pap-sz);background-repeat:var(--pap-rp);
+  border:1px solid color-mix(in srgb,var(--env) 72%,var(--env-dk));
+  box-shadow:0 2em 3.4em -1.6em rgba(120,95,65,.55)}
+.back{transform:rotateY(180deg) translateZ(1px);visibility:hidden}
+
+.panel-base{position:absolute;inset:0;border-radius:.6em;
+  background-image:var(--fibre),var(--grain),var(--fleck),
+    linear-gradient(165deg,color-mix(in srgb,var(--env) 92%,#fff),color-mix(in srgb,var(--env) 86%,var(--env-dk)));
+  background-size:var(--pap-sz);background-repeat:var(--pap-rp);
+  border:1px solid color-mix(in srgb,var(--env) 72%,var(--env-dk));
+  box-shadow:0 2em 3.4em -1.6em rgba(120,95,65,.55)}
+
+/* The throat: the lined interior you see once the card is out. Same colour
+   family as the flap liner, so the open envelope reads with real depth. */
+.throat{position:absolute;inset:0;transform:translateZ(.5px);border-radius:.6em .6em 0 0;
+  clip-path:polygon(0 0,100% 0,50% 58%);
+  background-image:var(--fibre),var(--grain),var(--fleck),
+    linear-gradient(180deg,color-mix(in srgb,var(--liner) 76%,#000) 0%,
+      color-mix(in srgb,var(--liner) 94%,#000) 42%,color-mix(in srgb,var(--liner) 70%,#000) 100%);
+  background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
+
+/* ---- front: addressed, stamped, cancelled ---- */
+.ret{position:absolute;left:1.6em;top:1.4em;font-size:.84em;line-height:1.5;
+  color:color-mix(in srgb,var(--ink) 58%,var(--env))}
+.ret b{display:block;font-family:var(--disp);font-weight:600;font-size:1.12em;
+  color:color-mix(in srgb,var(--ink) 82%,var(--env))}
+.to{position:absolute;left:50%;top:53%;transform:translate(-50%,-50%);width:76%;
+  text-align:center;font-size:.96em;line-height:1.7}
+.to .nm{font-family:var(--hand);font-size:2.15em;color:var(--ink);line-height:1;margin-bottom:.3em}
+.to .ln{color:color-mix(in srgb,var(--ink) 64%,var(--env))}
+.to .hr{width:3em;height:1px;margin:0 auto .9em;background:color-mix(in srgb,var(--ink) 32%,var(--env));border:0}
+.front .stamp{position:absolute;right:1.3em;top:1.2em;width:6em;height:7em;transform:rotate(2.4deg);z-index:2}
+.front .postmark{position:absolute;right:6.8em;top:1.6em;z-index:3}
+
+/* ---- back: flap, liner, folds, seal ---- */
+.flap{position:absolute;left:-1px;right:-1px;top:-1px;height:58%;transform-style:preserve-3d;
+  transform-origin:top center;transform:translateZ(4px) rotateX(0deg);
+  transition:transform var(--dFlap) var(--eFlap) var(--tFlap)}
+.fside{position:absolute;inset:0;backface-visibility:hidden}
+.fside.outer{clip-path:polygon(0 0,100% 0,50% 100%);border-radius:.6em .6em 0 0;
+  background-image:var(--fibre),var(--grain),var(--fleck),
+    linear-gradient(180deg,color-mix(in srgb,var(--env) 96%,#fff),color-mix(in srgb,var(--env) 88%,var(--env-dk)));
+  background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
+/* pre-mirrored clip-path, because the face is flipped about its own centre */
+.fside.inner{transform:rotateX(180deg);clip-path:polygon(0 100%,100% 100%,50% 0);border-radius:0 0 .6em .6em;
+  background-image:var(--fibre),var(--grain),var(--fleck),
+    linear-gradient(180deg,color-mix(in srgb,var(--liner) 88%,#000),var(--liner));
+  background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
+/* dried adhesive along the flap's glued edges */
+.gum{position:absolute;inset:0;pointer-events:none;
+  clip-path:polygon(4% 100%,50% 3%,96% 100%,87% 100%,50% 14%,13% 100%);
+  background:linear-gradient(180deg,rgba(255,249,232,.30),rgba(255,249,232,.13));
+  box-shadow:inset 0 0 .3em rgba(255,250,235,.25)}
+/* pocket front: lighter than the interior, with a lit edge, so the V reads */
+.lip{position:absolute;inset:-1px;transform:translateZ(3px);border-radius:.6em;
+  clip-path:polygon(0 0,50% 58%,100% 0,100% 100%,0 100%);
+  background-image:var(--fibre),var(--grain),var(--fleck),
+    linear-gradient(168deg,color-mix(in srgb,var(--env) 99%,#fff),color-mix(in srgb,var(--env) 83%,var(--env-dk)));
+  background-size:var(--pap-sz);background-repeat:var(--pap-rp);
+  filter:drop-shadow(0 -.16em .3em rgba(60,38,20,.42))}
+/* bottom flap, folded up over the two side flaps, so it sits slightly proud */
+.botflap{position:absolute;inset:-1px;transform:translateZ(3.1px);border-radius:.6em;pointer-events:none;
+  clip-path:polygon(0 100%,50% 58%,100% 100%);
+  background:linear-gradient(190deg,rgba(255,255,255,.12),rgba(255,255,255,0) 42%,rgba(107,86,54,.07))}
+/* the folds themselves: a lit side and a shaded side, as a real crease has */
+.creases{position:absolute;inset:0;width:100%;height:100%;transform:translateZ(3.2px);
+  pointer-events:none;overflow:visible}
+.creases path{fill:none;stroke-width:1;vector-effect:non-scaling-stroke}
+.cr-lo{stroke:rgba(96,72,42,.30)}
+.cr-hi{stroke:rgba(255,255,255,.20)}
+
+.seal{position:absolute;left:50%;top:52%;width:9.4em;height:9.4em;margin:-4.7em 0 0 -4.7em;
+  transform:translateZ(5px) rotate(-5deg);transform-style:preserve-3d;
+  transition:transform var(--dSeal) var(--eSeal) var(--tSeal),opacity var(--dSeal) ease var(--tSeal)}
+.sealsvg{width:100%;height:100%;display:block;
+  filter:drop-shadow(0 .2em .26em rgba(74,32,30,.42));
+  --wax-hi:color-mix(in srgb,var(--wax) 58%,#fff);
+  --wax-lo:color-mix(in srgb,var(--wax) 76%,#000);
+  --wax-xlo:color-mix(in srgb,var(--wax) 42%,#000)}
+.wgHi{stop-color:var(--wax-hi)} .wgMd{stop-color:var(--wax)} .wgLo{stop-color:var(--wax-lo)}
+.w-ring-lo{stroke:var(--wax-xlo);opacity:.72}
+.w-ring-hi{stroke:var(--wax-hi);opacity:.62}
+.w-mot-lo{color:var(--wax-xlo);opacity:.85}
+.w-mot-hi{color:var(--wax-hi);opacity:.72}
+
+/* ---- the card inside ---- */
+.env-card{position:absolute;left:7.5%;right:7.5%;bottom:5%;height:88%;
+  transform:translateZ(2px) translateY(0);
+  background-image:var(--grain),linear-gradient(168deg,var(--card),color-mix(in srgb,var(--card) 93%,#C9B79A));
+  background-size:170px 170px,auto;background-repeat:repeat,no-repeat;
+  border:1px solid color-mix(in srgb,var(--card) 80%,#C9B79A);border-radius:.6em;
+  padding:1.9em 1.5em;text-align:center;color:var(--ink);
+  transition:transform var(--dCard) var(--eCard) var(--tCard),box-shadow var(--dCard) ease var(--tCard)}
+.env-card .ci{position:absolute;inset:.6em;border:1.4px dashed color-mix(in srgb,var(--ink) 20%,transparent);
+  border-radius:.4em;pointer-events:none}
+.env-card .ck{font-size:.86em;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--accent) 80%,#000);position:relative}
+.env-card .ch{font-family:var(--hand);font-size:2.3em;color:var(--wax);line-height:.95;margin-top:.1em;position:relative}
+.env-card .cn{font-family:var(--disp);font-size:2.3em;font-weight:600;line-height:1.04;margin:.12em 0 .06em;position:relative}
+.env-card .cd{display:flex;gap:.55em;justify-content:center;margin:.8em 0;position:relative}
+.env-card .cd i{width:.55em;height:.55em;border-radius:50%;display:block}
+.env-card .cm{font-size:1.02em;line-height:1.7;color:color-mix(in srgb,var(--ink) 72%,var(--card));position:relative}
+
+/* ---- playback ---- */
+.scene.play .flip{transform:rotateY(180deg)}
+.scene.play .front{visibility:hidden}
+.scene.play .back{visibility:visible}
+.scene.play .env{transform:translateY(-2.4%)}
+.scene.play .env-shadow{transform:scale(.9);opacity:.7}
+.scene.play .flap{transform:translateZ(-2px) rotateX(-172deg)}
+.scene.play .seal{opacity:0;transform:translateZ(5px) rotate(-24deg) scale(.34)}
+.scene.play .env-card{transform:translateZ(2px) translateY(-90%);box-shadow:0 1.4em 2.6em -1.2em rgba(90,60,40,.7)}
+.scene.noanim,.scene.noanim *{transition:none!important}
+
+/* Reduced motion: no sequence at all. The envelope is simply shown open,
+   card out, on load. The guest still gets the reveal, just not the theatre. */
+@media (prefers-reduced-motion:reduce){
+  .scene *{transition-duration:.001s!important}
+}

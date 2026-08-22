@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guest list · Vellum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<style>
+.lead-add{max-width:640px}
+.hint{font-size:var(--t-xs);color:var(--ink-2);margin-top:var(--s3)}
+.paste{margin-top:var(--s5)}
+.paste summary{font-size:var(--t-sm);color:var(--wax);cursor:pointer;font-weight:600;
+  list-style:none;display:inline-flex;align-items:center;gap:7px;padding:6px 0}
+.paste summary::-webkit-details-marker{display:none}
+.paste summary::before{content:'+';font-size:15px;line-height:1}
+.paste[open] summary::before{content:'–'}
+.other{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5);margin-top:var(--s7)}
+.other a{display:flex;gap:var(--s4);padding:var(--s5);border-radius:var(--r-card);
+  background:var(--paper);border:1px solid var(--line);box-shadow:var(--e1);
+  text-decoration:none;color:inherit;transition:transform .16s,box-shadow .16s}
+.other a:hover{transform:translateY(-2px);box-shadow:var(--e2)}
+.other svg{width:18px;height:18px;color:var(--wax);flex:none;margin-top:2px}
+.other .nm{display:block;font-weight:600;font-size:15px}
+.other .sub{display:block;font-size:var(--t-xs);color:var(--ink-2);margin-top:3px;line-height:1.5}
+@media(max-width:680px){.other{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-nav="guests">
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <nav class="rail" aria-label="Main"></nav>
+
+  <div class="main">
+    <header class="topbar">
+      <p class="crumb"><a href="dashboard.html">Desk</a> <span aria-hidden="true">›</span>
+        <a href="event.html">A baby shower for Amara</a> <span aria-hidden="true">›</span>
+        <b>Guest list</b></p>
+      <span class="spacer"></span>
+      <button class="btn btn--ghost btn--sm" id="importBtn" data-icon="upload">Import a list</button>
+    </header>
+
+    <main class="page" id="main">
+      <div class="page-hd">
+        <div>
+          <span class="label">Guest list</span>
+          <h1 class="h1">Nobody on the list yet</h1>
+          <p>Add the people you want there. Nothing is sent until you post the letters,
+             so there's no harm in a half-finished list.</p>
+        </div>
+      </div>
+
+      <section class="desk lead-add">
+        <div class="desk-bd">
+          <form class="add-row" id="addRow">
+            <span class="mark" data-icon="plus" aria-hidden="true"></span>
+            <label class="sr" for="gName">Guest's name</label>
+            <input class="input nm" id="gName" placeholder="Name" autocomplete="off" autofocus>
+            <label class="sr" for="gContact">Email or phone number</label>
+            <input class="input contact" id="gContact" placeholder="Email or phone" autocomplete="off">
+            <button class="btn btn--ghost btn--sm" type="submit">Add</button>
+          </form>
+          <p class="hint">Press Enter to add and keep typing. A guest with no email or phone
+            stays on the list — they just can't be sent a letter yet.</p>
+
+          <details class="paste">
+            <summary>Paste a list instead</summary>
+            <div style="padding-top:var(--s3)">
+              <label class="sr" for="pasteBox">Paste names, one per line</label>
+              <textarea class="textarea" id="pasteBox" rows="5"
+                placeholder="Eleanor Vance, eleanor@vance.ca&#10;Jonah Okafor, jonah.okafor@gmail.com&#10;Aunt Margery"></textarea>
+              <p class="help" style="margin-top:var(--s3)">One person per line. A comma or a tab
+                separates the name from the email or phone number.</p>
+              <button class="btn btn--ghost btn--sm" id="pasteGo" style="margin-top:var(--s3)">
+                Add these</button>
+            </div>
+          </details>
+
+          <div id="rosterWrap" hidden>
+            <p class="roster-count">
+              <span class="fig" id="rCount">0</span>
+              <span class="of" id="rNote">on the list</span>
+            </p>
+            <div class="roster" id="roster"></div>
+          </div>
+        </div>
+
+        <div class="desk-ft" id="ready" hidden>
+          <span class="muted body-sm">Happy with the list?</span>
+          <a class="btn btn--wax btn--sm" href="send.html" data-icon="send">Post the letters</a>
+        </div>
+      </section>
+
+      <div class="other lead-add">
+        <a href="#" id="importLink">
+          <span data-icon="upload" aria-hidden="true"></span>
+          <span><span class="nm">Bring in a spreadsheet</span>
+            <span class="sub">A CSV, or a paste from Sheets or Excel. We'll show you what we
+              read before anything is added.</span></span>
+        </a>
+        <a href="event.html">
+          <span data-icon="card" aria-hidden="true"></span>
+          <span><span class="nm">Finish the invitation first</span>
+            <span class="sub">The wording, the wax and the gift lists. The guest list can
+              wait.</span></span>
+        </a>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+/* Same event, empty list — so the rail counts follow. This runs before the
+   shell is drawn on DOMContentLoaded. */
+EVENT.guests = 0;
+EVENT.replied = 0;
+
+const $ = id => document.getElementById(id);
+const guests = [];
+
+function addGuest(name, contact){
+  name = (name || '').trim();
+  if (!name) return false;
+  contact = (contact || '').trim();
+  if (contact && guests.some(g => g.contact.toLowerCase() === contact.toLowerCase())) {
+    toast(`${name} is already on the list`);
+    return false;
+  }
+  guests.unshift({ name, contact });
+  draw();
+  return true;
+}
+function draw(){
+  $('rosterWrap').hidden = guests.length === 0;
+  $('ready').hidden = guests.length === 0;
+  $('rCount').textContent = guests.length;
+  const noContact = guests.filter(g => !g.contact).length;
+  $('rNote').textContent = 'on the list'
+    + (noContact ? ` · ${noContact} still need an email or phone` : '');
+  $('roster').innerHTML = guests.map((g, i) => `
+    <div class="roster-row">
+      <span class="who-mark" aria-hidden="true">${g.name.trim().charAt(0).toUpperCase()}</span>
+      <span class="who">
+        <span class="nm">${g.name}</span>
+        <span class="sub${g.contact ? '' : ' warn'}">${g.contact || 'No email or phone yet'}</span>
+      </span>
+      <button class="btn btn--quiet btn--icon" data-rm="${i}"
+        aria-label="Remove ${g.name}">${icon('x')}</button>
+    </div>`).join('');
+}
+$('addRow').addEventListener('submit', e => {
+  e.preventDefault();
+  if (addGuest($('gName').value, $('gContact').value)) {
+    $('gName').value = ''; $('gContact').value = '';
+  }
+  $('gName').focus();
+});
+$('roster').addEventListener('click', e => {
+  const b = e.target.closest('[data-rm]'); if (!b) return;
+  guests.splice(+b.dataset.rm, 1);
+  draw();
+});
+$('pasteGo').addEventListener('click', () => {
+  const lines = $('pasteBox').value.split('\n').map(l => l.trim()).filter(Boolean);
+  let added = 0;
+  lines.forEach(line => {
+    const [name, contact] = line.split(/\s*[,\t]\s*|\s{2,}/);
+    if (addGuest(name, contact)) added++;
+  });
+  $('pasteBox').value = '';
+  toast(added ? `Added ${added} ${added === 1 ? 'person' : 'people'}` : 'Nothing to add');
+});
+
+/* Import still lands on the review screen, which is not designed yet. */
+const notYet = e => { e.preventDefault(); toast('The import review screen is still to be designed'); };
+$('importBtn').onclick = notYet;
+$('importLink').onclick = notYet;
+</script>
+</body>
+</html>

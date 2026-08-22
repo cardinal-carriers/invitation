@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desk · Vellum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<link rel="stylesheet" href="envelope.css">
+<style>
+.h1 em{font-style:italic;color:var(--wax)}
+.feed{display:flex;flex-direction:column}
+.feed-row{display:flex;align-items:flex-start;gap:var(--s4);padding:var(--s4) var(--s6);
+  border-bottom:1px solid var(--line)}
+.feed-row:last-child{border-bottom:0}
+.feed-row .body{flex:1;min-width:0}
+.feed-row .nm{font-weight:600}
+.feed-row .said{font-family:var(--hand);font-weight:600;font-size:19px;color:var(--wax);
+  line-height:1.25;margin-top:4px}
+.feed-row .when{font-size:var(--t-xs);color:var(--ink-3);white-space:nowrap;margin-left:auto;padding-left:var(--s3)}
+.todo{display:flex;gap:var(--s3);padding:var(--s4) 0;border-bottom:var(--perf-fine);align-items:flex-start}
+.todo:last-child{border-bottom:0;padding-bottom:0}
+.todo .n{font-family:var(--disp);font-size:19px;font-weight:600;color:var(--wax);line-height:1.3;flex:none;
+  min-width:26px}
+.todo .t{font-size:14.5px;line-height:1.45}
+.todo .t a{font-size:var(--t-sm);display:inline-block;margin-top:3px}
+.preview-note{text-align:center;font-size:var(--t-xs);color:var(--ink-2);margin-top:var(--s4)}
+</style>
+</head>
+<body data-nav="desk">
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <nav class="rail" aria-label="Main"></nav>
+
+  <div class="main">
+    <header class="topbar">
+      <p class="crumb"><b>Desk</b></p>
+      <span class="spacer"></span>
+      <a class="btn btn--ghost btn--sm" href="new-event.html" data-icon="plus">New event</a>
+    </header>
+
+    <main class="page" id="main">
+
+      <div class="page-hd">
+        <div>
+          <span class="label">Saturday 9 May · 2:00 pm · 14 Thornbury Lane</span>
+          <h1 class="h1">Amara's shower is <em>17 days</em> away</h1>
+          <p>52 guests haven't replied. The caterer wants final numbers by Monday 27 April.</p>
+        </div>
+        <div class="row">
+          <a class="btn btn--ghost" href="invite.html" data-icon="eye">Preview as a guest</a>
+          <a class="btn btn--wax" href="send.html" data-icon="send">Send a reminder</a>
+        </div>
+      </div>
+
+      <div class="split">
+        <div class="stack">
+
+          <!-- The number the host actually reads out to a caterer. -->
+          <section class="desk" aria-labelledby="tally-h">
+            <div class="desk-hd">
+              <h2 class="h3" id="tally-h">Headcount</h2>
+              <a class="btn btn--quiet btn--sm" href="rsvps.html">All replies</a>
+            </div>
+            <div class="desk-bd">
+              <p class="tally">
+                <span class="fig">84</span>
+                <span class="of">coming, of 148 invited</span>
+              </p>
+              <p class="tally-notes">
+                <span><b>9</b> can't make it</span>
+                <span><b>3</b> hoping to</span>
+                <span><b>52</b> yet to reply</span>
+                <span><b>2</b> plus-ones unnamed</span>
+              </p>
+            </div>
+
+            <!-- The postal track. Four states, all of them real: we know when
+                 a letter was posted, and we know when its envelope was opened. -->
+            <div class="desk-bd" style="border-top:var(--perf)">
+              <h3 class="label">Where the 148 letters are</h3>
+              <div class="track-bar" style="margin-top:var(--s3)"
+                   role="img" aria-label="96 replied, 31 opened without replying, 21 unopened">
+                <span style="width:64.9%;background:var(--yes)"></span>
+                <span style="width:20.9%;background:var(--sky)"></span>
+                <span style="width:14.2%;background:var(--line-2)"></span>
+              </div>
+              <div class="track-key">
+                <div><i style="background:var(--yes)"></i><b>96</b> replied</div>
+                <div><i style="background:var(--sky)"></i><b>31</b> opened, no reply yet</div>
+                <div><i style="background:var(--line-2)"></i><b>21</b> not opened</div>
+                <div><i style="background:var(--waiting-bg);box-shadow:inset 0 0 0 1px var(--line-2)"></i><b>0</b> unsent</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="desk" aria-labelledby="feed-h">
+            <div class="desk-hd">
+              <h2 class="h3" id="feed-h">Replies today</h2>
+              <span class="pill pill--yes"><i></i>6 new</span>
+            </div>
+            <div class="feed">
+              <div class="feed-row">
+                <span class="who-mark" aria-hidden="true">E</span>
+                <div class="body">
+                  <span class="nm">Eleanor Vance</span> <span class="pill pill--yes"><i></i>2 coming</span>
+                  <p class="said">Wouldn't miss it. Bringing the lemon cake.</p>
+                </div>
+                <span class="when">11:04</span>
+              </div>
+              <div class="feed-row">
+                <span class="who-mark who-mark--sky" aria-hidden="true">J</span>
+                <div class="body">
+                  <span class="nm">Jonah Okafor</span> <span class="pill pill--yes"><i></i>1 coming</span>
+                  <p class="said">See you there — one vegetarian, no nuts.</p>
+                </div>
+                <span class="when">10:41</span>
+              </div>
+              <div class="feed-row">
+                <span class="who-mark who-mark--ochre" aria-hidden="true">P</span>
+                <div class="body">
+                  <span class="nm">Priya Raman</span> <span class="pill pill--maybe"><i></i>hoping to</span>
+                  <p class="said">Depends on a shift. I'll know by the 30th.</p>
+                </div>
+                <span class="when">09:58</span>
+              </div>
+              <div class="feed-row">
+                <span class="who-mark who-mark--sage" aria-hidden="true">M</span>
+                <div class="body">
+                  <span class="nm">Marcus Ilves</span> <span class="pill pill--no"><i></i>can't come</span>
+                  <p class="said">In Lisbon that week. Sending something anyway.</p>
+                </div>
+                <span class="when">08:12</span>
+              </div>
+            </div>
+            <div class="desk-ft">
+              <span class="muted body-sm">Showing 4 of 6 from today</span>
+              <a class="btn btn--ghost btn--sm" href="rsvps.html">Open the reply list</a>
+            </div>
+          </section>
+
+          <section class="desk" aria-labelledby="other-h">
+            <div class="desk-hd">
+              <h2 class="h3" id="other-h">Your events</h2>
+              <a class="btn btn--quiet btn--sm" href="new-event.html" data-icon="plus">New</a>
+            </div>
+            <div class="table-scroll">
+              <table class="list">
+                <thead><tr>
+                  <th scope="col">Event</th><th scope="col">When</th>
+                  <th scope="col">Invited</th><th scope="col">Replied</th><th scope="col">Status</th>
+                </tr></thead>
+                <tbody>
+                  <tr>
+                    <td><div class="who">
+                      <span class="who-mark" aria-hidden="true">A</span>
+                      <span><span class="nm">A baby shower for Amara</span>
+                            <span class="sub">Baby shower</span></span></div></td>
+                    <td class="nowrap">Sat 9 May</td>
+                    <td>148</td>
+                    <td><b>96</b></td>
+                    <td><span class="pill pill--yes"><i></i>In the post</span></td>
+                  </tr>
+                  <tr>
+                    <td><div class="who">
+                      <span class="who-mark who-mark--sky" aria-hidden="true">I</span>
+                      <span><span class="nm">Ilse &amp; Marcus</span>
+                            <span class="sub">Wedding</span></span></div></td>
+                    <td class="nowrap">Sat 13 Jun</td>
+                    <td>210</td>
+                    <td class="faint">—</td>
+                    <td><span class="pill pill--draft">Draft</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- side: what the guest sees, and what is left to do -->
+        <aside class="stack sticky">
+          <section class="desk" aria-labelledby="prev-h">
+            <div class="desk-hd"><h2 class="h3" id="prev-h">What Eleanor sees</h2></div>
+            <div class="desk-bd">
+              <div class="scene scene--sm" id="prev" role="button" tabindex="0"
+                   aria-expanded="false" aria-label="Play the opening"></div>
+              <p class="preview-note">Click the envelope to watch it open</p>
+            </div>
+            <div class="desk-ft">
+              <a class="btn btn--ghost btn--sm btn--block" href="invite.html" data-icon="ext">Open the guest view</a>
+            </div>
+          </section>
+
+          <section class="desk" aria-labelledby="todo-h">
+            <div class="desk-hd"><h2 class="h3" id="todo-h">Still to do</h2></div>
+            <div class="desk-bd">
+              <div class="todo"><span class="n">52</span>
+                <span class="t">guests haven't replied.<br><a href="send.html">Send a reminder</a></span></div>
+              <div class="todo"><span class="n">2</span>
+                <span class="t">plus-ones have no name yet.<br><a href="rsvps.html">Chase the names</a></span></div>
+              <div class="todo"><span class="n">1</span>
+                <span class="t">registry link is broken.<br><a href="event.html">Fix it on the invitation</a></span></div>
+            </div>
+          </section>
+        </aside>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="dies.js"></script>
+<script src="app.js"></script>
+<script src="envelope.js"></script>
+<script>
+Envelope.mount('#prev', { to:{ name:'Eleanor Vance' }, die:'m-pram' }).showOpen();
+</script>
+</body>
+</html>

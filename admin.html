@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The invitation</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FCF7EE">
+<link rel="stylesheet" href="vellum.css">
+<style>
+/* ------------------------------------------------------------------
+   THE HOST'S PAGE — one person, on wifi, a few times a week.
+
+   All desk: flat, matte, no texture, no tilt. The paper lives on the
+   guest page. There is no rail, because there is nowhere else to go.
+   ------------------------------------------------------------------ */
+.top{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);
+  padding:var(--s5) var(--s7);border-bottom:var(--perf);flex-wrap:wrap}
+.top .brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);
+  font-size:21px;font-weight:600;letter-spacing:-.03em}
+.top .wax-mark{width:26px;height:26px;flex:none;border-radius:50%;
+  background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--wax) 58%,#fff),var(--wax));
+  box-shadow:inset 0 -2px 4px rgba(0,0,0,.22),inset 0 2px 4px rgba(255,255,255,.3);}
+.wrap{padding:var(--s7);max-width:760px;margin:0 auto;width:100%}
+
+/* Signed out: one field, one button, nothing else on the screen. */
+.gate{max-width:420px;margin:var(--s11) auto;text-align:center}
+.gate .h1{margin-bottom:var(--s3)}   /* the "not your invitation" message */
+.gate p{color:var(--ink-2);margin-bottom:var(--s7)}
+.gate form{display:flex;flex-direction:column;gap:var(--s4);text-align:left}
+.gate .sent{font-size:16px;color:var(--ink)}
+
+/* 1. The link — what he came for on most visits, so it is first. */
+.link-row{display:flex;gap:var(--s3);align-items:stretch;flex-wrap:wrap}
+.link-row .input{flex:1;min-width:220px;font-size:13.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.publish{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);
+  margin-top:var(--s5);padding-top:var(--s5);border-top:var(--perf-fine);flex-wrap:wrap}
+.publish .say{font-size:14px;color:var(--ink-2);max-width:46ch}
+.publish .say b{color:var(--ink);font-weight:600}
+
+/* 2. Replies */
+.reply-row{display:flex;align-items:flex-start;gap:var(--s4);padding:var(--s5) var(--s6);
+  border-bottom:1px solid var(--line)}
+.reply-row:last-child{border-bottom:0}
+.reply-row .who{flex:1;min-width:0}
+.reply-row .nm{font-weight:600;color:var(--ink)}
+.reply-row .with{font-size:var(--t-sm);color:var(--ink-2);margin-top:2px}
+.reply-row .note{font-size:var(--t-sm);color:var(--ink);margin-top:7px;padding-left:11px;
+  border-left:2px solid var(--line-2);white-space:pre-wrap}
+.reply-row .when{font-size:var(--t-xs);color:var(--ink-3);white-space:nowrap;margin-top:3px}
+
+/* 3. The invitation */
+.editor{display:grid;gap:var(--s5)}
+.editor .span-2{grid-column:1/-1}
+@media(min-width:620px){ .editor{grid-template-columns:1fr 1fr} }
+.reads{font-size:var(--t-xs);color:var(--ink-2);margin-top:5px}
+.reads b{color:var(--ink);font-weight:600}
+.save-bar{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
+@media(max-width:680px){ .top,.wrap{padding-left:var(--s5);padding-right:var(--s5)} }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <span class="brand"><span class="wax-mark" aria-hidden="true"></span>The invitation</span>
+  <button class="btn btn--quiet" id="signOut" hidden>Sign out</button>
+</header>
+
+<!-- ============ signed out ============ -->
+<section class="gate" id="gate" hidden>
+  <!-- No heading: the header already says which invitation this is. -->
+  <p>Sign in to edit the invitation and read the replies.</p>
+  <form id="gateForm">
+    <div class="field">
+      <label class="label" for="email">Your email</label>
+      <input class="input" id="email" type="email" autocomplete="email" required
+             placeholder="you@example.com">
+    </div>
+    <button class="btn btn--wax btn--lg btn--block" type="submit" id="sendLink">Send me a link</button>
+  </form>
+  <p class="sent" id="sent" hidden>Check your email.</p>
+</section>
+
+<!-- ============ signed in, but not the host ============ -->
+<section class="gate" id="stranger" hidden>
+  <h1 class="h1">This isn’t your invitation</h1>
+  <p>You’re signed in as <b id="strangerEmail"></b>, and this invitation belongs to
+     someone else.</p>
+  <button class="btn btn--ghost" id="strangerOut">Sign out</button>
+</section>
+
+<!-- ============ the host ============ -->
+<main class="wrap stack" id="host" hidden>
+
+  <!-- 1. the link -->
+  <section class="desk">
+    <div class="desk-hd"><h2 class="h3">The link</h2></div>
+    <div class="desk-bd">
+      <div class="link-row">
+        <input class="input" id="link" readonly aria-label="The invitation link">
+        <button class="btn btn--ghost" data-icon="copy" id="copy">Copy</button>
+        <a class="btn btn--quiet" data-icon="ext" id="open" target="_blank" rel="noopener">Open</a>
+      </div>
+      <div class="publish">
+        <p class="say" id="pubSay"></p>
+        <label class="switch">
+          <input type="checkbox" id="published">
+          <span id="pubLabel">Published</span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. replies -->
+  <section class="desk">
+    <div class="desk-hd"><h2 class="h3">Replies</h2></div>
+    <div class="desk-bd">
+      <div class="tally">
+        <span class="fig" id="heads">0</span>
+        <span class="of">coming</span>
+      </div>
+      <div class="tally-notes" id="tallyNotes"></div>
+    </div>
+    <div class="desk-bd desk-bd--flush" id="replies"></div>
+  </section>
+
+  <!-- 3. the invitation -->
+  <section class="desk">
+    <div class="desk-hd"><h2 class="h3">The invitation</h2></div>
+    <div class="desk-bd">
+      <form class="editor" id="editor">
+        <div class="field span-2">
+          <label class="label" for="f-occasionLine">Occasion</label>
+          <input class="input" id="f-occasionLine" placeholder="a baby shower">
+          <p class="help">Handwritten across the top of the card.</p>
+        </div>
+        <div class="field span-2">
+          <label class="label" for="f-honouree">Honouring</label>
+          <input class="input" id="f-honouree" placeholder="honouring Amara">
+        </div>
+        <div class="field span-2">
+          <label class="label" for="f-hosts">Hosts</label>
+          <input class="input" id="f-hosts" placeholder="Amara &amp; Theo">
+          <p class="help">The return address on the envelope, and the signature.</p>
+        </div>
+        <div class="field">
+          <label class="label" for="f-startsAt">Starts</label>
+          <input class="input" id="f-startsAt" type="datetime-local">
+          <p class="reads" id="readsStart"></p>
+        </div>
+        <div class="field">
+          <label class="label" for="f-replyBy">Reply by</label>
+          <input class="input" id="f-replyBy" type="date">
+        </div>
+        <div class="field">
+          <label class="label" for="f-locationName">Place</label>
+          <input class="input" id="f-locationName" placeholder="14 Thornbury Lane">
+        </div>
+        <div class="field">
+          <label class="label" for="f-address">Address</label>
+          <input class="input" id="f-address" placeholder="Ottawa, ON  K1N 6N5">
+        </div>
+        <div class="field span-2">
+          <label class="label" for="f-hostNote">Note</label>
+          <textarea class="textarea" id="f-hostNote" rows="3"
+                    placeholder="Brunch, cake, and one very silly game."></textarea>
+        </div>
+        <div class="field">
+          <span class="label" id="waxLabel">Wax</span>
+          <div class="swatches" id="waxes" role="group" aria-labelledby="waxLabel"></div>
+        </div>
+        <div class="field">
+          <span class="label" id="dieLabel">Seal</span>
+          <div class="dies" id="dieList" role="group" aria-labelledby="dieLabel"></div>
+        </div>
+        <div class="save-bar span-2">
+          <button class="btn btn--wax" type="submit" id="save">Save</button>
+          <span class="help" id="saveState"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<script src="config.js"></script>
+<script src="dies.js"></script>
+<script src="icons.js"></script>
+<script type="module" src="admin.js"></script>
+</body>
+</html>

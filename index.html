@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>You're invited</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FCF7EE">
+<link rel="preload" href="fonts/caveat.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<link rel="stylesheet" href="envelope.css">
+<script>document.documentElement.dataset.js='1'</script>
+<style>
+/* ------------------------------------------------------------------
+   THE INVITATION — the one shared link.
+
+   No account, no nav, no product chrome. One letter, forwarded to
+   everyone, addressed to whoever is holding it.
+
+   The letter sits below the envelope in ordinary flow and is never
+   hidden. Tapping the envelope is the designed path; scrolling is the
+   one that always works, including with JavaScript off.
+   ------------------------------------------------------------------ */
+body{background-image:
+  radial-gradient(circle at 18% 12%,rgba(216,155,148,.09),transparent 44%),
+  radial-gradient(circle at 84% 26%,rgba(159,186,203,.10),transparent 42%),
+  radial-gradient(circle at 58% 92%,rgba(168,183,154,.09),transparent 46%);
+  background-attachment:fixed}
+
+.stage{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:var(--s8) var(--s5) var(--s9);text-align:center}
+.from{font-size:var(--t-label);font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-2);margin-bottom:var(--s6)}
+.scene{cursor:pointer}
+.scene:focus-visible{outline:2px solid var(--wax);outline-offset:14px;border-radius:12px}
+.open-hint{display:flex;align-items:center;gap:10px;margin-top:var(--s5);
+  font-family:var(--hand);font-weight:600;font-size:25px;color:var(--wax);
+  animation:nudge 2.4s ease-in-out infinite}
+.open-hint svg{width:34px;height:24px;overflow:visible}
+.open-hint path{stroke:var(--wax);stroke-width:1.7;fill:none;stroke-linecap:round}
+@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+body.opened .open-hint{visibility:hidden}
+/* The scene reserves the height the card needs to rise into, so a sealed
+   envelope naturally sits low. On a tall screen there is slack to spend
+   bringing it back towards the optical centre; on a short one there isn't,
+   and clipping the card would cost more than the centring is worth. */
+@media (min-height:880px){ .stage .scene{margin-top:-9vh} }
+
+.letter{padding:0 var(--s5) var(--s11)}
+.sheet{padding:var(--s10) clamp(24px,6vw,56px) var(--s9)}
+.host-note{margin-top:var(--s6);padding-top:var(--s6);border-top:var(--perf-fine);
+  font-size:16.5px;line-height:1.7;text-align:center}
+.host-note .sig{display:block;font-family:var(--hand);font-weight:600;font-size:27px;
+  color:var(--wax);margin-top:var(--s4);line-height:1}
+.sheet-actions{display:flex;justify-content:center;margin-top:var(--s7)}
+
+/* --- the reply card --------------------------------------------------- */
+.reply-perf{margin:var(--s9) auto var(--s5)}
+/* The REPLIED cancellation runs off the edge of the card, so the card has to
+   be the thing that stops it. Without this it overflows the page. */
+.reply{overflow:hidden}
+
+/* Names of anyone else coming. Ruled blanks, because this is paper —
+   the dashed .add-row belongs to the host's desk, not to a guest's card. */
+.others{margin-top:var(--s6)}
+.other-row{display:flex;align-items:baseline;gap:var(--s2);margin-top:var(--s4);
+  animation:landed .3s cubic-bezier(.26,.9,.3,1)}
+@keyframes landed{from{opacity:0;transform:translateY(-6px)}}
+.other-row .ruled{font-size:23px}
+/* Not .drop — vellum §16 already owns that name for a file drop target. */
+.other-row .rm{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  color:var(--ink-3);transition:background .16s,color .16s}
+.other-row .rm:hover{background:color-mix(in srgb,var(--kraft) 30%,transparent);color:var(--ink)}
+.other-row .rm svg{width:14px;height:14px}
+.add-someone{display:flex;align-items:center;gap:7px;margin:var(--s4) auto 0;padding:8px 14px;
+  border-radius:var(--r-pill);font-size:14px;font-weight:600;color:var(--ink-2);
+  transition:background .16s,color .16s}
+.add-someone:hover{background:color-mix(in srgb,var(--kraft) 30%,transparent);color:var(--ink)}
+.add-someone svg{width:15px;height:15px}
+
+/* A note, folded away until it is wanted. */
+.note-fold{margin-top:var(--s6);border-top:var(--perf-fine);padding-top:var(--s5)}
+.note-fold > summary{display:flex;align-items:center;justify-content:center;gap:7px;
+  list-style:none;cursor:pointer;font-size:14px;font-weight:600;color:var(--ink-2);
+  padding:6px;border-radius:var(--r-pill);transition:color .16s}
+.note-fold > summary::-webkit-details-marker{display:none}
+.note-fold > summary:hover{color:var(--ink)}
+.note-fold > summary svg{width:14px;height:14px;transition:transform .18s}
+.note-fold[open] > summary svg{transform:rotate(45deg)}
+.note-fold .ruled-area{margin-top:var(--s4)}
+
+/* One primary action. Everything under it is deliberately quieter. */
+.reply-actions{margin-top:var(--s7);display:flex;flex-direction:column;align-items:center;gap:var(--s3)}
+.cant{font-size:14px;color:var(--ink-2);padding:8px 14px;border-radius:var(--r-pill);
+  transition:background .16s,color .16s}
+.cant:hover{background:color-mix(in srgb,var(--kraft) 30%,transparent);color:var(--ink)}
+
+/* A guest coming back finds the card already cancelled — no replay. */
+.reply.settled .cancel,.reply.settled .reply-form{transition:none}
+.posted-line{display:none;text-align:center;max-width:560px;margin:var(--s6) auto 0;
+  font-size:16.5px;line-height:1.6}
+.reply.posted ~ .posted-line{display:block}
+.posted-line .again{display:block;font-size:var(--t-sm);color:var(--ink-2);margin-top:var(--s3)}
+
+/* States that are not the invitation: still loading, or not ready yet. */
+.notice{max-width:520px;margin:var(--s9) auto 0;text-align:center;padding:var(--s8) var(--s6)}
+.notice .h3{margin-bottom:8px}
+.notice p{color:var(--ink-2)}
+
+@media(max-width:560px){
+  .sheet{padding:var(--s8) var(--s5) var(--s7)}
+  .reply{padding:var(--s8) var(--s5) var(--s7)}
+  .detail{grid-template-columns:1fr;gap:4px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#letter">Skip to the invitation</a>
+
+<!-- ============ the envelope. no addressee: one link, everyone ============ -->
+<div class="stage">
+  <p class="from" id="from"></p>
+
+  <div class="scene" id="sc" role="button" tabindex="0" aria-expanded="false"
+       aria-label="Open the envelope"></div>
+
+  <p class="open-hint">
+    <svg viewBox="0 0 34 24" aria-hidden="true"><path d="M2 2c6 9 14 14 27 15"/><path d="M23 13l6 4-2 6"/></svg>
+    Tap to open
+  </p>
+</div>
+
+<!-- ============ the invitation ============ -->
+<main class="letter" id="letter">
+
+  <article class="paper sheet" id="sheet" hidden>
+    <div class="sheet-inner" aria-hidden="true"></div>
+    <p class="eyebrow">Please join us for</p>
+    <p class="occasion" id="occasion"></p>
+    <h1 class="honouree" id="honouree"></h1>
+    <div class="dot-rule" aria-hidden="true">
+      <i style="background:var(--wax)"></i><i style="background:var(--sky)"></i>
+      <i style="background:var(--sage)"></i><i style="background:var(--liner)"></i>
+    </div>
+
+    <dl class="detail-block">
+      <div class="detail">
+        <dt>When</dt>
+        <dd id="dWhen"></dd>
+      </div>
+      <div class="detail">
+        <dt>Where</dt>
+        <dd id="dWhere"></dd>
+      </div>
+      <div class="detail" id="dReplyRow">
+        <dt>Reply by</dt>
+        <dd id="dReply"></dd>
+      </div>
+    </dl>
+
+    <p class="host-note" id="hostNote" hidden></p>
+
+    <div class="sheet-actions">
+      <button class="btn btn--ghost" data-icon="cal" id="cal">Add to calendar</button>
+    </div>
+  </article>
+
+  <!-- ============ the reply card ============ -->
+  <div id="replyWrap" hidden>
+    <p class="reply-perf">Detach and reply</p>
+
+    <form class="paper reply" id="reply" novalidate>
+      <div class="postmark cancel" aria-hidden="true">
+        <div class="bars"></div>
+        <div class="pm1">REPLIED</div><hr class="rule">
+        <div class="pm2">OTTAWA ON</div><div class="pm2" id="stampDate">—</div>
+      </div>
+
+      <div class="reply-form">
+        <p class="rsvp-mark">RSVP</p>
+
+        <div class="blank">
+          <label class="sr" for="guestName">Your name</label>
+          <input class="ruled" id="guestName" name="name" type="text" maxlength="80"
+                 autocomplete="name" placeholder="Your name">
+        </div>
+
+        <!-- No heading here. "Add someone" is the whole instruction, and the
+             reply card carries no headings beyond the printed RSVP. -->
+        <div class="others">
+          <div id="otherRows" role="group" aria-label="Anyone with you"></div>
+          <button class="add-someone" type="button" id="addOther" data-icon="plus">Add someone</button>
+        </div>
+
+        <details class="note-fold">
+          <summary data-icon="plus">Add a note</summary>
+          <label class="sr" for="note">A note</label>
+          <textarea class="ruled-area" id="note" rows="2" maxlength="500"
+                    placeholder="Anything we should know"></textarea>
+        </details>
+
+        <div class="reply-actions">
+          <button class="btn btn--wax btn--lg" type="submit">We'll be there</button>
+          <button class="cant" type="button" id="cant">Can't make it</button>
+        </div>
+      </div>
+    </form>
+
+    <p class="posted-line" id="postedLine"></p>
+  </div>
+
+  <section class="desk notice" id="notice" hidden>
+    <h2 class="h3" id="noticeH"></h2>
+    <p id="noticeP"></p>
+  </section>
+</main>
+
+<script src="config.js"></script>
+<script src="dies.js"></script>
+<script src="icons.js"></script>
+<script src="envelope.js"></script>
+<script src="invite.js"></script>
+</body>
+</html>

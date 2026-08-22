@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Send · Vellum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<link rel="stylesheet" href="envelope.css">
+<style>
+/* The counter slip: what you are about to post, itemised, the way the
+   post office hands you a docket before you pay. */
+.slip{padding:var(--s6)}
+.slip-line{display:flex;justify-content:space-between;gap:var(--s4);padding:11px 0;
+  border-bottom:var(--perf-fine);font-size:14.5px}
+.slip-line:last-of-type{border-bottom:0}
+.slip-line .k{color:var(--ink-2)}
+.slip-line .v{font-weight:600;white-space:nowrap}
+.slip-total{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s4);
+  margin-top:var(--s4);padding-top:var(--s4);border-top:var(--perf)}
+.slip-total .k{font-size:var(--t-label);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.slip-total .v{font-family:var(--disp);font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.mail{border:1px solid var(--line);border-radius:var(--r-input);overflow:hidden;background:var(--cream)}
+.mail-hd{padding:11px var(--s4);border-bottom:1px solid var(--line);font-size:var(--t-xs);color:var(--ink-2)}
+.mail-hd b{color:var(--ink);font-weight:600}
+.mail-bd{padding:var(--s5);text-align:center;background:var(--paper)}
+.mail-bd .sub{font-family:var(--disp);font-size:19px;font-weight:600;letter-spacing:-.02em}
+.mail-bd p{font-size:var(--t-sm);margin:8px 0 var(--s4)}
+.when-fields{margin-top:var(--s4);padding-left:30px;display:none}
+.when-fields.on{display:block}
+</style>
+</head>
+<body data-nav="send">
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <nav class="rail" aria-label="Main"></nav>
+
+  <div class="main">
+    <header class="topbar">
+      <p class="crumb"><a href="dashboard.html">Desk</a> <span aria-hidden="true">›</span>
+        <a href="event.html">A baby shower for Amara</a> <span aria-hidden="true">›</span>
+        <b>Send</b></p>
+      <span class="spacer"></span>
+      <button class="btn btn--ghost btn--sm" data-icon="eye"
+              onclick="toast('Test letter sent to theo@vance.ca')">Send one to myself</button>
+    </header>
+
+    <main class="page" id="main">
+
+      <div class="page-hd">
+        <div>
+          <span class="label">Send</span>
+          <h1 class="h1">Post the letters</h1>
+          <p>125 have already gone out. These are the ones still on your desk.</p>
+        </div>
+      </div>
+
+      <div class="split">
+        <div class="stack">
+
+          <section class="desk" aria-labelledby="who-h">
+            <div class="desk-hd"><h2 class="h3" id="who-h">Who gets one</h2></div>
+            <div class="desk-bd">
+              <fieldset class="fieldset">
+                <legend class="sr">Who to send to</legend>
+                <label class="check"><input type="radio" name="who" value="23" checked>
+                  <span>Everyone who hasn't been sent one yet
+                    <span class="sub">23 guests · 2 of them still need an email or phone number</span></span></label>
+                <label class="check"><input type="radio" name="who" value="52">
+                  <span>Everyone who hasn't replied
+                    <span class="sub">52 guests · they'll get the same letter again, with a short nudge</span></span></label>
+                <label class="check"><input type="radio" name="who" value="148">
+                  <span>The whole list
+                    <span class="sub">148 guests · including 96 who have already replied</span></span></label>
+                <label class="check"><input type="radio" name="who" value="0">
+                  <span>Guests I choose
+                    <span class="sub">Pick them on the <a href="guests.html">guest list</a></span></span></label>
+              </fieldset>
+
+              <p class="banner banner--warn" style="margin-top:var(--s5)" data-icon="alert">
+                <span><b>Two guests have no way to receive a letter.</b> Aunt Margery and Dev Sandhu
+                have no email or phone number. <a href="guests.html">Add their details</a> and they'll
+                be included.</span>
+              </p>
+            </div>
+          </section>
+
+          <section class="desk" aria-labelledby="how-h">
+            <div class="desk-hd"><h2 class="h3" id="how-h">How it travels</h2></div>
+            <div class="desk-bd">
+              <div class="fieldset">
+                <label class="check"><input type="checkbox" checked>
+                  <span>Email
+                    <span class="sub">21 of these 23 have an email address</span></span></label>
+                <label class="check"><input type="checkbox" id="bySms">
+                  <span>Text message
+                    <span class="sub">7 have a mobile number · 2 credits each, 14 of your 200 left</span></span></label>
+              </div>
+              <p class="help" style="margin-top:var(--s4)">
+                Where a guest has both, they get one email — never two of the same letter.
+              </p>
+            </div>
+          </section>
+
+          <section class="desk" aria-labelledby="when-h">
+            <div class="desk-hd"><h2 class="h3" id="when-h">When</h2></div>
+            <div class="desk-bd">
+              <fieldset class="fieldset">
+                <legend class="sr">When to send</legend>
+                <label class="check"><input type="radio" name="when" value="now" checked>
+                  <span>Now
+                    <span class="sub">Most arrive within a couple of minutes</span></span></label>
+                <label class="check"><input type="radio" name="when" value="later">
+                  <span>At a time I pick</span></label>
+              </fieldset>
+              <div class="when-fields" id="whenFields">
+                <div class="form-grid">
+                  <div class="field">
+                    <label class="label" for="sd">Date</label>
+                    <input class="input" id="sd" type="date" value="2026-04-24">
+                  </div>
+                  <div class="field">
+                    <label class="label" for="st">Time</label>
+                    <input class="input" id="st" type="time" value="09:00">
+                  </div>
+                </div>
+                <p class="help" style="margin-top:var(--s3)">
+                  Weekday mornings get opened most. That's Friday, in your guests' own time zones.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="desk" aria-labelledby="msg-h">
+            <div class="desk-hd">
+              <h2 class="h3" id="msg-h">The email that carries it</h2>
+              <span class="muted body-sm">The envelope itself is untouched</span>
+            </div>
+            <div class="desk-bd">
+              <div class="form-grid">
+                <div class="field span-2">
+                  <label class="label" for="subj">Subject</label>
+                  <input class="input" id="subj" value="A letter from Amara &amp; Theo">
+                </div>
+                <div class="field span-2">
+                  <label class="label" for="pre">Preview line</label>
+                  <input class="input" id="pre" value="There's an envelope waiting for you.">
+                  <p class="help">The grey text next to the subject in most inboxes.</p>
+                </div>
+              </div>
+
+              <div class="mail" style="margin-top:var(--s5)">
+                <p class="mail-hd">From <b>Amara &amp; Theo</b> via Vellum ·
+                  To <b>eleanor@vance.ca</b></p>
+                <div class="mail-bd">
+                  <p class="sub" id="subjEcho">A letter from Amara &amp; Theo</p>
+                  <p class="muted" id="preEcho">There's an envelope waiting for you.</p>
+                  <span class="btn btn--wax btn--sm">Open your envelope</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- the counter slip -->
+        <aside class="stack sticky">
+          <section class="desk">
+            <div class="desk-hd"><h2 class="h3">Going out</h2></div>
+            <div class="slip">
+              <p class="slip-line"><span class="k">Letters</span><span class="v" id="nLetters">23</span></p>
+              <p class="slip-line"><span class="k">By email</span><span class="v" id="nEmail">21</span></p>
+              <p class="slip-line"><span class="k">By text</span><span class="v" id="nSms">—</span></p>
+              <p class="slip-line"><span class="k">Held back</span><span class="v">2</span></p>
+              <p class="slip-line"><span class="k">Leaving</span><span class="v" id="leaving">Now</span></p>
+              <div class="slip-total">
+                <span class="k">In the post</span>
+                <span class="v" id="total">23</span>
+              </div>
+            </div>
+            <div class="desk-ft" style="flex-direction:column;align-items:stretch;gap:var(--s3)">
+              <button class="btn btn--wax btn--block" id="post">Post 23 letters</button>
+              <p class="help" style="text-align:center">You can't unsend a letter.</p>
+            </div>
+          </section>
+
+          <section class="desk">
+            <div class="desk-hd"><h2 class="h3">What they'll get</h2></div>
+            <div class="desk-bd">
+              <div class="scene scene--sm" id="prev" role="button" tabindex="0"
+                   aria-expanded="false" aria-label="Play the opening"></div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>
+
+<dialog id="confirm" aria-labelledby="cf-h">
+  <div class="dlg-hd">
+    <div>
+      <h2 class="h3" id="cf-h">Post 23 letters?</h2>
+      <p id="cf-body">They go to 21 email addresses, starting now.</p>
+    </div>
+  </div>
+  <div class="dlg-ft">
+    <button class="btn btn--ghost" id="cfNo">Not yet</button>
+    <button class="btn btn--wax" id="cfYes" data-icon="send">Post them</button>
+  </div>
+</dialog>
+
+<script src="dies.js"></script>
+<script src="app.js"></script>
+<script src="envelope.js"></script>
+<script>
+Envelope.mount('#prev', { to:{ name:'Eleanor Vance' }, die:'m-pram' }).showOpen();
+
+/* The slip is the single source of truth for what is about to happen, so
+   every control on the page writes to it. */
+const sms = document.getElementById('bySms');
+const whenFields = document.getElementById('whenFields');
+const post = document.getElementById('post');
+
+function recount(){
+  const n = +document.querySelector('input[name=who]:checked').value;
+  const email = Math.max(0, n - 2);
+  const bySms = sms.checked ? Math.min(7, n) : 0;
+  const later = document.querySelector('input[name=when]:checked').value === 'later';
+
+  document.getElementById('nLetters').textContent = n || '—';
+  document.getElementById('nEmail').textContent   = email || '—';
+  document.getElementById('nSms').textContent     = bySms || '—';
+  document.getElementById('total').textContent    = n || '0';
+  document.getElementById('leaving').textContent  = later ? 'Fri 24 Apr, 9:00' : 'Now';
+
+  post.innerHTML = icon('send') +
+    (n ? `Post ${n} letter${n === 1 ? '' : 's'}` : 'Choose who gets one');
+  post.setAttribute('aria-disabled', String(n === 0));
+  whenFields.classList.toggle('on', later);
+
+  document.getElementById('cf-h').textContent = `Post ${n} letters?`;
+  document.getElementById('cf-body').textContent =
+    `They go to ${email} email addresses${bySms ? ` and ${bySms} phone numbers` : ''}, ` +
+    (later ? 'on Friday 24 April at 9:00 am.' : 'starting now.') +
+    " A letter can't be unsent, though you can edit the invitation afterwards and guests will see the change.";
+}
+document.addEventListener('change', recount);
+recount();
+
+/* The subject and preview line echo live, because a typo there is the one
+   thing every guest sees before they open anything. */
+const echo = (from, to) => document.getElementById(from)
+  .addEventListener('input', e => document.getElementById(to).textContent = e.target.value);
+echo('subj', 'subjEcho');
+echo('pre', 'preEcho');
+
+/* Sending is irreversible, so it asks once, in plain words. */
+const cf = document.getElementById('confirm');
+post.onclick = () => { if (post.getAttribute('aria-disabled') !== 'true') cf.showModal(); };
+document.getElementById('cfNo').onclick = () => cf.close();
+document.getElementById('cfYes').onclick = () => {
+  cf.close();
+  toast(document.getElementById('total').textContent + ' letters posted');
+};
+</script>
+</body>
+</html>

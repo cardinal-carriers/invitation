@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vellum — Paper &amp; Ribbon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&family=Karla:wght@300;400;500&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FCF7EE; --paper:#FFFDF8; --kraft:#E8D9C0; --kraft-dk:#CBB393;
+  --rose:#D89B94; --rose-dp:#B4736C; --sky:#9FBACB; --sage:#A8B79A; --butter:#F0D9A0;
+  --ink:#3A322B; --muted:#8C8075; --line:#EADFCD;
+  --disp:'Fraunces',Georgia,serif; --body:'Karla',system-ui,sans-serif; --hand:'Caveat',cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{color:var(--ink);font-family:var(--body);font-weight:300;line-height:1.65;-webkit-font-smoothing:antialiased;
+  background-color:var(--cream);
+  background-image:radial-gradient(circle at 20% 30%,rgba(216,155,148,.07),transparent 42%),
+                   radial-gradient(circle at 82% 12%,rgba(159,186,203,.09),transparent 40%),
+                   radial-gradient(circle at 60% 88%,rgba(168,183,154,.08),transparent 45%);
+  background-attachment:fixed}
+.wrap{max-width:1140px;margin:0 auto;padding:0 30px}
+h1,h2,h3{font-family:var(--disp);font-weight:400;line-height:1.08;letter-spacing:-.02em}
+h1{font-size:clamp(46px,7vw,88px)}
+h2{font-size:clamp(32px,4.4vw,54px)}
+h3{font-size:22px;font-weight:600}
+.hand{font-family:var(--hand);font-weight:600;color:var(--rose-dp);font-size:1.35em;line-height:.9}
+p{color:var(--muted);font-size:16px}
+.tag{display:inline-block;font-family:var(--body);font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--butter);color:#7A5F26;padding:7px 15px;border-radius:3px;transform:rotate(-1.2deg);box-shadow:1px 2px 0 rgba(58,50,43,.1)}
+.dash{border:0;border-top:2px dashed var(--line)}
+
+nav{position:sticky;top:0;z-index:70;background:rgba(252,247,238,.9);backdrop-filter:blur(12px);border-bottom:2px dashed var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:78px}
+.brand{font-family:var(--disp);font-size:27px;font-weight:600;letter-spacing:-.03em;display:flex;align-items:center;gap:9px}
+.brand .st{width:24px;height:26px;background:var(--rose);border-radius:2px;position:relative;transform:rotate(-6deg);
+  display:grid;place-items:center;color:#fff;font-size:12px;font-family:var(--body)}
+.navlinks{display:flex;gap:32px;font-size:15px}
+.navlinks a{color:var(--ink);text-decoration:none;opacity:.75;position:relative}
+.navlinks a:hover{opacity:1}
+.navlinks a:hover:after{content:'';position:absolute;left:0;right:0;bottom:-4px;height:2px;background:var(--rose);border-radius:2px}
+@media(max-width:900px){.navlinks{display:none}}
+.btn{display:inline-block;font-family:var(--body);font-size:15px;font-weight:500;padding:14px 28px;border-radius:999px;cursor:pointer;
+  background:var(--rose-dp);color:#fff;text-decoration:none;border:2px solid var(--rose-dp);transition:.24s;box-shadow:0 4px 0 rgba(180,115,108,.3)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 0 rgba(180,115,108,.3)}
+.btn.o{background:transparent;color:var(--ink);border-color:var(--ink);box-shadow:0 4px 0 rgba(58,50,43,.15)}
+.btn.o:hover{box-shadow:0 6px 0 rgba(58,50,43,.15)}
+.btn.sm{padding:10px 20px;font-size:14px}
+.tape{position:absolute;width:98px;height:26px;background:rgba(240,217,160,.62);border-left:1px dashed rgba(255,255,255,.6);border-right:1px dashed rgba(255,255,255,.6)}
+
+/* hero */
+header{padding:76px 0 40px}
+.hero{display:grid;grid-template-columns:1.02fr .98fr;gap:56px;align-items:center}
+@media(max-width:960px){.hero{grid-template-columns:1fr;gap:48px}}
+.hero h1{margin:22px 0 0}
+.hero .sub{font-size:18px;margin-top:24px;max-width:470px}
+.hcta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;align-items:center}
+.scribble{display:flex;align-items:center;gap:8px;margin-top:30px;font-family:var(--hand);font-size:21px;color:var(--rose-dp)}
+.scribble svg{flex:none}
+
+/* envelope */
+.env-frame{perspective:1500px;position:relative;padding:16px}
+.envelope{position:relative;width:100%;max-width:480px;margin:0 auto;aspect-ratio:1.42/1;cursor:pointer;transform-style:preserve-3d;transform:rotate(-1.6deg)}
+.env-body{position:absolute;inset:0;border-radius:6px;background:linear-gradient(155deg,#F0E3CC,var(--kraft));
+  box-shadow:0 30px 60px -28px rgba(120,95,65,.5);border:1px solid var(--kraft-dk)}
+.stamp{position:absolute;right:16px;top:14px;z-index:7;width:60px;height:70px;background:var(--paper);border-radius:2px;
+  padding:5px;transform:rotate(3deg);box-shadow:0 2px 5px rgba(0,0,0,.12);
+  -webkit-mask-image:radial-gradient(circle at 3px 3px,transparent 3px,#000 3.4px);pointer-events:none}
+.stamp .in{width:100%;height:100%;background:linear-gradient(160deg,var(--sky),var(--sage));border-radius:1px;display:grid;place-items:center;
+  font-family:var(--disp);font-size:22px;color:#fff}
+.postmark{position:absolute;right:74px;top:24px;z-index:7;width:76px;height:76px;border:2px solid rgba(180,115,108,.45);border-radius:50%;
+  display:grid;place-items:center;transform:rotate(-14deg);font-family:var(--body);font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(180,115,108,.6);text-align:center;line-height:1.5;pointer-events:none}
+.pocket{position:absolute;inset:0;z-index:4;border-radius:6px;overflow:hidden;pointer-events:none}
+.pocket:before{content:'';position:absolute;left:-1px;right:-1px;bottom:0;height:76%;background:linear-gradient(165deg,#F5EAD7,#E3D2B6);
+  clip-path:polygon(0 24%,50% 0,100% 24%,100% 100%,0 100%);border-top:1px solid rgba(203,179,147,.7)}
+.flap{position:absolute;left:-1px;right:-1px;top:-1px;height:58%;z-index:6;transform-origin:top center;border-radius:6px 6px 0 0;
+  background:linear-gradient(180deg,#F2E7D3,#E5D5B9);clip-path:polygon(0 0,100% 0,50% 100%);
+  transition:transform 1.05s cubic-bezier(.66,-.02,.2,1),z-index 0s .55s}
+.seal{position:absolute;left:50%;top:52%;z-index:9;width:66px;height:66px;margin:-33px 0 0 -33px;transition:.5s cubic-bezier(.4,1.6,.5,1)}
+.seal .b{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 34% 30%,#E4ADA6,var(--rose-dp));
+  display:grid;place-items:center;font-family:var(--disp);font-size:24px;color:#fff;box-shadow:0 5px 14px rgba(180,115,108,.45)}
+.seal .rb{position:absolute;top:52px;left:50%;width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;
+  border-top:20px solid var(--rose);transform:translateX(-50%)}
+.card{position:absolute;left:7%;right:7%;bottom:6%;height:106%;z-index:3;background:var(--paper);border-radius:8px;
+  border:1px solid var(--line);padding:32px 26px;text-align:center;opacity:0;transform:translateY(0) rotate(0);
+  transition:transform 1.05s cubic-bezier(.28,.92,.3,1) .5s,opacity .35s .5s,box-shadow 1s .5s}
+.envelope.open .flap{transform:rotateX(-177deg);z-index:1}
+.envelope.open .seal{opacity:0;transform:scale(.35) rotate(-40deg)}
+.envelope.open .card{opacity:1;transform:translateY(-71%) rotate(1.8deg);box-shadow:0 24px 46px -26px rgba(120,95,65,.55)}
+.card .ci{position:absolute;inset:9px;border:1.5px dashed var(--line);border-radius:5px;pointer-events:none}
+.card .k{font-size:10px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--sage);position:relative}
+.card .h{font-family:var(--hand);font-size:26px;color:var(--rose-dp);margin-top:6px;position:relative}
+.card .nm{font-family:var(--disp);font-size:34px;font-weight:600;line-height:1.06;margin:6px 0 4px;position:relative}
+.card .dot{margin:14px auto;display:flex;gap:7px;justify-content:center;position:relative}
+.card .dot i{width:7px;height:7px;border-radius:50%;display:block}
+.card .meta{font-size:13px;color:var(--muted);line-height:1.85;position:relative}
+.card .acts{display:flex;gap:8px;justify-content:center;margin-top:16px;position:relative}
+.act{font-size:12px;font-weight:500;padding:9px 16px;border-radius:999px;border:1.5px solid var(--line);cursor:pointer;transition:.2s}
+.act.on{background:var(--sage);border-color:var(--sage);color:#fff}
+.hint{text-align:center;font-family:var(--hand);font-size:22px;color:var(--rose-dp);margin-top:20px}
+
+section{padding:92px 0}
+.sec-head{text-align:center;max-width:620px;margin:0 auto 58px}
+.sec-head h2{margin:18px 0 14px}
+
+/* steps as taped cards */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.stp{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:44px 28px 32px;position:relative;text-align:center;box-shadow:0 10px 26px -20px rgba(120,95,65,.6)}
+.stp:nth-child(1){transform:rotate(-1.1deg)}
+.stp:nth-child(2){transform:rotate(.6deg)}
+.stp:nth-child(3){transform:rotate(-.5deg)}
+.stp .tape{left:50%;top:-12px;transform:translateX(-50%) rotate(-2deg)}
+.stp .n{font-family:var(--hand);font-size:44px;color:var(--rose);line-height:.9}
+.stp h3{margin:8px 0 10px}
+.stp p{font-size:15px}
+@media(max-width:860px){.steps{grid-template-columns:1fr}}
+
+/* features */
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.f{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:32px 28px;transition:.28s}
+.f:hover{transform:translateY(-5px) rotate(-.6deg);box-shadow:0 18px 34px -24px rgba(120,95,65,.7)}
+.f .ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:18px}
+.f .ic svg{width:22px;height:22px;color:#fff}
+.f h3{font-size:19px;margin-bottom:8px}
+.f p{font-size:14.5px}
+@media(max-width:900px){.feats{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.feats{grid-template-columns:1fr}}
+
+/* gallery polaroids */
+.polas{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+.pola{background:var(--paper);padding:12px 12px 46px;border-radius:4px;box-shadow:0 12px 28px -18px rgba(120,95,65,.7);position:relative;transition:.3s;cursor:pointer}
+.pola:nth-child(odd){transform:rotate(-1.6deg)}
+.pola:nth-child(even){transform:rotate(1.4deg)}
+.pola:hover{transform:rotate(0) translateY(-8px)}
+.pola .im{aspect-ratio:.86/1;border-radius:2px;display:grid;place-items:center;text-align:center;padding:18px}
+.pola .im span{font-family:var(--disp);font-size:23px;line-height:1.12}
+.pola .cap{position:absolute;left:0;right:0;bottom:14px;text-align:center;font-family:var(--hand);font-size:20px;color:var(--muted)}
+@media(max-width:900px){.polas{grid-template-columns:1fr 1fr}}
+
+/* registry */
+.reg{display:grid;grid-template-columns:1fr 1fr;gap:62px;align-items:center}
+@media(max-width:900px){.reg{grid-template-columns:1fr;gap:44px}}
+.regcard{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px;transform:rotate(.8deg);
+  box-shadow:0 22px 46px -28px rgba(120,95,65,.7);position:relative}
+.regcard .tape{left:-14px;top:26px;transform:rotate(-42deg)}
+.rr{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:12px;transition:.2s}
+.rr:hover{background:var(--cream)}
+.rl{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:500;flex:none}
+.rr .t{font-weight:500;font-size:16px}
+.rr .s{font-size:13px;color:var(--muted)}
+.rr .a{margin-left:auto;color:var(--rose-dp);font-size:19px}
+
+/* dashboard strip */
+.board{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:46px;position:relative;box-shadow:0 22px 50px -34px rgba(120,95,65,.8)}
+.board .tape{left:50%;top:-13px;transform:translateX(-50%) rotate(1.6deg)}
+.cnt{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;text-align:center}
+.cnt .c{padding:22px 10px;border-radius:14px}
+.cnt .v{font-family:var(--disp);font-size:44px;font-weight:600;line-height:1}
+.cnt .k{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+@media(max-width:760px){.cnt{grid-template-columns:1fr 1fr}}
+
+.quote{text-align:center;max-width:720px;margin:0 auto;position:relative}
+.quote p{font-family:var(--disp);font-style:italic;font-weight:300;font-size:clamp(21px,2.9vw,31px);color:var(--ink);line-height:1.42}
+.quote .w{margin-top:22px;font-family:var(--hand);font-size:22px;color:var(--rose-dp)}
+
+.cta{text-align:center;background:var(--paper);border-top:2px dashed var(--line);border-bottom:2px dashed var(--line);padding:96px 0}
+footer{padding:48px 0;font-size:14px;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+footer a{color:var(--muted);text-decoration:none;margin-left:22px}
+footer a:hover{color:var(--rose-dp)}
+.badge{position:fixed;left:20px;bottom:20px;z-index:99;background:var(--ink);color:var(--cream);font-size:13px;padding:10px 18px;border-radius:999px;text-decoration:none}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <div class="brand"><span class="st">✉</span>Vellum</div>
+  <div class="navlinks"><a href="#how">How it works</a><a href="#feat">Features</a><a href="#designs">Designs</a><a href="#registry">Registry</a></div>
+  <a href="#" class="btn sm">Start yours</a>
+</div></nav>
+
+<header><div class="wrap hero">
+  <div>
+    <span class="tag">Weddings &amp; baby showers</span>
+    <h1>A little letter,<br>sent to <span class="hand">everyone</span><br>at once.</h1>
+    <p class="sub">Make the guest list, dress up the card, and send it off. Your guests get an envelope that actually opens — and you get every reply in one tidy place.</p>
+    <div class="hcta"><a href="#" class="btn">Make an invitation</a><a href="#demo" class="btn o">Peek inside</a></div>
+    <div class="scribble">
+      <svg width="34" height="22" viewBox="0 0 34 22" fill="none" stroke="#B4736C" stroke-width="1.6" stroke-linecap="round"><path d="M2 4c8 12 20 16 30 12"/><path d="M26 20l6-4-3-6"/></svg>
+      free to design, always
+    </div>
+  </div>
+  <div class="env-frame" id="demo">
+    <div class="envelope" id="env" role="button" tabindex="0" aria-label="Open the invitation">
+      <div class="env-body"></div>
+      <div class="card">
+        <div class="ci"></div>
+        <div class="k">Please join us for</div>
+        <div class="h">a baby shower</div>
+        <div class="nm">honouring<br>Amara</div>
+        <div class="dot"><i style="background:var(--rose)"></i><i style="background:var(--butter)"></i><i style="background:var(--sky)"></i><i style="background:var(--sage)"></i></div>
+        <div class="meta">Saturday, May 9th · 2:00 pm<br>14 Thornbury Lane, Ottawa<br>Brunch, cake &amp; a very silly game</div>
+        <div class="acts"><span class="act on">Count me in</span><span class="act">Sorry, can't</span></div>
+      </div>
+      <div class="pocket"></div>
+      <div class="flap"></div>
+      <div class="postmark">Ottawa<br>ON</div>
+      <div class="stamp"><div class="in">✿</div></div>
+      <div class="seal"><span class="rb"></span><span class="b">V</span></div>
+    </div>
+    <div class="hint" id="hint">give it a click!</div>
+  </div>
+</div></header>
+
+<section id="how"><div class="wrap">
+  <div class="sec-head"><span class="tag">How it works</span><h2>Three little steps.</h2></div>
+  <div class="steps">
+    <div class="stp"><span class="tape"></span><div class="n">one</div><h3>Dress up the card</h3><p>Upload your own artwork or start from ours. Title, date, time, place, a note, and a plus-one box if you want one.</p></div>
+    <div class="stp"><span class="tape"></span><div class="n">two</div><h3>Write the list</h3><p>Names with an email, a phone number, or both. Paste in a spreadsheet and we'll figure out the columns.</p></div>
+    <div class="stp"><span class="tape"></span><div class="n">three</div><h3>Pop it in the post</h3><p>Send to everyone at once or one at a time. Replies land in your dashboard the second they arrive.</p></div>
+  </div>
+</div></section>
+
+<section id="feat"><div class="wrap">
+  <div class="sec-head"><span class="tag">What you get</span><h2>Everything a host needs,<br><span class="hand">nothing they don't.</span></h2></div>
+  <div class="feats">
+    <div class="f"><div class="ic" style="background:var(--rose)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 6 10-6"/></svg></div><h3>Send to all, or a few</h3><p>The whole list in one click, or a careful handful. Everyone gets their own private RSVP link.</p></div>
+    <div class="f"><div class="ic" style="background:var(--sky)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/></svg></div><h3>A tidy guest list</h3><p>Names, emails, phone numbers. Import a CSV, and we'll flag the duplicates before you send.</p></div>
+    <div class="f"><div class="ic" style="background:var(--sage)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><h3>See who's coming</h3><p>Yes, no, maybe — with a live headcount, plus-one names, and a CSV for the caterer.</p></div>
+    <div class="f"><div class="ic" style="background:#D7B25F"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></div><h3>A nudge when they reply</h3><p>An email the moment someone answers, a daily round-up, or nothing until you check.</p></div>
+    <div class="f"><div class="ic" style="background:var(--rose-dp)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7"/></svg></div><h3>Registry links</h3><p>Amazon, Babylist, or anywhere else. Right on the invitation where people will find it.</p></div>
+    <div class="f"><div class="ic" style="background:#8FA0AE"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div><h3>Your own artwork</h3><p>Upload a finished design, or put your words on one of ours. Drag-and-drop editor coming soon.</p></div>
+  </div>
+</div></section>
+
+<section id="designs"><div class="wrap">
+  <div class="sec-head"><span class="tag">The collection</span><h2>Pick a paper.</h2></div>
+  <div class="polas">
+    <div class="pola"><div class="im" style="background:linear-gradient(165deg,#F6E2DE,#E9C4BE)"><span>Rosewater</span></div><div class="cap">baby shower</div></div>
+    <div class="pola"><div class="im" style="background:linear-gradient(165deg,#E4EDF2,#C4D6E1)"><span>Little Cloud</span></div><div class="cap">baby shower</div></div>
+    <div class="pola"><div class="im" style="background:linear-gradient(165deg,#EFF2E8,#CFD9C2)"><span>Garden Party</span></div><div class="cap">wedding</div></div>
+    <div class="pola"><div class="im" style="background:linear-gradient(165deg,#FBEFD5,#F0D9A0)"><span>Honey</span></div><div class="cap">engagement</div></div>
+  </div>
+</div></section>
+
+<section id="registry"><div class="wrap reg">
+  <div>
+    <span class="tag">Registry</span>
+    <h2 style="margin:18px 0 16px">The gift list goes<br><span class="hand">right on the card.</span></h2>
+    <p style="font-size:17px">Add as many links as you like — a shop, a cash fund, a wish list. Guests tap through from the invitation instead of hunting for a screenshot someone posted last month.</p>
+    <a href="#" class="btn" style="margin-top:28px">Add a registry</a>
+  </div>
+  <div class="regcard"><span class="tape"></span>
+    <div class="rr"><div class="rl" style="background:var(--ink)">a</div><div><div class="t">Amazon Baby Registry</div><div class="s">42 items · 18 claimed</div></div><span class="a">→</span></div>
+    <div class="rr"><div class="rl" style="background:var(--sky)">B</div><div><div class="t">Babylist</div><div class="s">30 items · 11 claimed</div></div><span class="a">→</span></div>
+    <div class="rr"><div class="rl" style="background:var(--sage)">✈</div><div><div class="t">Honeymoon Fund</div><div class="s">$1,840 of $3,000</div></div><span class="a">→</span></div>
+    <div class="rr"><div class="rl" style="background:var(--rose)">+</div><div><div class="t">Add another link</div><div class="s">Any shop with a URL</div></div><span class="a">→</span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap"><div class="board"><span class="tape"></span>
+  <div class="sec-head" style="margin-bottom:34px"><span class="tag">Your dashboard</span><h2 style="font-size:clamp(28px,3.6vw,42px)">Watch the yeses roll in.</h2></div>
+  <div class="cnt">
+    <div class="c" style="background:#EFF2E8"><div class="v" style="color:#7B8C6C">86</div><div class="k">Coming</div></div>
+    <div class="c" style="background:#F6E2DE"><div class="v" style="color:var(--rose-dp)">12</div><div class="k">Can't make it</div></div>
+    <div class="c" style="background:#E4EDF2"><div class="v" style="color:#6F8899">22</div><div class="k">Waiting</div></div>
+    <div class="c" style="background:#FBEFD5"><div class="v" style="color:#A8811F">98</div><div class="k">Headcount</div></div>
+  </div>
+  <hr class="dash" style="margin:34px 0 26px">
+  <p style="text-align:center;font-size:15px">Every reply arrives with the guest's name, their plus-one, dietary notes and any message they left you. Export it all whenever the caterer asks.</p>
+</div></div></section>
+
+<section><div class="wrap quote">
+  <p>“Our grandmothers RSVP'd. On their phones. Without calling us first. I still can't quite believe it.”</p>
+  <div class="w">— Priya &amp; Sam, married in June</div>
+</div></section>
+
+<div class="cta"><div class="wrap">
+  <span class="tag">Free to design</span>
+  <h2 style="margin:20px 0 16px">Let's get it<br><span class="hand">in the post.</span></h2>
+  <p style="max-width:420px;margin:0 auto 32px;font-size:17px">Make as many as you like. You only pay when you're ready to send them out.</p>
+  <a href="#" class="btn">Make an invitation</a>
+</div></div>
+
+<footer><div class="wrap">
+  <div>© 2026 Vellum · made in Ottawa</div>
+  <div><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Support</a></div>
+</div></footer>
+
+<a class="badge" href="index.html">← All templates</a>
+
+<script>
+const env=document.getElementById('env'),hint=document.getElementById('hint');
+function toggle(){env.classList.toggle('open');hint.textContent=env.classList.contains('open')?'click to close it up':'give it a click!';}
+env.addEventListener('click',toggle);
+env.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+setTimeout(()=>{if(!env.classList.contains('open'))toggle();},1500);
+document.querySelectorAll('.act').forEach(a=>a.addEventListener('click',e=>{e.stopPropagation();document.querySelectorAll('.act').forEach(x=>x.classList.remove('on'));a.classList.add('on');}));
+</script>
+</body>
+</html>

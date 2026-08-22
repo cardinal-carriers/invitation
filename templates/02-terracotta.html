@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vellum — Terracotta Modern</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FDF8F1; --clay:#C8734F; --clay-dk:#A2542F; --ochre:#D9A441;
+  --terra-pale:#F6E4D6; --olive:#5E6650; --ink:#2C1F18; --muted:#8A756A;
+  --line:#EADCCD;
+  --sans:'Outfit',system-ui,sans-serif; --serif:'Instrument Serif',Georgia,serif;
+  --r:26px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);font-weight:400;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:0 30px}
+h1,h2,h3{font-weight:600;line-height:1.02;letter-spacing:-.035em}
+h1{font-size:clamp(52px,8vw,104px)}
+h2{font-size:clamp(38px,5.2vw,68px)}
+h3{font-size:23px;letter-spacing:-.02em}
+.it{font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em;color:var(--clay)}
+p{color:var(--muted);font-weight:300}
+.tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;background:var(--terra-pale);color:var(--clay-dk);padding:8px 16px;border-radius:999px}
+.tag i{width:6px;height:6px;border-radius:50%;background:var(--clay);display:block;font-style:normal}
+
+nav{position:sticky;top:0;z-index:70;background:rgba(253,248,241,.85);backdrop-filter:blur(16px)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:82px}
+.brand{font-size:26px;font-weight:700;letter-spacing:-.04em;display:flex;align-items:center;gap:10px}
+.blob{width:26px;height:26px;border-radius:50% 50% 50% 8px;background:linear-gradient(135deg,var(--clay),var(--ochre))}
+.navlinks{display:flex;gap:34px;font-size:15px;font-weight:400}
+.navlinks a{color:var(--ink);text-decoration:none;opacity:.72}
+.navlinks a:hover{opacity:1;color:var(--clay)}
+@media(max-width:900px){.navlinks{display:none}}
+.btn{display:inline-block;border:0;cursor:pointer;font-family:var(--sans);font-size:16px;font-weight:500;padding:16px 32px;border-radius:999px;background:var(--clay);color:#fff;text-decoration:none;transition:.25s;box-shadow:0 10px 26px -12px rgba(200,115,79,.8)}
+.btn:hover{background:var(--clay-dk);transform:translateY(-2px)}
+.btn.alt{background:var(--ink);box-shadow:0 10px 26px -12px rgba(44,31,24,.7)}
+.btn.line{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn.line:hover{box-shadow:inset 0 0 0 1.5px var(--ink);background:transparent}
+.btn.sm{padding:12px 24px;font-size:15px}
+
+/* hero */
+header{padding:64px 0 40px}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:64px;align-items:center}
+@media(max-width:960px){.hero{grid-template-columns:1fr;gap:52px}}
+.hero h1{margin:24px 0 0}
+.hero .sub{font-size:19px;margin-top:26px;max-width:480px}
+.hero-cta{display:flex;gap:14px;margin-top:38px;flex-wrap:wrap}
+.avatars{display:flex;align-items:center;gap:14px;margin-top:36px}
+.faces{display:flex}
+.faces span{width:38px;height:38px;border-radius:50%;border:3px solid var(--cream);margin-left:-12px;display:grid;place-items:center;font-size:13px;font-weight:600;color:#fff}
+.faces span:first-child{margin-left:0}
+.avatars .txt{font-size:14px;color:var(--muted)}
+
+/* envelope */
+.env-frame{perspective:1400px;padding:20px}
+.envelope{position:relative;width:100%;max-width:470px;margin:0 auto;aspect-ratio:1.4/1;cursor:pointer;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.34,1.4,.5,1)}
+.envelope:hover{transform:translateY(-6px)}
+.env-body{position:absolute;inset:0;border-radius:18px;background:linear-gradient(150deg,#E9C9AE,#DDB294);box-shadow:0 40px 70px -30px rgba(140,80,50,.55)}
+.pocket{position:absolute;inset:0;z-index:4;border-radius:18px;overflow:hidden;pointer-events:none}
+.pocket:before{content:'';position:absolute;left:0;right:0;bottom:0;height:74%;background:linear-gradient(160deg,#F0D8C2,#E2BB9C);clip-path:polygon(0 26%,50% 0,100% 26%,100% 100%,0 100%)}
+.flap{position:absolute;left:0;right:0;top:0;height:58%;z-index:6;transform-origin:top center;
+  background:linear-gradient(180deg,#EFD3B9,#E4BE9F);clip-path:polygon(0 0,100% 0,50% 100%);border-radius:18px 18px 0 0;
+  transition:transform 1s cubic-bezier(.65,-.05,.25,1),z-index 0s .5s}
+.seal{position:absolute;left:50%;top:50%;z-index:9;width:72px;height:72px;margin:-36px 0 0 -36px;border-radius:50%;
+  background:linear-gradient(140deg,var(--clay),var(--clay-dk));display:grid;place-items:center;color:#fff;
+  font-family:var(--serif);font-style:italic;font-size:30px;box-shadow:0 10px 24px rgba(162,84,47,.45);transition:.5s cubic-bezier(.4,1.6,.5,1)}
+.card{position:absolute;left:6%;right:6%;bottom:7%;height:108%;z-index:3;background:#fff;border-radius:16px;
+  box-shadow:0 18px 40px -22px rgba(0,0,0,.35);padding:32px 28px;text-align:center;opacity:0;
+  transform:translateY(4%) rotate(0deg);transition:transform 1.05s cubic-bezier(.25,.9,.3,1) .45s,opacity .35s .45s}
+.envelope.open .flap{transform:rotateX(-176deg);z-index:1}
+.envelope.open .seal{opacity:0;transform:scale(.3) rotate(140deg)}
+.envelope.open .card{opacity:1;transform:translateY(-70%) rotate(-2.2deg)}
+.c-top{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--clay)}
+.c-name{font-family:var(--serif);font-size:44px;line-height:1;margin:14px 0 6px;letter-spacing:-.02em}
+.c-and{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--ochre);margin:2px 0}
+.c-meta{font-size:13px;color:var(--muted);line-height:1.9;margin-top:14px}
+.c-dots{display:flex;gap:6px;justify-content:center;margin:16px 0}
+.c-dots i{width:5px;height:5px;border-radius:50%;background:var(--terra-pale);display:block}
+.c-btns{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.pill{font-size:12px;font-weight:500;padding:9px 16px;border-radius:999px;background:#F7EFE7;color:var(--ink);cursor:pointer}
+.pill.on{background:var(--clay);color:#fff}
+.hint{text-align:center;font-size:14px;color:var(--muted);margin-top:22px}
+
+/* marquee */
+.marquee{background:var(--ink);color:var(--cream);padding:18px 0;overflow:hidden;white-space:nowrap;margin:70px 0 0}
+.mtrack{display:inline-block;animation:slide 26s linear infinite;font-size:15px;font-weight:300;letter-spacing:.05em}
+.mtrack span{margin:0 26px;opacity:.8}
+.mtrack b{color:var(--ochre);font-weight:400}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+section{padding:96px 0}
+.sec-head{max-width:640px;margin-bottom:56px}
+.sec-head h2{margin:18px 0 16px}
+.sec-head.mid{margin-left:auto;margin-right:auto;text-align:center}
+
+/* bento */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:18px}
+.box{border-radius:var(--r);padding:34px;background:#fff;box-shadow:0 2px 0 var(--line)}
+.b1{grid-column:span 4;background:linear-gradient(135deg,var(--clay),#D98C63);color:#fff}
+.b1 p{color:rgba(255,255,255,.85)}
+.b2{grid-column:span 2;background:var(--terra-pale)}
+.b3{grid-column:span 2}
+.b4{grid-column:span 2;background:var(--olive);color:#fff}
+.b4 p{color:rgba(255,255,255,.8)}
+.b5{grid-column:span 2;background:var(--ochre);color:var(--ink)}
+.b5 p{color:rgba(44,31,24,.7)}
+.box h3{margin-bottom:10px}
+.box p{font-size:15px}
+.box .ic{width:30px;height:30px;margin-bottom:18px;opacity:.9}
+@media(max-width:900px){.bento{grid-template-columns:repeat(2,1fr)}.b1,.b2,.b3,.b4,.b5{grid-column:span 2}}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.stp{background:#fff;border-radius:var(--r);padding:36px;position:relative;overflow:hidden}
+.stp .n{position:absolute;right:22px;top:6px;font-family:var(--serif);font-size:96px;color:var(--terra-pale);line-height:1}
+.stp h3{margin:0 0 10px;position:relative}
+.stp p{font-size:15px;position:relative}
+@media(max-width:860px){.steps{grid-template-columns:1fr}}
+
+/* gallery scroller */
+.scroller{display:flex;gap:20px;overflow-x:auto;padding:6px 30px 26px;scroll-snap-type:x mandatory}
+.scroller::-webkit-scrollbar{height:6px}
+.scroller::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+.tile{flex:0 0 260px;aspect-ratio:.74/1;border-radius:var(--r);scroll-snap-align:start;padding:30px;display:flex;flex-direction:column;justify-content:flex-end;transition:.3s;cursor:pointer}
+.tile:hover{transform:translateY(-8px) rotate(-1.5deg)}
+.tile .tt{font-family:var(--serif);font-size:30px;line-height:1.05}
+.tile .ts{font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-top:8px;opacity:.7}
+.t1{background:linear-gradient(160deg,#F3DCC8,#E7C0A2)}
+.t2{background:linear-gradient(160deg,var(--olive),#454C3B);color:#fff}
+.t3{background:linear-gradient(160deg,#FBEBD4,#F2D49E)}
+.t4{background:linear-gradient(160deg,var(--clay),#9F4E2A);color:#fff}
+.t5{background:#fff;box-shadow:inset 0 0 0 1.5px var(--line)}
+
+/* registry */
+.reg{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+@media(max-width:900px){.reg{grid-template-columns:1fr;gap:44px}}
+.regcard{background:#fff;border-radius:var(--r);padding:14px;box-shadow:0 30px 60px -34px rgba(140,80,50,.5)}
+.rrow{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:18px;transition:.2s}
+.rrow:hover{background:var(--cream)}
+.rlogo{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-weight:700;font-size:17px;color:#fff;flex:none}
+.rrow .rt{font-weight:500;font-size:16px}
+.rrow .rs{font-size:13px;color:var(--muted)}
+.rrow .arw{margin-left:auto;color:var(--clay);font-size:20px}
+
+/* dash */
+.dash{background:var(--ink);border-radius:34px;padding:56px;color:var(--cream);display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.dash h2{color:#fff}
+.dash p{color:rgba(253,248,241,.65)}
+@media(max-width:900px){.dash{grid-template-columns:1fr;padding:38px;gap:36px}}
+.meters{display:flex;flex-direction:column;gap:20px}
+.meter .mt{display:flex;justify-content:space-between;font-size:14px;margin-bottom:9px}
+.meter .mt b{font-weight:600}
+.bar{height:9px;border-radius:9px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:9px}
+.cta{text-align:center;background:linear-gradient(160deg,var(--terra-pale),var(--cream));border-radius:40px;padding:88px 30px;margin:0 30px}
+.cta h2{margin-bottom:18px}
+footer{padding:56px 0;font-size:14px;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px}
+footer a{color:var(--muted);text-decoration:none;margin-left:24px}
+footer a:hover{color:var(--clay)}
+.badge{position:fixed;left:20px;bottom:20px;z-index:99;background:var(--ink);color:var(--cream);font-size:13px;padding:11px 20px;border-radius:999px;text-decoration:none}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <div class="brand"><span class="blob"></span>Vellum</div>
+  <div class="navlinks"><a href="#how">How it works</a><a href="#designs">Designs</a><a href="#registry">Registry</a><a href="#">Pricing</a></div>
+  <a href="#" class="btn sm">Get started</a>
+</div></nav>
+
+<header><div class="wrap hero">
+  <div>
+    <span class="tag"><i></i> Weddings &amp; baby showers</span>
+    <h1>Send an invite<br>they actually<br><span class="it">open.</span></h1>
+    <p class="sub">Build the guest list, design the card, hit send. RSVPs come back to one dashboard — no spreadsheets, no group chat archaeology.</p>
+    <div class="hero-cta">
+      <a href="#" class="btn">Create your invite</a>
+      <a href="#demo" class="btn line">Watch it open</a>
+    </div>
+    <div class="avatars">
+      <div class="faces">
+        <span style="background:#C8734F">A</span><span style="background:#5E6650">M</span>
+        <span style="background:#D9A441">J</span><span style="background:#2C1F18">+</span>
+      </div>
+      <div class="txt"><b style="color:var(--ink)">14,200 hosts</b> sent invitations this month</div>
+    </div>
+  </div>
+  <div class="env-frame" id="demo">
+    <div class="envelope" id="env" role="button" tabindex="0" aria-label="Open the invitation">
+      <div class="env-body"></div>
+      <div class="card">
+        <div class="c-top">You're invited</div>
+        <div class="c-name">Amara</div>
+        <div class="c-and">and</div>
+        <div class="c-name">Theo</div>
+        <div class="c-dots"><i></i><i></i><i></i></div>
+        <div class="c-meta">Saturday · May 9 · 4:30 PM<br>Thornbury Gardens, Ottawa<br>Dinner and dancing to follow</div>
+        <div class="c-btns"><span class="pill on">I'll be there</span><span class="pill">Can't make it</span></div>
+      </div>
+      <div class="pocket"></div>
+      <div class="flap"></div>
+      <div class="seal">V</div>
+    </div>
+    <div class="hint" id="hint">Tap the envelope</div>
+  </div>
+</div></header>
+
+<div class="marquee"><div class="mtrack">
+  <span>Envelope animation <b>✦</b></span><span>Mass send <b>✦</b></span><span>Live RSVP tracking <b>✦</b></span><span>Registry links <b>✦</b></span><span>SMS + email <b>✦</b></span><span>Plus-one toggle <b>✦</b></span><span>CSV import <b>✦</b></span><span>Instant notifications <b>✦</b></span>
+  <span>Envelope animation <b>✦</b></span><span>Mass send <b>✦</b></span><span>Live RSVP tracking <b>✦</b></span><span>Registry links <b>✦</b></span><span>SMS + email <b>✦</b></span><span>Plus-one toggle <b>✦</b></span><span>CSV import <b>✦</b></span><span>Instant notifications <b>✦</b></span>
+</div></div>
+
+<section id="how"><div class="wrap">
+  <div class="sec-head"><span class="tag"><i></i> How it works</span><h2>From idea to<br><span class="it">inbox</span> in ten minutes.</h2></div>
+  <div class="steps">
+    <div class="stp"><div class="n">1</div><h3>Design it</h3><p>Upload your own artwork or pick a layout. Title, date, time, place, notes, plus-one toggle — all editable in one panel.</p></div>
+    <div class="stp"><div class="n">2</div><h3>List them</h3><p>Type names in or paste a spreadsheet. Email, phone, or both. We flag duplicates before you send.</p></div>
+    <div class="stp"><div class="n">3</div><h3>Send it</h3><p>Everyone at once, or a careful few at a time. Track opens, replies and headcount as they roll in.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sec-head"><span class="tag"><i></i> Features</span><h2>Everything a host needs.</h2></div>
+  <div class="bento">
+    <div class="box b1">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 6 10-6"/></svg>
+      <h3>Mass send, or one at a time</h3>
+      <p>Fire off the whole list in a click — or send a handful now and the rest when you've heard back from the venue. Each guest gets their own private RSVP link.</p>
+    </div>
+    <div class="box b2">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--clay-dk)"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+      <h3>Told right away</h3><p>Email the second someone replies, or a tidy daily digest.</p>
+    </div>
+    <div class="box b3">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--clay)"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/></svg>
+      <h3>Guest list</h3><p>Names, emails, phones. Import a CSV and we'll map the columns.</p>
+    </div>
+    <div class="box b4">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7"/></svg>
+      <h3>Registry built in</h3><p>Amazon, Babylist, or a link to anywhere. Right on the invite.</p>
+    </div>
+    <div class="box b5">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <h3>Your artwork</h3><p>Upload a design, or drop text on ours. Drag editor coming soon.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="designs" style="padding-bottom:70px">
+  <div class="wrap"><div class="sec-head"><span class="tag"><i></i> The collection</span><h2>Pick a look,<br>make it <span class="it">yours.</span></h2></div></div>
+  <div class="scroller">
+    <div class="tile t1"><div class="tt">Clay &amp; Bloom</div><div class="ts">Wedding</div></div>
+    <div class="tile t2"><div class="tt">Olive Grove</div><div class="ts">Rehearsal dinner</div></div>
+    <div class="tile t3"><div class="tt">Little Sun</div><div class="ts">Baby shower</div></div>
+    <div class="tile t4"><div class="tt">Ember</div><div class="ts">Engagement</div></div>
+    <div class="tile t5"><div class="tt">Plain Paper</div><div class="ts">Anything</div></div>
+  </div>
+</section>
+
+<section id="registry"><div class="wrap reg">
+  <div>
+    <span class="tag"><i></i> Registry</span>
+    <h2 style="margin:18px 0 18px">The gift list lives<br>on the <span class="it">invitation.</span></h2>
+    <p style="font-size:17px">Add as many links as you like. Guests tap through from the card instead of hunting for a screenshot someone posted three weeks ago.</p>
+    <a href="#" class="btn alt" style="margin-top:30px">Add a registry</a>
+  </div>
+  <div class="regcard">
+    <div class="rrow"><div class="rlogo" style="background:#2C1F18">a</div><div><div class="rt">Amazon Baby Registry</div><div class="rs">42 items · 18 claimed</div></div><span class="arw">→</span></div>
+    <div class="rrow"><div class="rlogo" style="background:var(--olive)">C</div><div><div class="rt">Crate &amp; Barrel</div><div class="rs">26 items · 9 claimed</div></div><span class="arw">→</span></div>
+    <div class="rrow"><div class="rlogo" style="background:var(--ochre)">✈</div><div><div class="rt">Honeymoon Fund</div><div class="rs">$1,840 of $3,000</div></div><span class="arw">→</span></div>
+    <div class="rrow"><div class="rlogo" style="background:var(--clay)">+</div><div><div class="rt">Add another link</div><div class="rs">Any shop with a URL</div></div><span class="arw">→</span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap"><div class="dash">
+  <div>
+    <span class="tag" style="background:rgba(217,164,65,.2);color:var(--ochre)"><i style="background:var(--ochre)"></i> Dashboard</span>
+    <h2 style="margin:18px 0 16px">Watch the yeses<br>stack up.</h2>
+    <p style="font-size:17px">A live headcount, who's bringing a plus-one, dietary notes, and every message your guests left you. Export the whole thing to CSV whenever the caterer asks.</p>
+  </div>
+  <div class="meters">
+    <div class="meter"><div class="mt"><span>Attending</span><b>86 guests</b></div><div class="bar"><i style="width:72%;background:var(--ochre)"></i></div></div>
+    <div class="meter"><div class="mt"><span>Declined</span><b>12 guests</b></div><div class="bar"><i style="width:10%;background:var(--clay)"></i></div></div>
+    <div class="meter"><div class="mt"><span>Awaiting reply</span><b>22 guests</b></div><div class="bar"><i style="width:18%;background:rgba(253,248,241,.4)"></i></div></div>
+    <div style="margin-top:12px;padding-top:22px;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;font-size:15px">
+      <span style="color:rgba(253,248,241,.6)">Final headcount</span><b style="font-size:26px;font-weight:600">98</b>
+    </div>
+  </div>
+</div></div></section>
+
+<div class="cta">
+  <span class="tag"><i></i> Free to start</span>
+  <h2 style="margin:20px 0 16px">Let's get that<br>invitation <span class="it">sent.</span></h2>
+  <p style="max-width:440px;margin:0 auto 34px;font-size:17px">Design as many as you like. You only pay when you're ready to send them out.</p>
+  <a href="#" class="btn">Create your invitation</a>
+</div>
+
+<footer><div class="wrap">
+  <div>© 2026 Vellum · Made in Ottawa</div>
+  <div><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Support</a></div>
+</div></footer>
+
+<a class="badge" href="index.html">← All templates</a>
+
+<script>
+const env=document.getElementById('env'),hint=document.getElementById('hint');
+function toggle(){env.classList.toggle('open');hint.textContent=env.classList.contains('open')?'Tap to close':'Tap the envelope';}
+env.addEventListener('click',toggle);
+env.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+setTimeout(()=>{if(!env.classList.contains('open'))toggle();},1500);
+document.querySelectorAll('.pill').forEach(p=>p.addEventListener('click',e=>{e.stopPropagation();document.querySelectorAll('.pill').forEach(x=>x.classList.remove('on'));p.classList.add('on');}));
+</script>
+</body>
+</html>

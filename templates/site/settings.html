@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Settings · Vellum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<style>
+.settings{display:grid;grid-template-columns:190px minmax(0,1fr);gap:var(--s8);align-items:start}
+.jump{position:sticky;top:calc(var(--topbar-h) + var(--s5));display:flex;flex-direction:column;gap:1px}
+.jump a{padding:8px 12px;border-radius:var(--r-input);font-size:14px;color:var(--ink-2);text-decoration:none}
+.jump a:hover{background:color-mix(in srgb,var(--kraft) 24%,transparent);color:var(--ink)}
+.jump a.on{color:var(--ink);font-weight:600;background:var(--paper);box-shadow:var(--e1)}
+.avatar-row{display:flex;align-items:center;gap:var(--s5)}
+.avatar-row .who-mark{width:62px;height:62px;font-size:26px}
+.plan{display:flex;align-items:flex-start;gap:var(--s5);flex-wrap:wrap}
+.plan .now{flex:1;min-width:220px}
+.plan .price{font-family:var(--disp);font-size:32px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.limits{margin-top:var(--s5);display:grid;gap:var(--s3)}
+.limit{display:flex;justify-content:space-between;gap:var(--s4);font-size:14.5px;
+  padding-bottom:11px;border-bottom:var(--perf-fine)}
+.limit:last-child{border-bottom:0;padding-bottom:0}
+.limit .v{font-weight:600;white-space:nowrap}
+.danger{border-left:4px solid var(--no)}
+@media(max-width:980px){.settings{grid-template-columns:1fr}.jump{position:static;flex-direction:row;
+  overflow-x:auto;padding-bottom:var(--s2)}}
+</style>
+</head>
+<body data-nav="settings">
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <nav class="rail" aria-label="Main"></nav>
+
+  <div class="main">
+    <header class="topbar">
+      <p class="crumb"><a href="dashboard.html">Desk</a> <span aria-hidden="true">›</span>
+        <b>Settings</b></p>
+      <span class="spacer"></span>
+      <p class="muted body-sm" role="status">Changes save as you make them</p>
+    </header>
+
+    <main class="page" id="main">
+      <div class="page-hd">
+        <div>
+          <span class="label">Settings</span>
+          <h1 class="h1">Your account</h1>
+        </div>
+      </div>
+
+      <div class="settings">
+        <nav class="jump" aria-label="Settings sections">
+          <a href="#you" class="on">You</a>
+          <a href="#hear">Hearing about replies</a>
+          <a href="#nudges">Reminders to guests</a>
+          <a href="#plan">Plan</a>
+          <a href="#gifts">Gift links</a>
+          <a href="#close">Closing the account</a>
+        </nav>
+
+        <div class="stack">
+
+          <section class="desk" id="you" aria-labelledby="you-h">
+            <div class="desk-hd"><h2 class="h3" id="you-h">You</h2></div>
+            <div class="desk-bd">
+              <div class="avatar-row">
+                <span class="who-mark who-mark--sky" aria-hidden="true">T</span>
+                <div>
+                  <p class="h3">Theo Vance</p>
+                  <p class="muted body-sm">Your initial is pressed into the wax on your envelopes.</p>
+                </div>
+              </div>
+              <div class="form-grid" style="margin-top:var(--s6)">
+                <div class="field">
+                  <label class="label" for="nm">Name</label>
+                  <input class="input" id="nm" value="Theo Vance">
+                </div>
+                <div class="field">
+                  <label class="label" for="em">Email</label>
+                  <input class="input" id="em" type="email" value="theo@vance.ca">
+                  <p class="help">Replies and sign-in links come here.</p>
+                </div>
+                <div class="field span-2">
+                  <label class="label" for="reply-to">Guests reply to</label>
+                  <input class="input" id="reply-to" type="email" value="theo@vance.ca">
+                  <p class="help">When a guest hits reply on the email carrying their letter.</p>
+                </div>
+              </div>
+              <hr class="rule">
+              <div class="row" style="justify-content:space-between">
+                <div>
+                  <p style="font-weight:600">Signing in</p>
+                  <p class="muted body-sm">Email links, and Google (theo@vance.ca)</p>
+                </div>
+                <button class="btn btn--ghost btn--sm">Manage</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="desk" id="hear" aria-labelledby="hear-h">
+            <div class="desk-hd"><h2 class="h3" id="hear-h">Hearing about replies</h2></div>
+            <div class="desk-bd">
+              <fieldset class="fieldset">
+                <legend class="label" style="margin-bottom:var(--s3)">When a guest replies</legend>
+                <label class="check"><input type="radio" name="notify" checked>
+                  <span>Tell me straight away
+                    <span class="sub">One email per reply. Fine for 20 guests, a lot for 148.</span></span></label>
+                <label class="check"><input type="radio" name="notify">
+                  <span>Once a day, at 8:00 am
+                    <span class="sub">Everything from the day before, in one email</span></span></label>
+                <label class="check"><input type="radio" name="notify">
+                  <span>Don't tell me
+                    <span class="sub">You'll still see everything on your desk</span></span></label>
+              </fieldset>
+              <hr class="rule">
+              <div class="fieldset">
+                <label class="switch"><input type="checkbox" checked>
+                  <span>Tell me when someone can't come</span></label>
+                <label class="switch"><input type="checkbox" checked>
+                  <span>Tell me when a guest leaves a note</span></label>
+                <label class="switch"><input type="checkbox">
+                  <span>Tell me each time an envelope is opened
+                    <span class="sub" style="display:block;font-size:var(--t-xs);color:var(--ink-2)">
+                      127 opened so far — this would have been 127 emails</span></span></label>
+              </div>
+            </div>
+          </section>
+
+          <section class="desk" id="nudges" aria-labelledby="nudge-h">
+            <div class="desk-hd">
+              <h2 class="h3" id="nudge-h">Reminders to guests</h2>
+              <label class="switch"><input type="checkbox" checked>
+                <span class="sr">Send reminders automatically</span></label>
+            </div>
+            <div class="desk-bd">
+              <p class="help" style="margin-bottom:var(--s5)">
+                Only guests who haven't replied get these. Nobody gets more than two.
+              </p>
+              <div class="fieldset">
+                <label class="check"><input type="checkbox" checked>
+                  <span>A week before the reply date
+                    <span class="sub">Friday 17 April — 52 guests would get this</span></span></label>
+                <label class="check"><input type="checkbox" checked>
+                  <span>The day before the reply date
+                    <span class="sub">Friday 24 April</span></span></label>
+                <label class="check"><input type="checkbox">
+                  <span>The morning of the event
+                    <span class="sub">For guests who said they were hoping to come</span></span></label>
+              </div>
+            </div>
+          </section>
+
+          <section class="desk" id="plan" aria-labelledby="plan-h">
+            <div class="desk-hd"><h2 class="h3" id="plan-h">Plan</h2></div>
+            <div class="desk-bd">
+              <div class="plan">
+                <div class="now">
+                  <p class="label">Currently on</p>
+                  <p class="price">Post · $18 <span class="muted" style="font-family:var(--body);font-size:15px;font-weight:400">an event</span></p>
+                  <p class="muted body-sm" style="margin-top:6px">Renews nothing — you pay per event.</p>
+                </div>
+                <button class="btn btn--ghost">Change plan</button>
+              </div>
+              <div class="limits">
+                <p class="limit"><span>Guests on this event</span><span class="v">148 of 300</span></p>
+                <p class="limit"><span>Text credits left</span><span class="v">14 of 200</span></p>
+                <p class="limit"><span>Vellum's mark on your invitation</span><span class="v">Hidden</span></p>
+                <p class="limit"><span>Your own web address</span><span class="v">amara.vellum.to</span></p>
+              </div>
+            </div>
+          </section>
+
+          <section class="desk" id="gifts" aria-labelledby="gifts-h">
+            <div class="desk-hd"><h2 class="h3" id="gifts-h">Gift links</h2></div>
+            <div class="desk-bd">
+              <p class="banner" data-icon="info">
+                <span><b>How Vellum makes money on gift lists.</b> When a guest buys from a
+                supported retailer through your list, we earn a small commission from that
+                retailer. Your guest pays the same price, and we never see what they bought.</span>
+              </p>
+              <div class="fieldset" style="margin-top:var(--s5)">
+                <label class="switch"><input type="checkbox" checked>
+                  <span>Allow Vellum's commission on my gift links
+                    <span class="sub" style="display:block;font-size:var(--t-xs);color:var(--ink-2)">
+                      Turning this off changes nothing your guests see</span></span></label>
+              </div>
+            </div>
+          </section>
+
+          <section class="desk danger" id="close" aria-labelledby="close-h">
+            <div class="desk-hd"><h2 class="h3" id="close-h">Closing the account</h2></div>
+            <div class="desk-bd">
+              <p class="body-sm muted" style="margin-bottom:var(--s5)">
+                This deletes both your events, all 358 guests and every reply they wrote.
+                Guests who open their letter afterwards will see that the invitation has been
+                withdrawn. It can't be undone.
+              </p>
+              <div class="row">
+                <button class="btn btn--ghost btn--sm" data-icon="download">Download everything first</button>
+                <button class="btn btn--danger btn--sm" id="closeBtn">Close my account</button>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<dialog id="closeDlg" aria-labelledby="cl-h">
+  <div class="dlg-hd">
+    <div>
+      <h2 class="h3" id="cl-h">Close your account?</h2>
+      <p>Two events, 358 guests and 96 replies are deleted immediately. Type
+         <b>close</b> to confirm.</p>
+    </div>
+  </div>
+  <div class="dlg-bd">
+    <div class="field">
+      <label class="sr" for="confirmWord">Type close to confirm</label>
+      <input class="input" id="confirmWord" placeholder="close" autocomplete="off">
+    </div>
+  </div>
+  <div class="dlg-ft">
+    <button class="btn btn--ghost" id="clNo">Keep my account</button>
+    <button class="btn btn--danger" id="clYes" aria-disabled="true">Close it</button>
+  </div>
+</dialog>
+
+<script src="app.js"></script>
+<script>
+/* Jump list follows the page. */
+const links = [...document.querySelectorAll('.jump a')];
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + en.target.id));
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+document.querySelectorAll('.settings section[id]').forEach(s => spy.observe(s));
+
+/* Closing an account is destructive, so the button stays inert until the
+   word is typed. */
+const dlg = document.getElementById('closeDlg');
+const word = document.getElementById('confirmWord');
+const yes = document.getElementById('clYes');
+document.getElementById('closeBtn').onclick = () => { word.value = ''; sync(); dlg.showModal(); };
+document.getElementById('clNo').onclick = () => dlg.close();
+function sync(){ yes.setAttribute('aria-disabled', String(word.value.trim().toLowerCase() !== 'close')); }
+word.addEventListener('input', sync);
+yes.onclick = () => {
+  if (yes.getAttribute('aria-disabled') === 'true') return;
+  dlg.close();
+  toast('Account closed');
+};
+</script>
+</body>
+</html>

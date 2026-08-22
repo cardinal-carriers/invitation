@@ -1,0 +1,858 @@
+/* Self-hosted, latin subset, variable. No third-party request on the critical path. */
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:300 700;font-display:swap;
+  src:url("fonts/fraunces.woff2") format("woff2")}
+@font-face{font-family:'Karla';font-style:normal;font-weight:300 700;font-display:swap;
+  src:url("fonts/karla.woff2") format("woff2")}
+@font-face{font-family:'Caveat';font-style:normal;font-weight:500 700;font-display:swap;
+  src:url("fonts/caveat.woff2") format("woff2")}
+
+/* ==========================================================================
+   VELLUM — design system
+   Direction: Paper & Ribbon. Locked in Phase 0.
+
+   ONE RULE GOVERNS THIS FILE:
+
+       paper is content. desk is chrome.
+
+   .paper  surfaces stand for a real physical artifact — an invitation, an
+           envelope, a card preview, a reply card. They get texture, warmth,
+           deckle, tilt, wax, handwriting.
+   .desk   surfaces are the workbench the host operates: nav, tables, forms,
+           dialogs. Same palette, same typefaces, zero tilt, zero handwriting.
+           Quiet, matte, dense, legible at 180 rows.
+
+   Never tilt a .desk. Never put Caveat in a table. The personality lives in
+   the artifact; the tool gets out of its way.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. TOKENS
+   -------------------------------------------------------------------------- */
+:root{
+  /* --- paper stock ------------------------------------------------------ */
+  --cream:#FCF7EE;        /* app background                                 */
+  --paper:#FFFDF8;        /* raised surfaces, card stock                    */
+  --card:#FFFDF8;         /* the invitation itself                          */
+  --kraft:#E8D9C0;        /* envelope, outside                              */
+  --kraft-dk:#6B5636;     /* envelope shadow / fold                         */
+  --liner:#C1615C;        /* flap liner and envelope interior               */
+
+  /* --- ink -------------------------------------------------------------- */
+  --ink:#3A322B;          /* primary text                                   */
+  --ink-2:#8C8075;        /* secondary text, labels                         */
+  --ink-3:#B0A599;        /* tertiary: placeholders, disabled               */
+  --line:#EADFCD;         /* hairlines, borders                             */
+  --line-2:#DCCFB8;       /* stronger border, input outline                 */
+
+  /* --- accents ---------------------------------------------------------- */
+  --wax:#B4736C;          /* primary action. the wax seal colour            */
+  --wax-dp:#8E5852;       /* pressed / hover ink                            */
+  --rose:#D89B94;         /* wax, tinted                                    */
+  --sky:#9FBACB;          /* postage                                        */
+  --sage:#A8B79A;         /* affirmative                                    */
+  --butter:#F0D9A0;       /* tag stock, highlighter                         */
+  --ochre:#C0913F;        /* butter, at text contrast                       */
+
+  /* --- semantic --------------------------------------------------------- */
+  --yes:#7E9070;          /* attending                                      */
+  --no:#B4544E;           /* declined                                       */
+  --maybe:#C0913F;        /* tentative                                      */
+  --waiting:#B0A599;      /* no reply yet                                   */
+  --yes-bg:#EEF2E9; --no-bg:#F8E9E7; --maybe-bg:#F9EFD9; --waiting-bg:#F2ECE2;
+
+  /* --- typefaces -------------------------------------------------------- */
+  --disp:'Fraunces',Georgia,'Times New Roman',serif;
+  --body:'Karla',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --hand:'Caveat','Segoe Script',cursive;
+
+  /* --- type scale ------------------------------------------------------- */
+  --t-display:clamp(38px,5.2vw,64px);
+  --t-h1:clamp(28px,3.4vw,40px);
+  --t-h2:24px;
+  --t-h3:18px;
+  --t-body:15px;
+  --t-sm:13.5px;
+  --t-xs:12px;
+  --t-label:11px;
+
+  /* --- space (4px base) ------------------------------------------------- */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px;
+  --s6:24px; --s7:32px; --s8:40px; --s9:56px; --s10:72px; --s11:96px;
+
+  /* --- radius ----------------------------------------------------------- */
+  --r-stamp:3px;          /* tags, stamps: barely rounded, like print       */
+  --r-input:9px;
+  --r-card:14px;
+  --r-pill:999px;
+
+  /* --- elevation. warm brown, never neutral grey ------------------------ */
+  --e1:0 1px 2px rgba(120,95,65,.06);
+  --e2:0 10px 24px -18px rgba(120,95,65,.55);
+  --e3:0 22px 46px -28px rgba(120,95,65,.7);
+  --e4:0 34px 70px -34px rgba(120,95,65,.8);
+
+  /* --- the perforation. our one structural motif ------------------------ */
+  /* A dashed rule is a tear line. Every division in this product is a place
+     something could be torn off, so every division is dashed.              */
+  --perf:2px dashed var(--line);
+  --perf-fine:1px dashed var(--line-2);
+
+  /* --- paper texture ---------------------------------------------------- */
+  --fibre:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='340'%3E %3Cfilter id='m' x='0' y='0' width='100%25' height='100%25'%3E %3CfeTurbulence type='fractalNoise' baseFrequency='0.018' numOctaves='4' stitchTiles='stitch' result='n'/%3E %3CfeColorMatrix in='n' type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.40 0 0 0 -0.30'/%3E %3C/filter%3E%3Crect width='340' height='340' filter='url(%23m)'/%3E%3C/svg%3E");
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E %3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E %3CfeTurbulence type='fractalNoise' baseFrequency='1.05' numOctaves='3' stitchTiles='stitch' result='n'/%3E %3CfeColorMatrix in='n' type='matrix' values='0 0 0 0 0.28 0 0 0 0 0.22 0 0 0 0 0.13 0.8 0 0 0 -0.52'/%3E %3C/filter%3E%3Crect width='170' height='170' filter='url(%23g)'/%3E%3C/svg%3E");
+  --fleck:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='430' height='430'%3E %3Cfilter id='k' x='0' y='0' width='100%25' height='100%25'%3E %3CfeTurbulence type='turbulence' baseFrequency='0.07' numOctaves='2' stitchTiles='stitch' result='n'/%3E %3CfeColorMatrix in='n' type='matrix' values='0 0 0 0 0.32 0 0 0 0 0.25 0 0 0 0 0.14 2.6 0 0 0 -2.06'/%3E %3C/filter%3E%3Crect width='430' height='430' filter='url(%23k)'/%3E%3C/svg%3E");
+  --pap-sz:340px 340px,170px 170px,430px 430px,auto;
+  --pap-rp:repeat,repeat,repeat,no-repeat;
+
+  /* --- shell ------------------------------------------------------------ */
+  --rail-w:236px;
+  --topbar-h:66px;
+  --measure:68ch;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. RESET & BASE
+   -------------------------------------------------------------------------- */
+*,*::before,*::after{box-sizing:border-box}
+*{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--body);font-size:var(--t-body);font-weight:400;line-height:1.6;
+  color:var(--ink);background-color:var(--cream);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  font-variant-numeric:tabular-nums lining-nums;
+}
+img,svg,video{display:block;max-width:100%}
+/* [hidden] must beat any component that sets its own display. */
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+a{color:var(--wax);text-decoration-color:color-mix(in srgb,var(--wax) 34%,transparent);text-underline-offset:3px}
+a:hover{text-decoration-color:currentColor}
+table{border-collapse:collapse;width:100%}
+::placeholder{color:var(--ink-3)}
+::selection{background:var(--butter);color:var(--ink)}
+
+/* One focus ring for the whole product. Wax on cream, always visible. */
+:focus-visible{outline:2px solid var(--wax);outline-offset:2px;border-radius:2px}
+:focus:not(:focus-visible){outline:none}
+
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+.skip{position:absolute;left:var(--s4);top:-60px;z-index:200;background:var(--ink);color:var(--cream);
+  padding:10px 18px;border-radius:var(--r-pill);text-decoration:none;transition:top .18s}
+.skip:focus{top:var(--s4)}
+
+
+/* --------------------------------------------------------------------------
+   3. TYPOGRAPHY
+   -------------------------------------------------------------------------- */
+.display,.h1,.h2,.h3{font-family:var(--disp);font-weight:400;line-height:1.1;letter-spacing:-.02em;color:var(--ink)}
+.display{font-size:var(--t-display);line-height:1.04;letter-spacing:-.03em}
+.h1{font-size:var(--t-h1)}
+.h2{font-size:var(--t-h2)}
+.h3{font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em}
+
+/* The label is the workhorse of the host app: every field, column and
+   section is named by one. Small caps, wide tracking, like a filing tab. */
+.label{font-family:var(--body);font-size:var(--t-label);font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);line-height:1.4}
+
+.lede{font-size:17px;line-height:1.6;color:var(--ink-2);max-width:var(--measure)}
+.body-sm{font-size:var(--t-sm)}
+.muted{color:var(--ink-2)}
+.faint{color:var(--ink-3)}
+.num{font-family:var(--disp);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* Handwriting. Guest-facing artifacts only — never in the host app. */
+.hand{font-family:var(--hand);font-weight:600;color:var(--wax);font-size:1.3em;line-height:1}
+
+/* Tag: a gummed label stuck slightly crooked. Guest-facing / marketing. */
+.tag{display:inline-block;font-size:var(--t-label);font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;background:var(--butter);color:#7A5F26;padding:6px 13px;
+  border-radius:var(--r-stamp);transform:rotate(-1.2deg);box-shadow:1px 2px 0 rgba(58,50,43,.09)}
+
+.rule{border:0;border-top:var(--perf);margin:var(--s6) 0}
+.rule-fine{border:0;border-top:1px solid var(--line);margin:var(--s5) 0}
+
+
+/* --------------------------------------------------------------------------
+   4. SURFACES — the paper / desk split
+   -------------------------------------------------------------------------- */
+
+/* PAPER. A real artifact. Textured, warm, slightly proud of the page. */
+.paper{
+  position:relative;background-color:var(--paper);
+  background-image:var(--fibre),var(--grain),var(--fleck),
+    linear-gradient(168deg,var(--paper),color-mix(in srgb,var(--paper) 94%,var(--kraft)));
+  background-size:var(--pap-sz);background-repeat:var(--pap-rp);
+  border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--e3);
+}
+/* Deckle: a torn bottom edge. Used once, on the invitation. Not a utility to
+   sprinkle — it means "this sheet was torn from something". */
+.deckle{-webkit-mask:radial-gradient(circle .42em at 50% 0,#0000 98%,#000) 50% 100%/1.35em 1.35em repeat-x,
+    linear-gradient(#000,#000) 50% 0/100% calc(100% - .7em) no-repeat;
+        mask:radial-gradient(circle .42em at 50% 0,#0000 98%,#000) 50% 100%/1.35em 1.35em repeat-x,
+    linear-gradient(#000,#000) 50% 0/100% calc(100% - .7em) no-repeat}
+
+/* DESK. The workbench. Flat, matte, no texture, no tilt, ever. */
+.desk{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--e1)}
+.desk-hd{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);
+  padding:var(--s5) var(--s6);border-bottom:var(--perf)}
+.desk-hd .h3{margin:0}
+.desk-bd{padding:var(--s6)}
+.desk-bd--flush{padding:0}
+.desk-ft{padding:var(--s4) var(--s6);border-top:var(--perf);display:flex;align-items:center;
+  justify-content:space-between;gap:var(--s4);flex-wrap:wrap}
+
+
+/* --------------------------------------------------------------------------
+   5. APP SHELL
+   -------------------------------------------------------------------------- */
+.app{display:grid;grid-template-columns:var(--rail-w) minmax(0,1fr);min-height:100vh}
+
+.rail{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+  background:color-mix(in srgb,var(--cream) 60%,var(--paper));border-right:var(--perf);
+  padding:var(--s5) var(--s4);gap:var(--s2);overflow-y:auto}
+.rail-brand{display:flex;align-items:center;gap:10px;padding:var(--s2) var(--s3) var(--s5);
+  font-family:var(--disp);font-size:23px;font-weight:600;letter-spacing:-.03em;color:var(--ink);
+  text-decoration:none}
+.rail-brand .wax-mark{width:26px;height:26px;flex:none;border-radius:50%;
+  background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--wax) 58%,#fff),var(--wax));
+  box-shadow:inset 0 -2px 4px rgba(0,0,0,.22),inset 0 2px 4px rgba(255,255,255,.3),0 2px 5px rgba(120,95,65,.35);
+  display:grid;place-items:center;color:#fff;font-size:13px;font-family:var(--disp)}
+.rail-grp{margin-top:var(--s5)}
+.rail-grp .label{padding:0 var(--s3) var(--s2)}
+.nav{display:flex;align-items:center;gap:10px;padding:9px var(--s3);border-radius:var(--r-input);
+  font-size:14.5px;color:var(--ink);text-decoration:none;transition:background .16s,color .16s}
+.nav svg{width:17px;height:17px;flex:none;color:var(--ink-2);transition:color .16s}
+.nav:hover{background:color-mix(in srgb,var(--kraft) 26%,transparent)}
+.nav[aria-current="page"]{background:var(--paper);box-shadow:var(--e1),inset 3px 0 0 var(--wax);font-weight:600}
+.nav[aria-current="page"] svg{color:var(--wax)}
+.nav .count{margin-left:auto;font-size:var(--t-xs);font-weight:600;color:var(--ink-2)}
+.rail-ft{margin-top:auto;padding-top:var(--s5);border-top:var(--perf)}
+
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:40;min-height:var(--topbar-h);display:flex;align-items:center;
+  gap:var(--s4);padding:var(--s3) var(--s7);background:color-mix(in srgb,var(--cream) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:var(--perf)}
+.topbar .spacer{margin-left:auto}
+.crumb{display:flex;align-items:center;gap:9px;font-size:var(--t-sm);color:var(--ink-2);min-width:0}
+.crumb a{color:var(--ink-2);text-decoration:none}
+.crumb a:hover{color:var(--ink)}
+.crumb b{color:var(--ink);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.page{padding:var(--s7);max-width:1180px;width:100%}
+.page--wide{max-width:1420px}
+.page-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s5);
+  flex-wrap:wrap;margin-bottom:var(--s7)}
+.page-hd .h1{margin-top:var(--s2)}
+.page-hd p{color:var(--ink-2);margin-top:6px;max-width:var(--measure)}
+.stack{display:flex;flex-direction:column;gap:var(--s6)}
+.stack > *,.split > *,.main > *{min-width:0}
+.row{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+.row--tight{gap:var(--s2)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s6)}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s5)}
+.split{display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:var(--s7);align-items:start}
+.sticky{position:sticky;top:calc(var(--topbar-h) + var(--s5))}
+
+
+/* --------------------------------------------------------------------------
+   6. BUTTONS
+   Wax-sealed primary: it sits on a small shadow so it reads pressable, the
+   way the seal sits proud of the envelope.
+   -------------------------------------------------------------------------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--body);font-size:14.5px;font-weight:600;line-height:1;white-space:nowrap;
+  padding:12px 20px;border-radius:var(--r-pill);border:1.5px solid transparent;cursor:pointer;
+  transition:transform .16s,box-shadow .16s,background .16s,border-color .16s,color .16s}
+.btn svg{width:16px;height:16px;flex:none}
+.btn:disabled,.btn[aria-disabled="true"]{opacity:.45;pointer-events:none}
+
+.btn--wax{background:var(--wax);color:#fff;border-color:var(--wax);box-shadow:0 3px 0 rgba(142,88,82,.36)}
+.btn--wax:hover{background:var(--wax-dp);border-color:var(--wax-dp);transform:translateY(-1px);
+  box-shadow:0 4px 0 rgba(142,88,82,.36)}
+.btn--wax:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(142,88,82,.36)}
+
+.btn--ink{background:var(--ink);color:var(--cream);border-color:var(--ink);box-shadow:0 3px 0 rgba(58,50,43,.24)}
+.btn--ink:hover{transform:translateY(-1px);box-shadow:0 4px 0 rgba(58,50,43,.24)}
+.btn--ink:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(58,50,43,.24)}
+
+.btn--ghost{background:var(--paper);color:var(--ink);border-color:var(--line-2)}
+.btn--ghost:hover{border-color:var(--ink-2);background:var(--paper)}
+
+.btn--quiet{background:transparent;color:var(--ink-2);padding:8px 12px}
+.btn--quiet:hover{background:color-mix(in srgb,var(--kraft) 30%,transparent);color:var(--ink)}
+
+.btn--danger{background:transparent;color:var(--no);border-color:color-mix(in srgb,var(--no) 34%,transparent)}
+.btn--danger:hover{background:var(--no-bg);border-color:var(--no)}
+
+.btn--sm{padding:8px 14px;font-size:13px}
+.btn--sm svg{width:14px;height:14px}
+.btn--lg{padding:15px 30px;font-size:16px}
+.btn--block{display:flex;width:100%}
+.btn--icon{padding:9px;border-radius:var(--r-input)}
+.btn--icon svg{width:17px;height:17px}
+
+
+/* --------------------------------------------------------------------------
+   7. FORMS
+   -------------------------------------------------------------------------- */
+.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.field > .label{margin-bottom:1px}
+.req{color:var(--wax);margin-left:2px}
+.help{font-size:var(--t-xs);color:var(--ink-2);line-height:1.5}
+.err{font-size:var(--t-xs);color:var(--no);font-weight:600;display:flex;align-items:center;gap:5px}
+
+.input,.select,.textarea{width:100%;background:var(--cream);color:var(--ink);
+  border:1.5px solid var(--line-2);border-radius:var(--r-input);padding:11px 13px;font-size:14.5px;
+  transition:border-color .16s,background .16s,box-shadow .16s}
+.input:hover,.select:hover,.textarea:hover{border-color:var(--ink-3)}
+.input:focus,.select:focus,.textarea:focus{outline:none;background:var(--paper);border-color:var(--wax);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--wax) 16%,transparent)}
+.textarea{resize:vertical;min-height:96px;line-height:1.6}
+.select{appearance:none;padding-right:38px;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238C8075' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center}
+.field--err .input,.field--err .select,.field--err .textarea{border-color:var(--no);background:var(--no-bg)}
+
+.input-group{display:flex;align-items:stretch}
+.input-group .affix{display:flex;align-items:center;padding:0 12px;font-size:var(--t-sm);color:var(--ink-2);
+  background:color-mix(in srgb,var(--kraft) 24%,var(--cream));border:1.5px solid var(--line-2);
+  border-right:0;border-radius:var(--r-input) 0 0 var(--r-input);white-space:nowrap}
+.input-group .input{border-radius:0 var(--r-input) var(--r-input) 0}
+
+/* Check & radio: a hand-inked tick, not a system control. */
+.check{display:flex;align-items:flex-start;gap:11px;cursor:pointer;font-size:14.5px;line-height:1.5}
+.check input{appearance:none;width:19px;height:19px;flex:none;margin-top:1px;background:var(--cream);
+  border:1.5px solid var(--line-2);border-radius:5px;cursor:pointer;display:grid;place-items:center;
+  transition:background .16s,border-color .16s}
+.check input[type=radio]{border-radius:50%}
+.check input::after{content:'';width:10px;height:10px;transform:scale(0);transition:transform .16s cubic-bezier(.4,1.6,.5,1);
+  background:#fff;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center/contain no-repeat}
+.check input[type=radio]::after{width:8px;height:8px;border-radius:50%;-webkit-mask:none;mask:none}
+.check input:checked{background:var(--wax);border-color:var(--wax)}
+.check input:checked::after{transform:scale(1)}
+.check .sub{display:block;font-size:var(--t-xs);color:var(--ink-2);margin-top:2px}
+
+.switch{display:flex;align-items:center;gap:11px;cursor:pointer}
+.switch input{appearance:none;width:40px;height:23px;flex:none;background:var(--line-2);border-radius:var(--r-pill);
+  position:relative;cursor:pointer;transition:background .18s}
+.switch input::after{content:'';position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;
+  background:var(--paper);box-shadow:0 1px 3px rgba(58,50,43,.3);transition:transform .18s cubic-bezier(.4,1.5,.5,1)}
+.switch input:checked{background:var(--sage)}
+.switch input:checked::after{transform:translateX(17px)}
+
+/* Segmented control — used for yes / no / maybe and for filters. */
+.seg{display:inline-flex;background:color-mix(in srgb,var(--kraft) 22%,var(--cream));
+  border:1.5px solid var(--line);border-radius:var(--r-pill);padding:3px;gap:2px}
+.seg button{padding:7px 15px;border-radius:var(--r-pill);font-size:13.5px;font-weight:600;color:var(--ink-2);
+  transition:background .16s,color .16s,box-shadow .16s}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--paper);color:var(--ink);box-shadow:var(--e1)}
+
+.fieldset{border:0;display:flex;flex-direction:column;gap:var(--s3);align-items:stretch}
+/* A segmented control sizes to its options; a column fieldset would
+   otherwise stretch it across the whole form. */
+.fieldset > .seg{align-self:flex-start}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5)}
+.form-grid .span-2{grid-column:1/-1}
+
+
+/* --------------------------------------------------------------------------
+   8. THE POSTAL TRACK — this product's signature
+   A letter has exactly four states, and the product genuinely knows all four.
+   "Opened" is real: the envelope animation firing is an event we record.
+   So this is information, not ornament. It is the same vocabulary everywhere:
+       Written · Posted · Opened · Replied
+   -------------------------------------------------------------------------- */
+.track{display:flex;align-items:center;gap:0;--tw:var(--sage)}
+.track .stop{display:flex;align-items:center;gap:0}
+.track .tick{width:9px;height:9px;border-radius:50%;flex:none;background:var(--paper);
+  border:1.5px solid var(--line-2);transition:background .2s,border-color .2s}
+.track .seg-line{width:16px;height:1.5px;background:var(--line-2);flex:none}
+.track .stop.done .tick{background:var(--tw);border-color:var(--tw)}
+.track .stop.done .seg-line{background:var(--tw)}
+/* "now" marks where the letter has actually got to, so it rings the last
+   completed stop rather than replacing it. */
+.track .stop.now .tick{box-shadow:0 0 0 3px color-mix(in srgb,var(--tw) 24%,transparent)}
+.track--no{--tw:var(--no)}
+.track--wide .seg-line{width:34px}
+
+/* The aggregate version: one bar, four bands, real proportions. */
+.track-bar{display:flex;height:11px;border-radius:var(--r-pill);overflow:hidden;
+  background:var(--waiting-bg);border:1px solid var(--line)}
+.track-bar span{display:block;transition:width .5s cubic-bezier(.3,.9,.3,1)}
+.track-key{display:flex;flex-wrap:wrap;gap:var(--s4) var(--s5);margin-top:var(--s4)}
+.track-key div{display:flex;align-items:center;gap:8px;font-size:var(--t-sm);color:var(--ink-2)}
+.track-key i{width:9px;height:9px;border-radius:50%;flex:none}
+.track-key b{color:var(--ink);font-weight:600}
+
+/* Status pill. Postal words, not SaaS words. */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:var(--t-xs);font-weight:600;
+  padding:5px 11px;border-radius:var(--r-pill);white-space:nowrap;letter-spacing:.01em}
+.pill i{width:7px;height:7px;border-radius:50%;flex:none;background:currentColor}
+.pill--yes{background:var(--yes-bg);color:#5C6B50}
+.pill--no{background:var(--no-bg);color:#8E3F3A}
+.pill--maybe{background:var(--maybe-bg);color:#8A6620}
+.pill--waiting{background:var(--waiting-bg);color:#7C7266}
+.pill--draft{background:transparent;color:var(--ink-2);box-shadow:inset 0 0 0 1.5px var(--line-2)}
+
+
+/* --------------------------------------------------------------------------
+   9. LISTS & TABLES
+   Dense, quiet, zero tilt. This is desk.
+   -------------------------------------------------------------------------- */
+/* A scrolling table only contains itself if every ancestor is allowed to be
+   narrower than its content. Flex and grid children default to min-width:auto,
+   which lets a wide table push the whole page sideways.
+
+   position:relative matters as much: an absolutely positioned descendant with
+   no positioned ancestor — every .sr label inside these cells — otherwise
+   escapes to the initial containing block and drags the page sideways with it. */
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;min-width:0;
+  position:relative}
+.list{width:100%;font-size:14.5px}
+.list th{text-align:left;font-family:var(--body);font-size:var(--t-label);font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);
+  padding:var(--s3) var(--s5);border-bottom:var(--perf);white-space:nowrap;background:var(--paper)}
+.list td{padding:var(--s4) var(--s5);border-bottom:1px solid var(--line);vertical-align:middle}
+.list tbody tr:last-child td{border-bottom:0}
+.list tbody tr{transition:background .14s}
+.list tbody tr:hover{background:color-mix(in srgb,var(--kraft) 15%,transparent)}
+.list .r{text-align:right}
+.list .nowrap{white-space:nowrap}
+.list .who{display:flex;align-items:center;gap:11px;min-width:0}
+.list .who > span{min-width:0}
+.list .who .nm{display:block;font-weight:600;color:var(--ink);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list .who .sub{display:block;font-size:var(--t-xs);color:var(--ink-2);margin-top:1px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (hover:hover){
+  .list td .btn--quiet{opacity:0;transition:opacity .14s}
+  .list tr:hover td .btn--quiet,.list td .btn--quiet:focus-visible{opacity:1}
+}
+
+/* Avatar: a wax dot with an initial. Consistent with the brand mark. */
+.who-mark{width:32px;height:32px;flex:none;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--disp);font-size:14px;font-weight:600;color:#fff;
+  background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--wax) 56%,#fff),var(--wax));
+  box-shadow:inset 0 -1.5px 3px rgba(0,0,0,.2),inset 0 1.5px 3px rgba(255,255,255,.28)}
+.who-mark--sky{background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--sky) 56%,#fff),var(--sky))}
+.who-mark--sage{background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--sage) 56%,#fff),var(--sage))}
+.who-mark--ochre{background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--ochre) 56%,#fff),var(--ochre))}
+
+.toolbar{display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s6);
+  border-bottom:var(--perf);flex-wrap:wrap}
+.search{position:relative;flex:1;min-width:180px;max-width:340px}
+.search .input{padding-left:36px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;
+  color:var(--ink-2);pointer-events:none}
+
+
+/* --------------------------------------------------------------------------
+   10. TABS, CHIPS, BANNERS, EMPTY STATES
+   -------------------------------------------------------------------------- */
+.tabs{display:flex;gap:var(--s5);border-bottom:var(--perf);overflow-x:auto}
+.tabs a,.tabs button{padding:var(--s3) 2px var(--s4);font-size:14.5px;font-weight:600;color:var(--ink-2);
+  text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .16s,border-color .16s}
+.tabs a:hover,.tabs button:hover{color:var(--ink)}
+.tabs [aria-selected="true"],.tabs [aria-current="page"]{color:var(--ink);border-bottom-color:var(--wax)}
+
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:var(--t-xs);font-weight:600;
+  padding:5px 10px 5px 11px;border-radius:var(--r-pill);background:var(--cream);
+  border:1px solid var(--line-2);color:var(--ink-2)}
+.chip button{display:grid;place-items:center;width:15px;height:15px;border-radius:50%;color:var(--ink-2)}
+.chip button:hover{background:var(--line);color:var(--ink)}
+
+.banner{display:flex;gap:var(--s3);padding:var(--s4) var(--s5);border-radius:var(--r-input);
+  background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--sky);font-size:14px}
+.banner svg{width:18px;height:18px;flex:none;margin-top:1px;color:var(--sky)}
+.banner b{font-weight:600;color:var(--ink)}
+.banner--warn{border-left-color:var(--ochre)}
+.banner--warn svg{color:var(--ochre)}
+.banner--yes{border-left-color:var(--sage)}
+.banner--yes svg{color:var(--yes)}
+
+/* Empty state: an invitation to act, never an apology. */
+.empty{text-align:center;padding:var(--s10) var(--s6);max-width:420px;margin:0 auto}
+.empty .art{width:76px;height:76px;margin:0 auto var(--s5);color:var(--line-2)}
+.empty .h3{margin-bottom:8px}
+.empty p{color:var(--ink-2);font-size:14.5px;margin-bottom:var(--s5)}
+
+.toast{position:fixed;left:50%;bottom:var(--s7);transform:translateX(-50%);z-index:120;
+  display:flex;align-items:center;gap:11px;padding:13px 20px;border-radius:var(--r-pill);
+  background:var(--ink);color:var(--cream);font-size:14px;font-weight:500;box-shadow:var(--e4)}
+.toast svg{width:17px;height:17px;color:var(--sage)}
+
+
+/* --------------------------------------------------------------------------
+   11. THE TALLY
+   The host's headcount is not a KPI. It is the number they read out to a
+   caterer. So it is set as a tally sheet: one big figure, ruled, with the
+   qualifications a caterer actually asks for sitting right underneath.
+   -------------------------------------------------------------------------- */
+.tally{display:flex;align-items:baseline;gap:var(--s3);flex-wrap:wrap}
+.tally .fig{font-family:var(--disp);font-size:clamp(46px,6vw,66px);font-weight:600;line-height:.9;
+  letter-spacing:-.04em;color:var(--ink)}
+.tally .of{font-size:17px;color:var(--ink-2)}
+.tally-notes{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s5);margin-top:var(--s4);
+  padding-top:var(--s4);border-top:var(--perf);font-size:var(--t-sm);color:var(--ink-2)}
+.tally-notes b{color:var(--ink);font-weight:600}
+
+
+/* --------------------------------------------------------------------------
+   12. STAMP & POSTMARK — shared with the envelope
+   -------------------------------------------------------------------------- */
+.stamp{position:relative;background:var(--paper);padding:.5em;
+  filter:drop-shadow(0 .12em .3em rgba(0,0,0,.18));--pr:.4em;--pp:1.4em;
+  -webkit-mask:
+    radial-gradient(circle var(--pr) at 50% 0,#0000 98%,#000) 50% 0/var(--pp) var(--pp) repeat-x,
+    radial-gradient(circle var(--pr) at 50% 100%,#0000 98%,#000) 50% 100%/var(--pp) var(--pp) repeat-x,
+    radial-gradient(circle var(--pr) at 0 50%,#0000 98%,#000) 0 50%/var(--pp) var(--pp) repeat-y,
+    radial-gradient(circle var(--pr) at 100% 50%,#0000 98%,#000) 100% 50%/var(--pp) var(--pp) repeat-y,
+    linear-gradient(#000,#000) 50% 50%/calc(100% - var(--pp)) calc(100% - var(--pp)) no-repeat;
+          mask:
+    radial-gradient(circle var(--pr) at 50% 0,#0000 98%,#000) 50% 0/var(--pp) var(--pp) repeat-x,
+    radial-gradient(circle var(--pr) at 50% 100%,#0000 98%,#000) 50% 100%/var(--pp) var(--pp) repeat-x,
+    radial-gradient(circle var(--pr) at 0 50%,#0000 98%,#000) 0 50%/var(--pp) var(--pp) repeat-y,
+    radial-gradient(circle var(--pr) at 100% 50%,#0000 98%,#000) 100% 50%/var(--pp) var(--pp) repeat-y,
+    linear-gradient(#000,#000) 50% 50%/calc(100% - var(--pp)) calc(100% - var(--pp)) no-repeat}
+.stamp .in{width:100%;height:100%;border-radius:.08em;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(158deg,color-mix(in srgb,var(--sky) 55%,#fff),var(--sky))}
+.stamp .cty{position:absolute;top:.32em;left:0;right:0;text-align:center;font-size:.56em;font-weight:600;
+  letter-spacing:.14em;color:rgba(255,255,255,.96)}
+.stamp svg{width:56%;height:56%;color:#fff;margin-top:.5em}
+.stamp .val{position:absolute;left:.4em;bottom:.24em;font-family:var(--disp);font-size:.95em;font-weight:600;color:#fff;line-height:1}
+
+.postmark{position:relative;width:7.4em;height:7.4em;border-radius:50%;
+  border:.17em solid color-mix(in srgb,var(--wax) 68%,transparent);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transform:rotate(-12deg);text-align:center;pointer-events:none}
+.postmark .pm1{font-size:.74em;font-weight:600;letter-spacing:.16em;line-height:1.5;
+  color:color-mix(in srgb,var(--wax) 88%,transparent)}
+.postmark .pm2{font-size:.62em;letter-spacing:.12em;line-height:1.5;
+  color:color-mix(in srgb,var(--wax) 74%,transparent)}
+.postmark .rule{width:64%;height:.1em;margin:.22em 0;background:color-mix(in srgb,var(--wax) 52%,transparent);border:0}
+.postmark .bars{position:absolute;left:82%;top:32%;width:6.4em;height:2.3em;
+  background:repeating-linear-gradient(180deg,color-mix(in srgb,var(--wax) 50%,transparent) 0 .14em,transparent .14em .78em);
+  -webkit-mask:linear-gradient(90deg,#000 72%,transparent);mask:linear-gradient(90deg,#000 72%,transparent)}
+
+
+/* --------------------------------------------------------------------------
+   13. RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width:1100px){
+  .split{grid-template-columns:1fr}
+  .sticky{position:static}
+}
+@media (max-width:980px){
+  .app{grid-template-columns:1fr}
+  .rail{position:static;height:auto;flex-direction:row;align-items:center;overflow-x:auto;
+    border-right:0;border-bottom:var(--perf);padding:var(--s3) var(--s4)}
+  .rail-brand{padding:0 var(--s4) 0 var(--s2);font-size:20px}
+  .rail-grp{margin-top:0;display:flex;gap:var(--s1)}
+  .rail-grp .label{display:none}
+  .rail-ft{margin-top:0;margin-left:auto;padding-top:0;border-top:0;padding-left:var(--s4)}
+  .nav[aria-current="page"]{box-shadow:var(--e1),inset 0 -3px 0 var(--wax)}
+  .page{padding:var(--s6) var(--s5)}
+  .topbar{padding:var(--s3) var(--s5)}
+  .grid-3{grid-template-columns:1fr 1fr}
+}
+@media (max-width:680px){
+  .grid-2,.grid-3,.form-grid{grid-template-columns:1fr}
+  .page-hd{align-items:flex-start}
+  .desk-bd,.desk-hd,.toolbar{padding-left:var(--s5);padding-right:var(--s5)}
+  .list th,.list td{padding-left:var(--s4);padding-right:var(--s4)}
+  /* Give the trail its own line and drop the event from it — the rail already
+     says which event you are in, and truncating to "Gue…" helps nobody. */
+  .topbar{flex-wrap:wrap;padding-top:var(--s3);padding-bottom:var(--s3)}
+  .crumb{flex:1 0 100%}
+  .crumb a:nth-of-type(2),.crumb span:nth-of-type(2){display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+
+
+/* --------------------------------------------------------------------------
+   14. THE INVITATION & THE REPLY CARD
+   A wedding suite contains two pieces of paper: the invitation, and a small
+   response card the guest fills in and posts back. That second card is a
+   real artifact with a fixed, centuries-old form — the "M____" line, the
+   party count, accepts / regrets.
+
+   So the RSVP form is not a web form dressed up as one. It IS one: the
+   inputs are the blanks. What the guest types comes out in handwriting.
+   Underneath it is ordinary, labelled, keyboard-navigable HTML.
+   -------------------------------------------------------------------------- */
+
+.sheet{max-width:620px;margin:0 auto;padding:var(--s10) var(--s9) var(--s9)}
+.sheet-inner{position:absolute;inset:var(--s4);border:1.5px dashed color-mix(in srgb,var(--ink) 17%,transparent);
+  border-radius:9px;pointer-events:none}
+.sheet .eyebrow{font-size:var(--t-label);font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--sage) 82%,#000);text-align:center}
+.sheet .occasion{font-family:var(--hand);font-weight:600;font-size:clamp(34px,5.4vw,46px);
+  color:var(--wax);line-height:.95;text-align:center;margin-top:var(--s2)}
+.sheet .honouree{font-family:var(--disp);font-weight:600;font-size:clamp(38px,6.6vw,60px);
+  line-height:1.02;letter-spacing:-.03em;text-align:center;margin:var(--s3) 0 var(--s5)}
+
+/* The dot rule: the four brand colours, as the card's only ornament. */
+.dot-rule{display:flex;gap:9px;justify-content:center;margin:var(--s5) 0}
+.dot-rule i{width:8px;height:8px;border-radius:50%;display:block}
+
+/* Details set as a stationery block: label above, fact below, ruled apart. */
+.detail-block{display:grid;gap:var(--s5);margin-top:var(--s6)}
+.detail{display:grid;grid-template-columns:88px 1fr;gap:var(--s4);align-items:baseline;
+  padding-bottom:var(--s4);border-bottom:var(--perf-fine)}
+.detail:last-child{border-bottom:0;padding-bottom:0}
+.detail dt{font-size:var(--t-label);font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.detail dd{font-size:17px;line-height:1.5;color:var(--ink)}
+.detail dd .sub{display:block;font-size:var(--t-sm);color:var(--ink-2);margin-top:3px}
+.detail dd a{font-size:var(--t-sm)}
+
+/* --- the reply card ----------------------------------------------------- */
+.reply{position:relative;max-width:560px;margin:0 auto;padding:var(--s9) var(--s8) var(--s8)}
+/* Its top edge is torn from the invitation above it. */
+.reply-perf{display:flex;align-items:center;gap:var(--s4);max-width:560px;margin:0 auto;
+  color:var(--ink-3);font-size:var(--t-xs);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.reply-perf::before,.reply-perf::after{content:'';flex:1;border-top:var(--perf)}
+
+.reply .rsvp-mark{font-family:var(--disp);font-size:var(--t-h3);font-weight:600;letter-spacing:.3em;
+  text-transform:uppercase;text-align:center;color:var(--wax)}
+.reply .by{text-align:center;font-size:var(--t-sm);color:var(--ink-2);margin-top:6px}
+
+/* A blank on a printed card. The rule is the input's only border. */
+.blank{display:flex;align-items:baseline;gap:1px;margin-top:var(--s6)}
+.blank .m{font-family:var(--disp);font-size:22px;font-weight:600;color:var(--ink);flex:none;line-height:1}
+.ruled{flex:1;min-width:0;background:transparent;border:0;border-bottom:1.5px solid var(--line-2);
+  border-radius:0;padding:2px 4px 5px 2px;font-family:var(--hand);font-weight:600;font-size:26px;
+  line-height:1.1;color:var(--wax);transition:border-color .16s}
+.ruled::placeholder{font-family:var(--body);font-weight:400;font-size:14px;color:var(--ink-3)}
+.ruled:hover{border-bottom-color:var(--ink-3)}
+.ruled:focus{outline:none;border-bottom-color:var(--wax);box-shadow:0 1.5px 0 var(--wax)}
+
+/* accepts / declines, as ticked boxes on a card */
+.choices{display:grid;gap:2px;margin-top:var(--s6)}
+.choice{display:flex;align-items:center;gap:13px;padding:13px 14px;border-radius:var(--r-input);
+  cursor:pointer;transition:background .16s}
+.choice:hover{background:color-mix(in srgb,var(--kraft) 20%,transparent)}
+.choice input{appearance:none;width:22px;height:22px;flex:none;border:1.5px solid var(--line-2);
+  border-radius:4px;background:var(--cream);cursor:pointer;display:grid;place-items:center;
+  transition:border-color .16s,background .16s}
+.choice input::after{content:'';width:13px;height:13px;background:#fff;transform:scale(0) rotate(-12deg);
+  transition:transform .2s cubic-bezier(.4,1.7,.5,1);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E") center/contain no-repeat}
+.choice input:checked::after{transform:scale(1) rotate(-6deg)}
+.choice .txt{font-size:16.5px;line-height:1.35}
+.choice .txt .sub{display:block;font-size:var(--t-xs);color:var(--ink-2);margin-top:2px}
+.choice:has(input:checked){background:color-mix(in srgb,var(--sage) 15%,transparent)}
+.choice:has(input:checked) input{background:var(--yes);border-color:var(--yes)}
+.choice--no:has(input:checked){background:color-mix(in srgb,var(--no) 10%,transparent)}
+.choice--no:has(input:checked) input{background:var(--no);border-color:var(--no)}
+.choice--maybe:has(input:checked){background:color-mix(in srgb,var(--ochre) 12%,transparent)}
+.choice--maybe:has(input:checked) input{background:var(--maybe);border-color:var(--maybe)}
+
+/* A count, set as a stepper on a blank. */
+.stepper{display:inline-flex;align-items:center;gap:2px;border:1.5px solid var(--line-2);
+  border-radius:var(--r-pill);padding:3px;background:var(--cream)}
+.stepper button{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  color:var(--ink-2);font-size:17px;line-height:1;transition:background .16s,color .16s}
+.stepper button:hover{background:var(--paper);color:var(--ink)}
+.stepper input{width:40px;text-align:center;background:transparent;border:0;
+  font-family:var(--disp);font-size:19px;font-weight:600;color:var(--ink);
+  -moz-appearance:textfield}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+/* Ruled writing area. The lines are real: line-height matches the period. */
+.ruled-area{width:100%;border:0;background:transparent;resize:none;padding:0;
+  font-family:var(--hand);font-weight:600;font-size:22px;color:var(--wax);
+  line-height:34px;min-height:102px;
+  background-image:repeating-linear-gradient(transparent 0 33px,var(--line) 33px 34px);
+  background-attachment:local}
+.ruled-area::placeholder{font-family:var(--body);font-weight:400;font-size:14.5px;
+  line-height:34px;color:var(--ink-3)}
+.ruled-area:focus{outline:none;background-image:repeating-linear-gradient(transparent 0 33px,var(--line-2) 33px 34px)}
+
+/* Posted: the card is cancelled, exactly as the post office would. */
+.reply .cancel{position:absolute;right:6%;top:14%;width:7.4em;height:7.4em;font-size:15px;
+  opacity:0;transform:rotate(-12deg) scale(1.9);transition:opacity .5s ease,transform .55s cubic-bezier(.3,1.2,.4,1);
+  z-index:5}
+.reply.posted .cancel{opacity:1;transform:rotate(-12deg) scale(1)}
+.reply.posted .reply-form{opacity:.5;pointer-events:none;filter:saturate(.65)}
+
+
+/* --------------------------------------------------------------------------
+   15. EDITOR CONTROLS
+   Choosing wax and a seal die is picking a physical thing, so these controls
+   show the thing itself at the size it will be used. No colour names, no
+   dropdowns of words standing in for objects.
+   -------------------------------------------------------------------------- */
+.swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.sw{aspect-ratio:1;border-radius:50%;border:2px solid transparent;cursor:pointer;
+  box-shadow:0 0 0 1px rgba(0,0,0,.1),inset 0 -3px 6px rgba(0,0,0,.25),inset 0 3px 6px rgba(255,255,255,.35);
+  transition:transform .16s}
+.sw:hover{transform:scale(1.07)}
+.sw[aria-pressed="true"]{border-color:var(--ink);
+  box-shadow:0 0 0 1px rgba(0,0,0,.1),0 0 0 3px color-mix(in srgb,var(--wax) 34%,transparent)}
+
+.dies{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.die-btn{background:var(--cream);border:1.5px solid var(--line);border-radius:12px;padding:11px 4px 8px;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:.16s}
+.die-btn:hover{border-color:var(--rose)}
+.die-btn[aria-pressed="true"]{border-color:var(--wax);background:color-mix(in srgb,var(--wax) 11%,transparent)}
+.die-btn svg{width:32px;height:32px;color:var(--wax)}
+.die-btn span{font-size:var(--t-xs);color:var(--ink-2);line-height:1.2;text-align:center}
+
+/* A row of a repeatable list — registry links, guest fields, anything the
+   host adds one at a time. */
+.repeat-row{display:flex;align-items:center;gap:var(--s3);padding:var(--s3);border-radius:var(--r-input);
+  border:1px solid var(--line);background:var(--cream)}
+.repeat-row + .repeat-row{margin-top:var(--s2)}
+.repeat-row .grip{color:var(--ink-3);cursor:grab;flex:none;line-height:0}
+.repeat-row .grip svg{width:15px;height:15px}
+.repeat-row .input{background:var(--paper)}
+.repeat-row .lbl{flex:0 0 130px}
+.repeat-row .url{flex:1;min-width:0}
+@media(max-width:620px){
+  .repeat-row{flex-wrap:wrap}
+  .repeat-row .lbl{flex:1 1 100%}
+}
+
+
+/* --------------------------------------------------------------------------
+   16. DIALOG
+   -------------------------------------------------------------------------- */
+dialog{border:0;padding:0;max-width:min(560px,calc(100vw - 32px));width:100%;
+  background:var(--paper);border-radius:var(--r-card);box-shadow:var(--e4);color:var(--ink)}
+dialog::backdrop{background:rgba(58,50,43,.42);backdrop-filter:blur(3px)}
+dialog[open]{animation:dlg .24s cubic-bezier(.26,.9,.3,1)}
+@keyframes dlg{from{opacity:0;transform:translateY(12px) scale(.98)}}
+.dlg-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s4);
+  padding:var(--s6) var(--s6) var(--s4)}
+.dlg-hd p{font-size:var(--t-sm);color:var(--ink-2);margin-top:5px}
+.dlg-bd{padding:0 var(--s6) var(--s6)}
+.dlg-ft{display:flex;justify-content:flex-end;gap:var(--s3);padding:var(--s4) var(--s6);
+  border-top:var(--perf);background:color-mix(in srgb,var(--cream) 60%,var(--paper));
+  border-radius:0 0 var(--r-card) var(--r-card)}
+
+/* A drop target for a file. Dashed, because it is a place a thing goes. */
+.drop{border:2px dashed var(--line-2);border-radius:var(--r-card);padding:var(--s8) var(--s6);
+  text-align:center;background:var(--cream);transition:border-color .16s,background .16s}
+.drop:hover,.drop.over{border-color:var(--wax);background:color-mix(in srgb,var(--wax) 6%,var(--cream))}
+.drop svg{width:30px;height:30px;color:var(--ink-3);margin:0 auto var(--s3)}
+.drop .h3{margin-bottom:5px}
+.drop p{font-size:var(--t-sm);color:var(--ink-2)}
+
+/* Bulk action bar — appears only when rows are ticked. */
+.bulk{display:flex;align-items:center;gap:var(--s3);padding:var(--s3) var(--s6);
+  background:color-mix(in srgb,var(--butter) 34%,var(--paper));border-bottom:var(--perf);flex-wrap:wrap}
+.bulk .n{font-weight:600}
+
+
+/* --------------------------------------------------------------------------
+   17. THE TASK SHELL
+   Creating an event is a task, not a place, so it drops the rail. There is one
+   way out (save and finish later) and one way on. Same desk discipline.
+   -------------------------------------------------------------------------- */
+.task{min-height:100vh;display:flex;flex-direction:column}
+.task-bar{display:flex;align-items:center;gap:var(--s4);padding:var(--s4) var(--s7);
+  border-bottom:var(--perf);position:sticky;top:0;z-index:40;
+  background:color-mix(in srgb,var(--cream) 90%,transparent);backdrop-filter:blur(10px)}
+.task-bar .spacer{margin-left:auto}
+.task-main{flex:1;width:100%;max-width:1140px;margin:0 auto;padding:var(--s8) var(--s7) var(--s10)}
+.task-ft{position:sticky;bottom:0;background:color-mix(in srgb,var(--cream) 92%,transparent);
+  backdrop-filter:blur(10px);border-top:var(--perf);padding:var(--s4) var(--s7);
+  display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
+.task-ft .spacer{margin-left:auto}
+
+/* Progress. Completed segments are solid; the road ahead is still perforated,
+   because it hasn't been torn off yet. */
+.steps{display:flex;align-items:center;list-style:none;margin-bottom:var(--s8);
+  font-size:var(--t-sm);gap:0}
+.steps li{display:flex;align-items:center;gap:9px;color:var(--ink-3);white-space:nowrap}
+.steps li .dot{width:11px;height:11px;border-radius:50%;flex:none;background:var(--paper);
+  border:1.5px solid var(--line-2)}
+.steps li + li::before{content:'';width:clamp(20px,5vw,64px);height:0;flex:none;margin:0 14px;
+  border-top:var(--perf)}
+.steps li.done{color:var(--ink-2)}
+.steps li.done .dot{background:var(--sage);border-color:var(--sage)}
+.steps li.done + li::before{border-top:1.5px solid var(--sage)}
+.steps li.now{color:var(--ink);font-weight:600}
+.steps li.now .dot{background:var(--wax);border-color:var(--wax);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--wax) 22%,transparent)}
+@media(max-width:680px){
+  .steps li:not(.now) span{display:none}
+  .task-bar,.task-main,.task-ft{padding-left:var(--s5);padding-right:var(--s5)}
+}
+
+
+/* --------------------------------------------------------------------------
+   18. BLANK STATIONERY
+   An empty desk doesn't show an icon of an envelope. It shows what an empty
+   desk actually has on it: blank card stock, waiting to be written on.
+   -------------------------------------------------------------------------- */
+.blank-cards{display:grid;grid-template-columns:1fr 1fr;gap:var(--s6);max-width:520px;
+  margin:var(--s8) auto 0}
+.blank-card{position:relative;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:var(--s4);aspect-ratio:1/1.24;padding:var(--s6);
+  text-align:center;text-decoration:none;color:inherit;cursor:pointer;
+  background-image:var(--fibre),var(--grain),var(--fleck),
+    linear-gradient(168deg,var(--paper),color-mix(in srgb,var(--paper) 93%,var(--kraft)));
+  background-size:var(--pap-sz);background-repeat:var(--pap-rp);
+  border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--e2);
+  transition:transform .22s cubic-bezier(.26,.9,.3,1),box-shadow .22s}
+.blank-card:nth-child(1){transform:rotate(-1.4deg)}
+.blank-card:nth-child(2){transform:rotate(1.1deg)}
+.blank-card:hover,.blank-card:focus-visible{transform:rotate(0) translateY(-6px);box-shadow:var(--e3)}
+.blank-card::after{content:'';position:absolute;inset:11px;border:1.4px dashed
+  color-mix(in srgb,var(--ink) 15%,transparent);border-radius:9px;pointer-events:none}
+.blank-card .die{width:52px;height:52px;color:color-mix(in srgb,var(--wax) 52%,transparent)}
+.blank-card .nm{font-family:var(--disp);font-size:20px;font-weight:600;letter-spacing:-.02em}
+.blank-card .sub{font-size:var(--t-xs);color:var(--ink-2)}
+@media(max-width:560px){.blank-cards{grid-template-columns:1fr;max-width:280px}}
+
+
+/* --------------------------------------------------------------------------
+   19. ADDING PEOPLE
+   Typing forty names has to be bearable, so the add row never moves, never
+   opens a dialog, and hands focus straight back for the next one.
+   -------------------------------------------------------------------------- */
+.add-row{display:flex;align-items:center;gap:var(--s3);padding:var(--s4);
+  border:1.5px dashed var(--line-2);border-radius:var(--r-card);background:var(--cream);
+  transition:border-color .16s}
+.add-row:focus-within{border-color:var(--wax);background:var(--paper)}
+.add-row .mark{width:32px;height:32px;flex:none;border-radius:50%;display:grid;place-items:center;
+  color:var(--ink-3);border:1.5px dashed var(--line-2)}
+.add-row .mark svg{width:15px;height:15px}
+.add-row .nm{flex:1 1 44%;min-width:0}
+.add-row .contact{flex:1 1 44%;min-width:0}
+@media(max-width:620px){
+  .add-row{flex-wrap:wrap}
+  .add-row .mark{display:none}
+  .add-row .nm,.add-row .contact{flex:1 1 100%}
+  .add-row .btn{width:100%}
+}
+
+/* The list as it grows. Newest at the top, so you can see what you just typed. */
+.roster{margin-top:var(--s5);border-top:var(--perf)}
+.roster-row{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) var(--s2);
+  border-bottom:1px solid var(--line);animation:landed .3s cubic-bezier(.26,.9,.3,1)}
+@keyframes landed{from{opacity:0;transform:translateY(-6px)}}
+.roster-row .who{flex:1;min-width:0}
+.roster-row .nm{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.roster-row .sub{display:block;font-size:var(--t-xs);color:var(--ink-2);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.roster-row .sub.warn{color:var(--maybe);font-style:italic}
+.roster-count{display:flex;align-items:baseline;gap:9px;margin-top:var(--s5)}
+.roster-count .fig{font-family:var(--disp);font-size:26px;font-weight:600;letter-spacing:-.02em}
+.roster-count .of{font-size:var(--t-sm);color:var(--ink-2)}

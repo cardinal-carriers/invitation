@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Vellum system</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<style>
+.doc{display:grid;grid-template-columns:206px minmax(0,1fr);gap:var(--s9);
+  max-width:1240px;margin:0 auto;padding:var(--s8) var(--s7) var(--s11)}
+.toc{position:sticky;top:var(--s6);align-self:start;display:flex;flex-direction:column;gap:1px}
+.toc .label{padding:0 12px var(--s2)}
+.toc a{padding:7px 12px;border-radius:var(--r-input);font-size:14px;color:var(--ink-2);text-decoration:none}
+.toc a:hover{background:color-mix(in srgb,var(--kraft) 26%,transparent);color:var(--ink)}
+.doc > main{min-width:0}
+.doc-hd{border-bottom:var(--perf);padding-bottom:var(--s7);margin-bottom:var(--s8)}
+.sec{padding-top:var(--s9);scroll-margin-top:var(--s6)}
+.sec > .h2{margin-bottom:var(--s2)}
+.sec > .intro{color:var(--ink-2);max-width:var(--measure);margin-bottom:var(--s6)}
+.demo{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:var(--s6);box-shadow:var(--e1)}
+.demo + .demo{margin-top:var(--s4)}
+.demo-lbl{font-size:var(--t-label);font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:var(--s4)}
+
+.swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--s4)}
+.swatch .chip-c{height:64px;border-radius:10px;border:1px solid rgba(58,50,43,.09)}
+.swatch .n{font-size:13.5px;font-weight:600;margin-top:10px}
+.swatch .t{font-size:var(--t-xs);color:var(--ink-2);font-variant-numeric:tabular-nums}
+.swatch .u{font-size:var(--t-xs);color:var(--ink-3);margin-top:2px;line-height:1.4}
+
+.type-row{display:grid;grid-template-columns:120px 1fr;gap:var(--s5);align-items:baseline;
+  padding:var(--s5) 0;border-bottom:var(--perf-fine)}
+.type-row:last-child{border-bottom:0}
+.type-row .meta{font-size:var(--t-xs);color:var(--ink-2);line-height:1.5}
+.type-row .meta b{display:block;color:var(--ink);font-size:var(--t-label);font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase}
+
+.space-row{display:flex;align-items:center;gap:var(--s4);padding:7px 0;font-size:var(--t-xs);color:var(--ink-2)}
+.space-row .bar{height:14px;background:var(--rose);border-radius:3px;flex:none}
+.space-row .n{width:34px;font-weight:600;color:var(--ink)}
+
+.elev{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:var(--s5)}
+.elev div{background:var(--paper);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:var(--s5) var(--s4);text-align:center;font-size:var(--t-xs);color:var(--ink-2)}
+
+.vocab{width:100%;font-size:14.5px}
+.vocab th{text-align:left;font-size:var(--t-label);font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-2);padding-bottom:var(--s3);border-bottom:var(--perf)}
+.vocab td{padding:11px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.vocab td:first-child{font-weight:600;width:42%}
+.vocab td:last-child{color:var(--ink-3);text-decoration:line-through;
+  text-decoration-color:color-mix(in srgb,var(--no) 50%,transparent)}
+.vocab tr:last-child td{border-bottom:0}
+
+.rule-card{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5)}
+.rule-card > div{padding:var(--s6);border-radius:var(--r-card)}
+/* The demo has to show the difference, not just describe it. */
+.rule-card .paper{transform:rotate(-.7deg)}
+.rule-card .k{font-family:var(--disp);font-size:22px;font-weight:600;margin-bottom:var(--s2)}
+.rule-card p{font-size:14.5px;line-height:1.6}
+.rule-card ul{margin:var(--s3) 0 0 17px;font-size:var(--t-sm);color:var(--ink-2)}
+.rule-card li{margin:4px 0}
+@media(max-width:900px){
+  .doc{grid-template-columns:1fr;gap:var(--s6);padding:var(--s6) var(--s5) var(--s9)}
+  .toc{position:static;flex-direction:row;overflow-x:auto;padding-bottom:var(--s2)}
+  .toc .label{display:none}
+  .rule-card{grid-template-columns:1fr}
+  .type-row{grid-template-columns:1fr;gap:var(--s2)}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="doc">
+  <nav class="toc" aria-label="Sections">
+    <p class="label">The system</p>
+    <a href="#rule">The rule</a>
+    <a href="#colour">Colour</a>
+    <a href="#type">Type</a>
+    <a href="#space">Space &amp; depth</a>
+    <a href="#buttons">Buttons</a>
+    <a href="#forms">Forms</a>
+    <a href="#track">The postal track</a>
+    <a href="#data">Lists &amp; numbers</a>
+    <a href="#feedback">Feedback</a>
+    <a href="#words">Words</a>
+    <a href="#files">Files</a>
+  </nav>
+
+  <main id="main">
+    <header class="doc-hd">
+      <span class="tag">Design system · locked</span>
+      <h1 class="display" style="margin-top:var(--s5)">Paper &amp; Ribbon,<br>
+        <span class="hand" style="font-size:.82em">made operable.</span></h1>
+      <p class="lede" style="margin-top:var(--s5)">
+        The visual direction was chosen in Phase 0 and the opening animation was settled
+        after it. This page is what happens when that direction has to survive a form,
+        a table of 148 rows and a destructive confirmation — and the one rule that
+        keeps it whole.
+      </p>
+    </header>
+
+    <!-- ---------- the rule ---------- -->
+    <section class="sec" id="rule">
+      <h2 class="h2">The rule</h2>
+      <p class="intro">
+        Everything in this product is one of two things, and the two never mix.
+        If you can only remember one thing from this page, remember this one.
+      </p>
+      <div class="rule-card">
+        <div class="paper">
+          <p class="k">Paper is content</p>
+          <p>A real artifact: the invitation, the envelope, a card preview, the reply card.
+             Textured, warm, tilted where a hand would tilt it.</p>
+          <ul>
+            <li>Fraunces for display, Caveat for what a person wrote</li>
+            <li>Grain, fibre and fleck; wax; deckled edges</li>
+            <li>Guest-facing, or a preview of something guest-facing</li>
+          </ul>
+        </div>
+        <div class="desk">
+          <p class="k">Desk is chrome</p>
+          <p>The workbench the host operates: nav, tables, forms, dialogs. Same palette
+             and same typefaces, but flat and quiet.</p>
+          <ul>
+            <li>No tilt. No texture. No handwriting, ever</li>
+            <li>Karla, dense and legible at 148 rows</li>
+            <li>Gets out of the way of the thing being made</li>
+          </ul>
+        </div>
+      </div>
+      <p class="banner" style="margin-top:var(--s5)" data-icon="info">
+        <span>The two are literal CSS classes — <b>.paper</b> and <b>.desk</b> — so the rule
+        is something you apply, not something you remember.</span>
+      </p>
+    </section>
+
+    <!-- ---------- colour ---------- -->
+    <section class="sec" id="colour">
+      <h2 class="h2">Colour</h2>
+      <p class="intro">
+        Warm neutrals carry the page; the accents are the four things on a real envelope —
+        wax, postage, a sprig of green, and the paper lining. Nothing here is a
+        brand colour looking for a job.
+      </p>
+      <div class="demo">
+        <p class="demo-lbl">Paper &amp; ink</p>
+        <div class="swatch-grid" id="sw-paper"></div>
+      </div>
+      <div class="demo">
+        <p class="demo-lbl">Accents</p>
+        <div class="swatch-grid" id="sw-accent"></div>
+      </div>
+      <div class="demo">
+        <p class="demo-lbl">Reply states</p>
+        <div class="swatch-grid" id="sw-state"></div>
+      </div>
+    </section>
+
+    <!-- ---------- type ---------- -->
+    <section class="sec" id="type">
+      <h2 class="h2">Type</h2>
+      <p class="intro">
+        Three faces, three jobs, no overlap. Fraunces sets anything that is a name or a
+        number worth reading. Karla does all the work. Caveat appears only where a
+        human being actually wrote something.
+      </p>
+      <div class="demo">
+        <div class="type-row">
+          <p class="meta"><b>Display</b>Fraunces 400<br>clamp 38–64px<br>−.03em</p>
+          <p class="display">Post the letters</p>
+        </div>
+        <div class="type-row">
+          <p class="meta"><b>H1</b>Fraunces 400<br>clamp 28–40px</p>
+          <p class="h1">96 have written back</p>
+        </div>
+        <div class="type-row">
+          <p class="meta"><b>H3</b>Fraunces 600<br>18px</p>
+          <p class="h3">Where the letter is</p>
+        </div>
+        <div class="type-row">
+          <p class="meta"><b>Body</b>Karla 400<br>15px / 1.6</p>
+          <p style="max-width:var(--measure)">Only guests who haven't replied get these,
+            and nobody gets more than two.</p>
+        </div>
+        <div class="type-row">
+          <p class="meta"><b>Label</b>Karla 600<br>11px / .16em caps</p>
+          <p class="label">Where the 148 letters are</p>
+        </div>
+        <div class="type-row">
+          <p class="meta"><b>Hand</b>Caveat 600<br>guest writing only</p>
+          <p class="hand" style="font-size:24px">Wouldn't miss it. Bringing the lemon cake.</p>
+        </div>
+        <div class="type-row">
+          <p class="meta"><b>Number</b>Fraunces 600<br>tabular</p>
+          <p class="num" style="font-size:40px">84 · 148 · $18</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- space ---------- -->
+    <section class="sec" id="space">
+      <h2 class="h2">Space &amp; depth</h2>
+      <p class="intro">
+        A 4px base. Shadows are warm brown and never neutral grey, because everything
+        here casts its shadow onto paper.
+      </p>
+      <div class="demo">
+        <p class="demo-lbl">Scale</p>
+        <div id="spaces"></div>
+      </div>
+      <div class="demo">
+        <p class="demo-lbl">Elevation</p>
+        <div class="elev">
+          <div style="box-shadow:var(--e1)">--e1<br>resting</div>
+          <div style="box-shadow:var(--e2)">--e2<br>lifted</div>
+          <div style="box-shadow:var(--e3)">--e3<br>paper</div>
+          <div style="box-shadow:var(--e4)">--e4<br>above everything</div>
+        </div>
+      </div>
+      <div class="demo">
+        <p class="demo-lbl">The perforation</p>
+        <p class="body-sm muted" style="margin-bottom:var(--s4);max-width:var(--measure)">
+          Every division in this product is dashed, because a dashed rule is a tear line
+          and everything here is something that could be torn off — a reply card, a
+          receipt, a stub. It is the one structural motif, and it does all the dividing.
+        </p>
+        <hr class="rule">
+        <p class="body-sm muted">--perf, on section edges, table headers and card footers.</p>
+      </div>
+    </section>
+
+    <!-- ---------- buttons ---------- -->
+    <section class="sec" id="buttons">
+      <h2 class="h2">Buttons</h2>
+      <p class="intro">
+        One primary per screen, in wax. It sits on a small hard shadow, the way a seal
+        sits proud of an envelope, and presses down when clicked.
+      </p>
+      <div class="demo">
+        <div class="row">
+          <button class="btn btn--wax" data-icon="send">Post 23 letters</button>
+          <button class="btn btn--ink">Add to calendar</button>
+          <button class="btn btn--ghost" data-icon="eye">Preview</button>
+          <button class="btn btn--quiet">Export</button>
+          <button class="btn btn--danger" data-icon="trash">Close my account</button>
+          <button class="btn btn--wax" aria-disabled="true">Choose who gets one</button>
+        </div>
+        <hr class="rule">
+        <div class="row">
+          <button class="btn btn--wax btn--lg">Large</button>
+          <button class="btn btn--ghost">Default</button>
+          <button class="btn btn--ghost btn--sm">Small</button>
+          <button class="btn btn--ghost btn--icon" data-icon="dots" aria-label="More"></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- forms ---------- -->
+    <section class="sec" id="forms">
+      <h2 class="h2">Forms</h2>
+      <p class="intro">
+        Labels are always visible and always above. Help text explains a consequence, not
+        a format. A field that asks for something private says what it is for.
+      </p>
+      <div class="demo">
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="d1">Event name<span class="req">*</span></label>
+            <input class="input" id="d1" value="A baby shower for Amara">
+            <p class="help">Guests never see this.</p>
+          </div>
+          <div class="field field--err">
+            <label class="label" for="d2">Reply by</label>
+            <input class="input" id="d2" value="2026-06-01">
+            <p class="err"><span data-icon="alert"></span>That's after the event.</p>
+          </div>
+          <div class="field span-2">
+            <label class="label" for="d3">Time zone</label>
+            <select class="select" id="d3"><option>Eastern — Toronto, Ottawa, New York</option></select>
+          </div>
+          <div class="field span-2">
+            <label class="label" for="d4">A note to your guests</label>
+            <textarea class="textarea" id="d4">Brunch, cake, and one very silly game.</textarea>
+          </div>
+        </div>
+        <hr class="rule">
+        <div class="fieldset">
+          <label class="check"><input type="checkbox" checked>
+            <span>Ask for the plus-one's name</span></label>
+          <label class="check"><input type="radio" name="demo" checked>
+            <span>Tell me straight away<span class="sub">One email per reply</span></span></label>
+          <label class="switch"><input type="checkbox" checked><span>Send reminders automatically</span></label>
+        </div>
+        <hr class="rule">
+        <div class="seg" role="group" aria-label="Demo">
+          <button type="button" aria-pressed="true">Everyone</button>
+          <button type="button" aria-pressed="false">Not sent</button>
+          <button type="button" aria-pressed="false">No reply</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- the track ---------- -->
+    <section class="sec" id="track">
+      <h2 class="h2">The postal track</h2>
+      <p class="intro">
+        A letter has four states and this product genuinely knows all four — including
+        <b>opened</b>, because the envelope animation firing is an event we record. So the
+        track carries information, not decoration. It is the same four words everywhere:
+        written, posted, opened, replied.
+      </p>
+      <div class="demo">
+        <p class="demo-lbl">One letter</p>
+        <div id="tracks"></div>
+      </div>
+      <div class="demo">
+        <p class="demo-lbl">All of them</p>
+        <div class="track-bar">
+          <span style="width:64.9%;background:var(--yes)"></span>
+          <span style="width:20.9%;background:var(--sky)"></span>
+          <span style="width:14.2%;background:var(--line-2)"></span>
+        </div>
+        <div class="track-key">
+          <div><i style="background:var(--yes)"></i><b>96</b> replied</div>
+          <div><i style="background:var(--sky)"></i><b>31</b> opened, no reply yet</div>
+          <div><i style="background:var(--line-2)"></i><b>21</b> not opened</div>
+        </div>
+      </div>
+      <div class="demo">
+        <p class="demo-lbl">States, as a guest's answer</p>
+        <div class="row">
+          <span class="pill pill--yes"><i></i>Coming</span>
+          <span class="pill pill--no"><i></i>Can't come</span>
+          <span class="pill pill--maybe"><i></i>Hoping to</span>
+          <span class="pill pill--waiting"><i></i>Opened, no reply yet</span>
+          <span class="pill pill--draft">Draft</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- data ---------- -->
+    <section class="sec" id="data">
+      <h2 class="h2">Lists &amp; numbers</h2>
+      <p class="intro">
+        The host's headcount isn't a metric on a dashboard — it's the number they read
+        out to a caterer. So it's set as a tally, with the qualifications a caterer
+        actually asks about sitting directly underneath it.
+      </p>
+      <div class="demo">
+        <p class="tally"><span class="fig">84</span><span class="of">coming, of 148 invited</span></p>
+        <p class="tally-notes">
+          <span><b>9</b> can't make it</span><span><b>3</b> hoping to</span>
+          <span><b>52</b> yet to reply</span><span><b>2</b> plus-ones unnamed</span>
+        </p>
+      </div>
+      <div class="demo" style="padding:0;overflow:hidden">
+        <div class="table-scroll">
+        <table class="list">
+          <thead><tr><th scope="col">Guest</th><th scope="col">Party</th>
+            <th scope="col">Where the letter is</th><th scope="col">Reply</th></tr></thead>
+          <tbody>
+            <tr><td><div class="who"><span class="who-mark">E</span>
+              <span><span class="nm">Eleanor Vance</span><span class="sub">eleanor@vance.ca</span></span>
+              </div></td><td>2</td><td id="t-row-1"></td>
+              <td><span class="pill pill--yes"><i></i>Coming</span></td></tr>
+            <tr><td><div class="who"><span class="who-mark who-mark--sky">H</span>
+              <span><span class="nm">Hana Kobayashi</span><span class="sub">hana.k@icloud.com</span></span>
+              </div></td><td>2</td><td id="t-row-2"></td>
+              <td><span class="pill pill--waiting"><i></i>Opened, no reply yet</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- feedback ---------- -->
+    <section class="sec" id="feedback">
+      <h2 class="h2">Feedback</h2>
+      <p class="intro">
+        An error says what happened and what fixes it. An empty screen is an invitation
+        to act, not an apology. A confirmation uses the same verb as the button that
+        caused it.
+      </p>
+      <div class="demo">
+        <div class="stack" style="gap:var(--s4)">
+          <p class="banner" data-icon="info"><span>We'll match <b>name</b>, <b>email</b> and
+            <b>phone</b> columns by their headers.</span></p>
+          <p class="banner banner--warn" data-icon="alert"><span><b>Two guests have no way to
+            receive a letter.</b> <a href="guests.html">Add their details</a>.</span></p>
+          <p class="banner banner--yes" data-icon="check"><span>23 letters are on their way.</span></p>
+        </div>
+        <hr class="rule">
+        <div class="empty">
+          <svg class="art" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
+               aria-hidden="true"><rect x="2" y="5" width="20" height="15" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+          <h3 class="h3">No guests yet</h3>
+          <p>Add them one at a time, or bring in a spreadsheet you already have.</p>
+          <button class="btn btn--wax" data-icon="plus">Add your first guest</button>
+        </div>
+        <hr class="rule">
+        <div class="row">
+          <button class="btn btn--ghost btn--sm" onclick="toast('23 letters posted')">Show a confirmation</button>
+          <button class="btn btn--ghost btn--sm" onclick="document.getElementById('demoDlg').showModal()">
+            Show a dialog</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- words ---------- -->
+    <section class="sec" id="words">
+      <h2 class="h2">Words</h2>
+      <p class="intro">
+        The product speaks postal, not SaaS. This isn't decoration: "opened" is more
+        precise than "viewed", "can't come" is kinder and shorter than "declined", and a
+        host who thinks in letters makes better decisions than one thinking in campaigns.
+        Use the left column everywhere — in the interface, in emails, in support replies.
+      </p>
+      <div class="demo">
+        <div class="table-scroll">
+        <table class="vocab">
+          <thead><tr><th scope="col">We say</th><th scope="col">Never</th></tr></thead>
+          <tbody>
+            <tr><td>Desk</td><td>Dashboard</td></tr>
+            <tr><td>Letter</td><td>Invitation email</td></tr>
+            <tr><td>Post the letters</td><td>Send campaign</td></tr>
+            <tr><td>In the post</td><td>Sent / Delivered</td></tr>
+            <tr><td>Opened</td><td>Viewed / Impressions</td></tr>
+            <tr><td>Replied</td><td>Responded / RSVP'd</td></tr>
+            <tr><td>Yet to reply</td><td>Pending / Awaiting response</td></tr>
+            <tr><td>Coming · Can't come · Hoping to</td><td>Accepted / Declined / Tentative</td></tr>
+            <tr><td>Guest list</td><td>Contacts / Recipients / Audience</td></tr>
+            <tr><td>Nudge the 52</td><td>Trigger reminder sequence</td></tr>
+            <tr><td>Comes with</td><td>Plus-one field</td></tr>
+            <tr><td>Needs</td><td>Dietary restrictions / Accessibility requirements</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- files ---------- -->
+    <section class="sec" id="files">
+      <h2 class="h2">Files</h2>
+      <p class="intro">Six files, no build step. Open any page straight from disk.</p>
+      <div class="demo" style="padding:0;overflow:hidden">
+        <div class="table-scroll">
+        <table class="list">
+          <tbody>
+            <tr><td><span class="nm">vellum.css</span></td>
+              <td class="muted">Tokens and every component. The Phase 1 source of truth.</td></tr>
+            <tr><td><span class="nm">envelope.css</span></td>
+              <td class="muted">The opening, inherited unchanged from the Phase 0 study.</td></tr>
+            <tr><td><span class="nm">envelope.js</span></td>
+              <td class="muted"><code>Envelope.mount(el, opts)</code> — becomes a React component.</td></tr>
+            <tr><td><span class="nm">dies.js</span></td>
+              <td class="muted">Seal dies as SVG symbols. One path each.</td></tr>
+            <tr><td><span class="nm">app.js</span></td>
+              <td class="muted">The rail, the icon set, tabs, toasts, selection.</td></tr>
+            <tr><td><span class="nm">*.html</span></td>
+              <td class="muted">One file per screen. Demo data lives at the bottom of each.</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+      <p class="banner" style="margin-top:var(--s5)" data-icon="info">
+        <span>Every screen is here: <a href="dashboard.html">desk</a>,
+        <a href="event.html">invitation</a>, <a href="guests.html">guest list</a>,
+        <a href="send.html">send</a>, <a href="rsvps.html">replies</a>,
+        <a href="settings.html">settings</a>, and the one that matters —
+        <a href="invite.html">the guest's letter</a>.</span>
+      </p>
+    </section>
+  </main>
+</div>
+
+<dialog id="demoDlg" aria-labelledby="dd-h">
+  <div class="dlg-hd">
+    <div><h2 class="h3" id="dd-h">Post 23 letters?</h2>
+      <p>They go to 21 email addresses and 2 phone numbers, starting now.
+         A letter can't be unsent.</p></div>
+  </div>
+  <div class="dlg-ft">
+    <button class="btn btn--ghost" onclick="this.closest('dialog').close()">Not yet</button>
+    <button class="btn btn--wax" onclick="this.closest('dialog').close();toast('23 letters posted')">Post them</button>
+  </div>
+</dialog>
+
+<script src="app.js"></script>
+<script>
+/* Swatches read their values off the stylesheet, so this page can never drift
+   from the tokens it documents. */
+const css = getComputedStyle(document.documentElement);
+const hex = v => css.getPropertyValue(v).trim();
+
+const SETS = {
+  'sw-paper': [
+    ['--cream','App background'], ['--paper','Raised surfaces'], ['--kraft','Envelope paper'],
+    ['--liner','Flap liner, interior'], ['--ink','Primary text'], ['--ink-2','Labels, secondary'],
+    ['--ink-3','Placeholders, disabled'], ['--line','Hairlines'], ['--line-2','Input borders']
+  ],
+  'sw-accent': [
+    ['--wax','Primary action, the seal'], ['--wax-dp','Pressed'], ['--rose','Wax, tinted'],
+    ['--sky','Postage'], ['--sage','Affirmative'], ['--butter','Tag stock'], ['--ochre','Butter, at text contrast']
+  ],
+  'sw-state': [
+    ['--yes','Coming'], ['--no',"Can't come"], ['--maybe','Hoping to'], ['--waiting','Yet to reply']
+  ]
+};
+Object.entries(SETS).forEach(([id, list]) => {
+  document.getElementById(id).innerHTML = list.map(([v, use]) => `
+    <div class="swatch">
+      <div class="chip-c" style="background:var(${v})"></div>
+      <p class="n">${v}</p><p class="t">${hex(v)}</p><p class="u">${use}</p>
+    </div>`).join('');
+});
+
+/* Spacing scale, drawn at its real size. */
+document.getElementById('spaces').innerHTML =
+  [1,2,3,4,5,6,7,8,9,10,11].map(i => {
+    const v = hex('--s' + i);
+    return `<div class="space-row"><span class="n">s${i}</span>
+      <span class="bar" style="width:${v}"></span><span>${v}</span></div>`;
+  }).join('');
+
+/* The track, at each of its four states. */
+const STOPS = ['Written, not sent','In the post','Opened, no reply yet','Replied'];
+function track(idx, tone){
+  const stops = STOPS.map((_, i) => {
+    const cls = [i <= idx ? 'done' : '', i === idx && idx < 3 ? 'now' : ''].filter(Boolean).join(' ');
+    return `<span class="stop ${cls}">${i ? '<span class="seg-line"></span>' : ''}<span class="tick"></span></span>`;
+  }).join('');
+  return `<span class="track${tone ? ' track--' + tone : ''}" role="img"
+    aria-label="${STOPS[idx]}">${stops}</span>`;
+}
+document.getElementById('tracks').innerHTML = STOPS.map((label, i) => `
+  <div class="row" style="gap:var(--s5);padding:9px 0">
+    ${track(i)}<span class="body-sm muted">${label}</span>
+  </div>`).join('') + `
+  <div class="row" style="gap:var(--s5);padding:9px 0">
+    ${track(3, 'no')}<span class="body-sm muted">Replied, but can't come</span>
+  </div>`;
+document.getElementById('t-row-1').innerHTML = track(3);
+document.getElementById('t-row-2').innerHTML = track(2);
+</script>
+</body>
+</html>

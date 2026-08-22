@@ -1,0 +1,61 @@
+rules_version = '2';
+
+/* ==========================================================================
+   This file IS the access model. There is nothing else protecting the data.
+
+   Paste it into Firebase Console → Firestore → Rules → Publish, and keep this
+   copy in step with what is deployed. Verify with the Rules Playground and
+   the curl checks in docs/mvp-plan.md §5.6 before sharing the link.
+
+   Create the database in PRODUCTION mode. Test mode opens every document to
+   the world for 30 days.
+   ========================================================================== */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function event() {
+      return get(/databases/$(database)/documents/events/shower).data;
+    }
+    function isHost() {
+      return request.auth != null && request.auth.uid == event().hostUid;
+    }
+
+    match /events/{eventId} {
+      // Anyone may read a published invitation. That is the invitation itself.
+      allow read: if resource.data.published == true || isHost();
+
+      // Only the host may edit, and may not hand the event to someone else.
+      allow update: if request.auth != null
+                    && request.auth.uid == resource.data.hostUid
+                    && request.resource.data.hostUid == resource.data.hostUid;
+
+      // There is exactly one event and it is created by hand in the console.
+      allow create, delete: if false;
+    }
+
+    match /rsvps/{rsvpId} {
+      // Anyone may reply to a published invitation, with a well-formed document.
+      allow create: if event().published == true
+        && request.resource.data.keys().hasOnly(
+             ['eventId','name','others','attending','note','createdAt'])
+        && request.resource.data.eventId == 'shower'
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.others is list
+        && request.resource.data.others.size() <= 10
+        && request.resource.data.attending is bool
+        && (request.resource.data.note == null ||
+            (request.resource.data.note is string &&
+             request.resource.data.note.size() <= 500))
+        && request.resource.data.createdAt is timestamp;
+
+      // Only the host reads replies. Guests never see each other.
+      allow read, delete: if isHost();
+
+      // Nobody edits a reply, including its author.
+      allow update: if false;
+    }
+  }
+}

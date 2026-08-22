@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A letter for Eleanor · Vellum</title>
+<meta name="description" content="Amara and Theo have sent you an invitation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<link rel="stylesheet" href="envelope.css">
+<script>document.documentElement.dataset.js='1'</script>
+<style>
+/* ------------------------------------------------------------------
+   GUEST — /i/[token]
+   No account, no nav, no product chrome. One letter, addressed to one
+   person. The only thing on screen is the thing they were sent.
+   ------------------------------------------------------------------ */
+body{background-image:
+  radial-gradient(circle at 18% 12%,rgba(216,155,148,.09),transparent 44%),
+  radial-gradient(circle at 84% 26%,rgba(159,186,203,.10),transparent 42%),
+  radial-gradient(circle at 58% 92%,rgba(168,183,154,.09),transparent 46%);
+  background-attachment:fixed}
+
+.stage{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:var(--s8) var(--s5) var(--s9);text-align:center}
+.from{font-size:var(--t-label);font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ink-2);margin-bottom:var(--s6)}
+.scene{cursor:pointer}
+.scene:focus-visible{outline:2px solid var(--wax);outline-offset:14px;border-radius:12px}
+.open-hint{display:flex;align-items:center;gap:10px;margin-top:var(--s5);
+  font-family:var(--hand);font-weight:600;font-size:25px;color:var(--wax)}
+.open-hint svg{width:34px;height:24px;overflow:visible}
+.open-hint path{stroke:var(--wax);stroke-width:1.7;fill:none;stroke-linecap:round}
+@keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+.open-hint{animation:nudge 2.4s ease-in-out infinite}
+body.opened .open-hint{display:none}
+html:not([data-js]) .stage{display:none}
+/* The scene reserves the height the card needs to rise into, so a sealed
+   envelope naturally sits low. On a tall screen there is slack to spend
+   bringing it back towards the optical centre; on a short one there isn't,
+   and clipping the card would cost more than the centring is worth. */
+@media (min-height:880px){ .stage .scene{margin-top:-9vh} }
+
+.replay{display:none;margin-top:var(--s5)}
+body.opened .replay{display:inline-flex}
+
+/* The letter is sealed until the envelope is opened. Without JS it is
+   simply there — a guest never loses the invitation to a script. */
+.letter{padding:0 var(--s5) var(--s11)}
+[data-js] body:not(.opened) .letter{opacity:0;transform:translateY(26px);visibility:hidden;
+  height:0;padding:0;overflow:hidden}
+.letter{transition:opacity .7s ease .1s,transform .7s cubic-bezier(.26,.9,.3,1) .1s}
+
+.sheet{padding:var(--s10) clamp(24px,6vw,56px) var(--s9)}
+.host-note{margin-top:var(--s6);padding-top:var(--s6);border-top:var(--perf-fine);
+  font-size:16.5px;line-height:1.7;color:var(--ink);text-align:center}
+.host-note .sig{display:block;font-family:var(--hand);font-weight:600;font-size:27px;
+  color:var(--wax);margin-top:var(--s4);line-height:1}
+.sheet-actions{display:flex;gap:var(--s3);justify-content:center;flex-wrap:wrap;margin-top:var(--s7)}
+
+.gifts{max-width:620px;margin:var(--s7) auto 0;padding:var(--s6)}
+.gift{display:flex;align-items:center;gap:var(--s4);padding:13px var(--s3);border-radius:var(--r-input);
+  text-decoration:none;color:inherit;transition:background .16s}
+.gift:hover{background:color-mix(in srgb,var(--kraft) 22%,transparent)}
+.gift .nm{display:block;font-weight:600;font-size:15px;line-height:1.3}
+.gift .sub{display:block;font-size:var(--t-xs);color:var(--ink-2);margin-top:2px}
+.gift .txt{flex:1;min-width:0}
+.gift svg{width:16px;height:16px;margin-left:auto;color:var(--ink-2);flex:none}
+
+.reply-perf{margin:var(--s9) auto var(--s5)}
+.party{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);
+  margin-top:var(--s6);padding-top:var(--s5);border-top:var(--perf-fine);flex-wrap:wrap}
+.party .q{font-size:16px}
+.extra{margin-top:var(--s6)}
+.extra > * + *{margin-top:var(--s2)}
+.reply-actions{margin-top:var(--s7);display:flex;flex-direction:column;align-items:center;gap:var(--s3)}
+.posted-line{display:none;text-align:center;max-width:560px;margin:var(--s6) auto 0}
+.reply.posted ~ .posted-line{display:block}
+
+.foot{text-align:center;margin-top:var(--s9);font-size:var(--t-xs);color:var(--ink-3)}
+.foot a{color:var(--ink-2)}
+@media(max-width:560px){
+  .sheet{padding:var(--s8) var(--s5) var(--s7)}
+  .reply{padding:var(--s8) var(--s5) var(--s7)}
+  .detail{grid-template-columns:1fr;gap:4px}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#letter">Skip to the invitation</a>
+
+<!-- ============ the envelope, addressed to one person ============ -->
+<div class="stage">
+  <p class="from">From Amara &amp; Theo</p>
+
+  <div class="scene" id="sc" role="button" tabindex="0" aria-expanded="false"
+       aria-label="Open your envelope"></div>
+
+  <p class="open-hint">
+    <svg viewBox="0 0 34 24" aria-hidden="true"><path d="M2 2c6 9 14 14 27 15"/><path d="M23 13l6 4-2 6"/></svg>
+    Tap to open
+  </p>
+  <button class="btn btn--ghost btn--sm replay" id="replay">Play it again</button>
+</div>
+
+<!-- ============ the invitation ============ -->
+<main class="letter" id="letter">
+
+  <article class="paper sheet">
+    <div class="sheet-inner" aria-hidden="true"></div>
+    <p class="eyebrow">Please join us for</p>
+    <p class="occasion">a baby shower</p>
+    <h1 class="honouree">honouring<br>Amara</h1>
+    <div class="dot-rule" aria-hidden="true">
+      <i style="background:var(--wax)"></i><i style="background:var(--sky)"></i>
+      <i style="background:var(--sage)"></i><i style="background:var(--liner)"></i>
+    </div>
+
+    <dl class="detail-block">
+      <div class="detail">
+        <dt>When</dt>
+        <dd>Saturday 9 May 2026, 2:00 pm
+          <span class="sub">Through to about five o'clock</span></dd>
+      </div>
+      <div class="detail">
+        <dt>Where</dt>
+        <dd>14 Thornbury Lane<br>Ottawa, ON&nbsp; K1N 6N5
+          <span class="sub">Street parking on Thornbury; the side gate is open</span></dd>
+      </div>
+      <div class="detail">
+        <dt>Reply by</dt>
+        <dd>Saturday 25 April<span class="sub">So we can tell the caterer</span></dd>
+      </div>
+    </dl>
+
+    <p class="host-note">
+      Brunch, cake, and one very silly game. Bring nothing but yourself —
+      though if you insist, there's a list below.
+      <span class="sig">Amara &amp; Theo</span>
+    </p>
+
+    <div class="sheet-actions">
+      <button class="btn btn--ink" data-icon="cal" onclick="toast('Added to your calendar')">Add to calendar</button>
+      <a class="btn btn--ghost" data-icon="pin" href="https://maps.google.com/?q=14+Thornbury+Lane+Ottawa"
+         target="_blank" rel="noopener">Open in maps</a>
+    </div>
+  </article>
+
+  <!-- registry -->
+  <section class="desk gifts" aria-labelledby="gifts-h">
+    <h2 class="label" id="gifts-h" style="margin-bottom:var(--s3)">If you'd like to bring something</h2>
+    <a class="gift" href="#" target="_blank" rel="noopener">
+      <span class="who-mark who-mark--sage" aria-hidden="true">B</span>
+      <span class="txt"><span class="nm">Babylist</span><span class="sub">The main list — everything we still need</span></span>
+      <span data-icon="ext"></span>
+    </a>
+    <a class="gift" href="#" target="_blank" rel="noopener">
+      <span class="who-mark who-mark--ochre" aria-hidden="true">A</span>
+      <span class="txt"><span class="nm">Amazon</span><span class="sub">Books and the small things</span></span>
+      <span data-icon="ext"></span>
+    </a>
+  </section>
+
+  <!-- ============ the reply card ============ -->
+  <p class="reply-perf">Detach and reply</p>
+
+  <form class="paper reply" id="reply" novalidate>
+    <div class="postmark cancel" aria-hidden="true">
+      <div class="bars"></div>
+      <div class="pm1">REPLIED</div><hr class="rule">
+      <div class="pm2">OTTAWA ON</div><div class="pm2" id="stampDate">—</div>
+    </div>
+
+    <div class="reply-form">
+      <p class="rsvp-mark">RSVP</p>
+      <p class="by">Kindly reply by Saturday 25 April</p>
+
+      <div class="blank">
+        <span class="m" aria-hidden="true">M</span>
+        <label class="sr" for="guestName">Your name, written after the M</label>
+        <input class="ruled" id="guestName" name="name" type="text" value="rs. Eleanor Vance"
+               autocomplete="name" placeholder="rs. Eleanor Vance">
+      </div>
+
+      <div class="choices" role="radiogroup" aria-label="Will you attend?">
+        <label class="choice">
+          <input type="radio" name="rsvp" value="yes" checked>
+          <span class="txt">joyfully accepts
+            <span class="sub">We'll count you in</span></span>
+        </label>
+        <label class="choice choice--no">
+          <input type="radio" name="rsvp" value="no">
+          <span class="txt">regretfully declines
+            <span class="sub">We'll miss you, and Amara will still get your note</span></span>
+        </label>
+        <label class="choice choice--maybe">
+          <input type="radio" name="rsvp" value="maybe">
+          <span class="txt">hopes to, and will confirm
+            <span class="sub">We'll ask again a week before</span></span>
+        </label>
+      </div>
+
+      <div class="party" id="partyRow">
+        <label class="q" for="partySize">How many of you are coming?</label>
+        <div class="stepper">
+          <button type="button" aria-label="One fewer" data-step="-1">−</button>
+          <input id="partySize" type="number" name="party" value="2" min="1" max="4" aria-label="Number in your party">
+          <button type="button" aria-label="One more" data-step="1">+</button>
+        </div>
+      </div>
+
+      <div class="extra" id="plusOneRow" hidden>
+        <label class="label" for="plusOne">Who's coming with you?</label>
+        <div class="blank" style="margin-top:6px">
+          <input class="ruled" id="plusOne" name="plusOne" type="text" placeholder="Their name">
+        </div>
+      </div>
+
+      <div class="extra">
+        <label class="label" for="diet">Anything we should know?</label>
+        <p class="help">Allergies, access, a nap-shaped child — whatever helps.</p>
+        <textarea class="ruled-area" id="diet" name="diet" rows="2"
+                  placeholder="One vegetarian, no nuts"></textarea>
+      </div>
+
+      <div class="extra">
+        <label class="label" for="note">A note for Amara</label>
+        <textarea class="ruled-area" id="note" name="note" rows="3"
+                  placeholder="Say hello"></textarea>
+      </div>
+
+      <div class="reply-actions">
+        <button class="btn btn--wax btn--lg" type="submit" data-icon="send">Post my reply</button>
+        <p class="help">You can change your answer any time before 25 April.</p>
+      </div>
+    </div>
+  </form>
+
+  <p class="posted-line" id="postedLine"></p>
+
+  <p class="foot">
+    Sent with <a href="dashboard.html">Vellum</a> · Only Amara and Theo can see your reply.
+  </p>
+</main>
+
+<script src="dies.js"></script>
+<script src="app.js"></script>
+<script src="envelope.js"></script>
+<script>
+/* ---- the opening ---- */
+const env = Envelope.mount('#sc', {
+  to:  { name:'Eleanor Vance', l1:'88 Rideau Street', l2:'Ottawa, ON&nbsp; K1N 5W8' },
+  die: 'm-pram'
+}).onOpen(() => {
+  document.body.classList.add('opened');
+  document.getElementById('letter')
+    .scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+});
+document.getElementById('replay').onclick = () => {
+  env.reset();
+  document.querySelector('.stage').scrollIntoView({behavior:'smooth'});
+};
+/* A guest who has already opened this letter shouldn't have to watch it
+   again. In production that's a flag on the invite; here it's a query
+   string: invite.html?opened=1 */
+if (new URLSearchParams(location.search).has('opened')) {
+  env.showOpen();
+  document.body.classList.add('opened');
+}
+
+/* ---- the reply card ---- */
+const form = document.getElementById('reply');
+const partyRow = document.getElementById('partyRow');
+const plusOneRow = document.getElementById('plusOneRow');
+const size = document.getElementById('partySize');
+
+/** Party size and plus-one only make sense if they're coming. */
+function syncChoice(){
+  const going = form.querySelector('input[name=rsvp]:checked').value !== 'no';
+  partyRow.hidden = !going;
+  plusOneRow.hidden = !going || +size.value < 2;
+}
+form.addEventListener('change', syncChoice);
+form.querySelectorAll('.stepper button').forEach(b => b.onclick = () => {
+  size.value = Math.min(4, Math.max(1, +size.value + +b.dataset.step));
+  syncChoice();
+});
+syncChoice();
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('guestName');
+  if (!name.value.trim()) { name.focus(); toast('Add your name first'); return; }
+
+  const answer = form.querySelector('input[name=rsvp]:checked').value;
+  const d = new Date();
+  document.getElementById('stampDate').textContent =
+    `${String(d.getDate()).padStart(2,'0')} · ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][d.getMonth()]} · ${String(d.getFullYear()).slice(2)}`;
+
+  form.classList.add('posted');
+  form.querySelectorAll('input,textarea,button').forEach(el => el.disabled = true);
+
+  document.getElementById('postedLine').innerHTML = {
+    yes:  `Your reply is on its way. <b>${size.value} of you</b>, on 9 May.`,
+    no:   `Your reply is on its way. Amara will be sorry to miss you.`,
+    maybe:`Your reply is on its way. We'll check back the week before.`
+  }[answer] + ` <a href="#" onclick="location.reload();return false">Change it</a>`;
+
+  toast('Reply posted');
+});
+</script>
+</body>
+</html>

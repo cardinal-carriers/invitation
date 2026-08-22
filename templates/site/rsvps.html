@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Replies · Vellum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<style>
+/* A guest's note is the one thing on this screen that a person wrote by
+   hand, so it is the one thing set in handwriting. */
+.said{font-family:var(--hand);font-weight:600;font-size:19px;color:var(--wax);line-height:1.3;
+  max-width:34ch}
+.said:empty::before{content:'—';font-family:var(--body);font-size:14px;color:var(--ink-3)}
+.diet{font-size:var(--t-xs);color:var(--ink-2);max-width:22ch}
+.with{font-size:var(--t-sm)}
+.with .unnamed{color:var(--maybe);font-style:italic}
+.caterer{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:var(--s5)}
+.caterer div .k{font-size:var(--t-label);font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-2)}
+.caterer div .v{font-family:var(--disp);font-size:30px;font-weight:600;letter-spacing:-.03em;line-height:1.2}
+.needs{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s5);padding-top:var(--s5);
+  border-top:var(--perf)}
+</style>
+</head>
+<body data-nav="rsvps">
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <nav class="rail" aria-label="Main"></nav>
+
+  <div class="main">
+    <header class="topbar">
+      <p class="crumb"><a href="dashboard.html">Desk</a> <span aria-hidden="true">›</span>
+        <a href="event.html">A baby shower for Amara</a> <span aria-hidden="true">›</span>
+        <b>Replies</b></p>
+      <span class="spacer"></span>
+      <button class="btn btn--ghost btn--sm" id="exportBtn" data-icon="download">Export</button>
+      <a class="btn btn--wax btn--sm" href="send.html" data-icon="send">Nudge the 52</a>
+    </header>
+
+    <main class="page page--wide" id="main">
+
+      <div class="page-hd">
+        <div>
+          <span class="label">Replies · 17 days to go</span>
+          <h1 class="h1">96 have written back</h1>
+          <p>52 haven't. The caterer needs final numbers by Monday 27 April.</p>
+        </div>
+      </div>
+
+      <!-- The number that leaves this screen and goes to a caterer. -->
+      <section class="desk" style="margin-bottom:var(--s6)" aria-labelledby="cat-h">
+        <div class="desk-hd">
+          <h2 class="h3" id="cat-h">For the caterer</h2>
+          <button class="btn btn--quiet btn--sm" data-icon="copy"
+                  onclick="toast('Copied — paste it into an email')">Copy this</button>
+        </div>
+        <div class="desk-bd">
+          <div class="caterer">
+            <div><p class="k">Confirmed</p><p class="v">84</p></div>
+            <div><p class="k">Plus unnamed</p><p class="v">2</p></div>
+            <div><p class="k">Might still come</p><p class="v">3</p></div>
+            <div><p class="k">Cater for</p><p class="v" style="color:var(--wax)">89</p></div>
+          </div>
+          <div class="needs">
+            <span class="chip">6 vegetarian</span>
+            <span class="chip">2 no nuts</span>
+            <span class="chip">1 gluten free</span>
+            <span class="chip">1 dairy free</span>
+            <span class="chip">2 high chairs</span>
+            <span class="chip">1 step-free access</span>
+          </div>
+        </div>
+        <div class="desk-ft">
+          <span class="muted body-sm">"Cater for" counts confirmed guests, unnamed plus-ones
+            and everyone still hoping to come.</span>
+        </div>
+      </section>
+
+      <section class="desk">
+        <div class="toolbar">
+          <div class="search">
+            <span data-icon="search" aria-hidden="true"></span>
+            <label class="sr" for="q">Search replies</label>
+            <input class="input" id="q" type="search" placeholder="Search a name or a note">
+          </div>
+          <div class="seg" data-seg="filter" role="group" aria-label="Filter replies">
+            <button type="button" aria-pressed="true"  data-filter="all">All 96</button>
+            <button type="button" aria-pressed="false" data-filter="yes">Coming 84</button>
+            <button type="button" aria-pressed="false" data-filter="maybe">Hoping to 3</button>
+            <button type="button" aria-pressed="false" data-filter="no">Can't 9</button>
+            <button type="button" aria-pressed="false" data-filter="note">With a note</button>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="list">
+            <thead><tr>
+              <th scope="col">Guest</th>
+              <th scope="col">Reply</th>
+              <th scope="col">Party</th>
+              <th scope="col">Comes with</th>
+              <th scope="col">Needs</th>
+              <th scope="col">Said</th>
+              <th scope="col">When</th>
+            </tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+        <div class="empty" id="none" hidden>
+          <svg class="art" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
+               aria-hidden="true"><rect x="2" y="5" width="20" height="15" rx="2"/><path d="m2 7 10 7 10-7"/>
+          </svg>
+          <h2 class="h3">No replies match that</h2>
+          <p>Clear the search, or pick a different filter.</p>
+          <button class="btn btn--ghost" id="clearAll">Show all 96</button>
+        </div>
+
+        <div class="desk-ft">
+          <span class="muted body-sm" id="count">Showing 96 replies</span>
+          <span class="muted body-sm">Newest first</span>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<dialog id="exportDlg" aria-labelledby="ex-h">
+  <div class="dlg-hd">
+    <div><h2 class="h3" id="ex-h">Export replies</h2>
+      <p>A CSV you can open in anything.</p></div>
+    <button class="btn btn--quiet btn--icon" data-icon="x" aria-label="Close" id="exX"></button>
+  </div>
+  <div class="dlg-bd">
+    <fieldset class="fieldset">
+      <legend class="sr">What to export</legend>
+      <label class="check"><input type="radio" name="ex" checked>
+        <span>Everyone on the list
+          <span class="sub">148 rows, including guests who haven't replied</span></span></label>
+      <label class="check"><input type="radio" name="ex">
+        <span>Only the replies
+          <span class="sub">96 rows, with party size, notes and needs</span></span></label>
+      <label class="check"><input type="radio" name="ex">
+        <span>A caterer's sheet
+          <span class="sub">One row per head, with dietary needs. No email addresses.</span></span></label>
+    </fieldset>
+  </div>
+  <div class="dlg-ft">
+    <button class="btn btn--ghost" id="exCancel">Cancel</button>
+    <button class="btn btn--wax" id="exGo" data-icon="download">Download</button>
+  </div>
+</dialog>
+
+<script src="app.js"></script>
+<script>
+/* name, reply, party, plus-one, needs, note, when */
+const REPLIES = [
+  ['Eleanor Vance','yes',2,'Duncan Vance','',              'Wouldn’t miss it. Bringing the lemon cake.','11:04'],
+  ['Jonah Okafor','yes',1,'','Vegetarian, no nuts',        'See you there.','10:41'],
+  ['Priya Raman','maybe',1,'','',                          'Depends on a shift. I’ll know by the 30th.','09:58'],
+  ['Marcus Ilves','no',1,'','',                            'In Lisbon that week. Sending something anyway.','08:12'],
+  ['Sofia Delacroix','yes',2,null,'High chair',            'Bringing the baby, hope that’s alright!','Yesterday'],
+  ['Yusuf Demir','yes',1,'','Gluten free',                 '','Yesterday'],
+  ['Rosa Lindqvist','yes',2,'Anders Lindqvist','',         'Amara! Finally!','Yesterday'],
+  ['Grace Osei','yes',1,'','Step-free access',             'I’ll need the side gate, if that’s alright.','Mon'],
+  ['Ruth Abrahams','no',1,'','',                           'Away at my sister’s. Give her my love.','Mon'],
+  ['Hana Kobayashi','yes',2,null,'Dairy free',             '','Mon'],
+  ['Tomás Ferreira','yes',1,'','',                         'Wouldn’t miss it for anything.','Sun'],
+  ['Nadia Haddad','maybe',2,'','Vegetarian',               'Trying to move a flight.','Sun']
+];
+
+const REPLY = { yes:['pill--yes','Coming'], no:['pill--no',"Can't come"], maybe:['pill--maybe','Hoping to'] };
+const TINT = ['', ' who-mark--sky', ' who-mark--sage', ' who-mark--ochre'];
+
+function row([name, reply, party, plusOne, needs, note, when], i){
+  const [cls, label] = REPLY[reply];
+  /* null means "a plus-one is coming but hasn't been named" — the thing the
+     host has to chase, so it is called out rather than left blank. */
+  const with_ = party < 2 ? '<span class="faint">—</span>'
+              : plusOne   ? plusOne
+              : '<span class="unnamed">not named yet</span>';
+  return `<tr data-reply="${reply}" data-note="${note ? 1 : 0}"
+              data-name="${(name + ' ' + note).toLowerCase()}">
+    <td><div class="who">
+      <span class="who-mark${TINT[i % 4]}" aria-hidden="true">${name.charAt(0)}</span>
+      <span class="nm">${name}</span></div></td>
+    <td><span class="pill ${cls}"><i></i>${label}</span></td>
+    <td>${reply === 'no' ? '<span class="faint">—</span>' : party}</td>
+    <td class="with">${reply === 'no' ? '<span class="faint">—</span>' : with_}</td>
+    <td class="diet">${needs || '<span class="faint">—</span>'}</td>
+    <td><p class="said">${note}</p></td>
+    <td class="nowrap muted body-sm">${when}</td>
+  </tr>`;
+}
+
+const tbody = document.getElementById('rows');
+tbody.innerHTML = REPLIES.map(row).join('');
+
+let filter = 'all';
+const q = document.getElementById('q');
+function apply(){
+  let shown = 0;
+  tbody.querySelectorAll('tr').forEach(tr => {
+    const hit = tr.dataset.name.includes(q.value.toLowerCase().trim())
+      && (filter === 'all' || (filter === 'note' ? tr.dataset.note === '1' : tr.dataset.reply === filter));
+    tr.hidden = !hit;
+    if (hit) shown++;
+  });
+  document.getElementById('none').hidden = shown > 0;
+  document.querySelector('.table-scroll').hidden = shown === 0;
+  document.getElementById('count').textContent = `Showing ${shown} of ${REPLIES.length} loaded`;
+}
+q.addEventListener('input', apply);
+document.querySelector('[data-seg="filter"]').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  filter = b.dataset.filter; apply();
+});
+document.getElementById('clearAll').onclick = () => {
+  q.value = ''; filter = 'all';
+  document.querySelectorAll('[data-seg="filter"] button')
+    .forEach(b => b.setAttribute('aria-pressed', b.dataset.filter === 'all'));
+  apply();
+};
+apply();
+
+const ex = document.getElementById('exportDlg');
+document.getElementById('exportBtn').onclick = () => ex.showModal();
+document.getElementById('exX').onclick =
+document.getElementById('exCancel').onclick = () => ex.close();
+document.getElementById('exGo').onclick = () => { ex.close(); toast('Downloaded amara-shower-replies.csv'); };
+</script>
+</body>
+</html>

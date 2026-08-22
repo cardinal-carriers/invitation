@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The invitation · Vellum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="vellum.css">
+<link rel="stylesheet" href="envelope.css">
+<style>
+.panel{padding-top:var(--s6)}
+.affiliate{margin-top:var(--s5)}
+.preview-hd{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);
+  margin-bottom:var(--s4)}
+.face-toggle{display:flex;gap:2px}
+.saved{font-size:var(--t-xs);color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.saved i{width:6px;height:6px;border-radius:50%;background:var(--sage);flex:none}
+</style>
+</head>
+<body data-nav="event">
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app">
+  <nav class="rail" aria-label="Main"></nav>
+
+  <div class="main">
+    <header class="topbar">
+      <p class="crumb"><a href="dashboard.html">Desk</a> <span aria-hidden="true">›</span>
+        <b>A baby shower for Amara</b></p>
+      <span class="spacer"></span>
+      <p class="saved" role="status"><i aria-hidden="true"></i>Saved a moment ago</p>
+      <a class="btn btn--ghost btn--sm" href="invite.html" data-icon="eye">Preview</a>
+      <a class="btn btn--wax btn--sm" href="send.html" data-icon="send">Send</a>
+    </header>
+
+    <main class="page" id="main">
+
+      <div class="page-hd">
+        <div>
+          <span class="label">The invitation</span>
+          <h1 class="h1">What the letter says</h1>
+          <p>Every change here shows up in the envelope on the right, exactly as a guest will see it.</p>
+        </div>
+      </div>
+
+      <div class="split">
+        <div>
+          <div class="tabs" role="tablist" aria-label="Invitation sections">
+            <button role="tab" aria-selected="true" data-tab="details">Details</button>
+            <button role="tab" aria-selected="false" data-tab="card">The card</button>
+            <button role="tab" aria-selected="false" data-tab="registry">Registry</button>
+          </div>
+
+          <!-- ---------- Details ---------- -->
+          <div class="panel" data-tabpanel="details" role="tabpanel">
+            <section class="desk">
+              <div class="desk-hd"><h2 class="h3">The occasion</h2></div>
+              <div class="desk-bd">
+                <fieldset class="fieldset">
+                  <legend class="label" style="margin-bottom:var(--s3)">What are you hosting?</legend>
+                  <div class="seg" data-seg="type" role="group">
+                    <button type="button" aria-pressed="false">Wedding</button>
+                    <button type="button" aria-pressed="true">Baby shower</button>
+                  </div>
+                </fieldset>
+
+                <div class="form-grid" style="margin-top:var(--s6)">
+                  <div class="field span-2">
+                    <label class="label" for="title">Event name<span class="req">*</span></label>
+                    <input class="input" id="title" value="A baby shower for Amara">
+                    <p class="help">Guests never see this. It's how you'll find the event on your desk.</p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="occ">Line on the card</label>
+                    <input class="input" id="occ" value="a baby shower">
+                    <p class="help">Set in handwriting, so keep it short.</p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="hon">Who it's for</label>
+                    <input class="input" id="hon" value="honouring Amara">
+                  </div>
+                  <div class="field">
+                    <label class="label" for="date">Date<span class="req">*</span></label>
+                    <input class="input" id="date" type="date" value="2026-05-09">
+                  </div>
+                  <div class="field">
+                    <label class="label" for="time">Start time<span class="req">*</span></label>
+                    <input class="input" id="time" type="time" value="14:00">
+                  </div>
+                  <div class="field span-2">
+                    <label class="label" for="tz">Time zone</label>
+                    <select class="select" id="tz">
+                      <option selected>Eastern — Toronto, Ottawa, New York</option>
+                      <option>Central — Winnipeg, Chicago</option>
+                      <option>Mountain — Calgary, Denver</option>
+                      <option>Pacific — Vancouver, Los Angeles</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="desk" style="margin-top:var(--s6)">
+              <div class="desk-hd"><h2 class="h3">Where</h2></div>
+              <div class="desk-bd">
+                <div class="form-grid">
+                  <div class="field span-2">
+                    <label class="label" for="place">Place</label>
+                    <input class="input" id="place" value="Our house" placeholder="The Rideau Room, Fairmont Château Laurier">
+                  </div>
+                  <div class="field span-2">
+                    <label class="label" for="addr">Address<span class="req">*</span></label>
+                    <input class="input" id="addr" value="14 Thornbury Lane, Ottawa, ON  K1N 6N5">
+                    <p class="help">Becomes a map link on the invitation.</p>
+                  </div>
+                  <div class="field span-2">
+                    <label class="label" for="note">A note to your guests</label>
+                    <textarea class="textarea" id="note">Brunch, cake, and one very silly game. Bring nothing but yourself — though if you insist, there's a list below.</textarea>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="desk" style="margin-top:var(--s6)">
+              <div class="desk-hd"><h2 class="h3">Replies</h2></div>
+              <div class="desk-bd">
+                <div class="form-grid">
+                  <div class="field">
+                    <label class="label" for="deadline">Reply by</label>
+                    <input class="input" id="deadline" type="date" value="2026-04-25">
+                    <p class="help">After this, the reply card closes and guests are asked to message you.</p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="cap">Largest party allowed</label>
+                    <select class="select" id="cap">
+                      <option>Just the guest</option>
+                      <option selected>Guest plus one</option>
+                      <option>Up to four</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="fieldset" style="margin-top:var(--s5)">
+                  <label class="switch"><input type="checkbox" checked>
+                    <span>Ask for the plus-one's name</span></label>
+                  <label class="switch"><input type="checkbox" checked>
+                    <span>Ask about allergies and access</span></label>
+                  <label class="switch"><input type="checkbox">
+                    <span>Let guests forward the invitation to someone else</span></label>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- ---------- The card ---------- -->
+          <div class="panel" data-tabpanel="card" role="tabpanel" hidden>
+            <section class="desk">
+              <div class="desk-hd"><h2 class="h3">Wax</h2></div>
+              <div class="desk-bd">
+                <div class="swatches" id="waxes" role="group" aria-label="Wax colour"></div>
+              </div>
+            </section>
+
+            <section class="desk" style="margin-top:var(--s6)">
+              <div class="desk-hd">
+                <h2 class="h3">Seal</h2>
+                <span class="muted body-sm">Pressed into the wax</span>
+              </div>
+              <div class="desk-bd">
+                <div class="dies" id="dieList" role="group" aria-label="Seal die"></div>
+                <div class="field" id="monoField" style="margin-top:var(--s5)" hidden>
+                  <label class="label" for="mono">Letter</label>
+                  <input class="input" id="mono" maxlength="2" value="A" style="max-width:110px">
+                </div>
+                <p class="banner" style="margin-top:var(--s5)" data-icon="info">
+                  <span>Upload your own die as an SVG on the paid plan. One path, any shape.</span>
+                </p>
+              </div>
+            </section>
+
+            <section class="desk" style="margin-top:var(--s6)">
+              <div class="desk-hd"><h2 class="h3">Postage</h2></div>
+              <div class="desk-bd">
+                <div class="form-grid">
+                  <div class="field">
+                    <label class="label" for="pmCity">Postmark city</label>
+                    <input class="input" id="pmCity" value="OTTAWA">
+                  </div>
+                  <div class="field">
+                    <label class="label" for="stVal">Stamp value</label>
+                    <input class="input" id="stVal" value="P" maxlength="3">
+                  </div>
+                </div>
+                <p class="help" style="margin-top:var(--s4)">
+                  The postmark carries the date you send, so it's stamped at send time, not now.
+                </p>
+              </div>
+            </section>
+          </div>
+
+          <!-- ---------- Registry ---------- -->
+          <div class="panel" data-tabpanel="registry" role="tabpanel" hidden>
+            <section class="desk">
+              <div class="desk-hd">
+                <h2 class="h3">Gift lists</h2>
+                <button class="btn btn--ghost btn--sm" id="addReg" data-icon="plus">Add a list</button>
+              </div>
+              <div class="desk-bd">
+                <p class="help" style="margin-bottom:var(--s4)">
+                  These sit under the invitation, after the details. Guests see the label, not the URL.
+                </p>
+                <div id="regRows">
+                  <div class="repeat-row">
+                    <span class="grip" data-icon="dots" aria-hidden="true"></span>
+                    <input class="input lbl" value="Babylist" aria-label="List name">
+                    <input class="input url" value="https://babylist.com/amara-theo" aria-label="Link">
+                    <button class="btn btn--quiet btn--icon" data-icon="trash" aria-label="Remove Babylist"></button>
+                  </div>
+                  <div class="repeat-row">
+                    <span class="grip" data-icon="dots" aria-hidden="true"></span>
+                    <input class="input lbl" value="Amazon" aria-label="List name">
+                    <input class="input url" value="https://amazon.ca/wedding/registry/2R9" aria-label="Link">
+                    <button class="btn btn--quiet btn--icon" data-icon="trash" aria-label="Remove Amazon"></button>
+                  </div>
+                </div>
+
+                <p class="banner banner--warn affiliate" data-icon="alert">
+                  <span><b>One link is broken.</b> The Amazon list returned a 404 when we last checked it,
+                  on 20 April. <a href="#">Check it again</a></span>
+                </p>
+              </div>
+              <div class="desk-ft">
+                <span class="muted body-sm">Vellum adds its affiliate tag to supported retailers.
+                  <a href="settings.html">How that works</a></span>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- live preview -->
+        <aside class="sticky">
+          <div class="preview-hd">
+            <h2 class="label">As Eleanor will see it</h2>
+            <div class="face-toggle seg" data-seg="face" role="group" aria-label="Which side">
+              <button type="button" aria-pressed="false" id="faceFront">Front</button>
+              <button type="button" aria-pressed="true" id="faceOpen">Opened</button>
+            </div>
+          </div>
+          <section class="desk">
+            <div class="desk-bd">
+              <div class="scene" id="prev" role="button" tabindex="0" aria-expanded="false"
+                   aria-label="Play the opening"></div>
+            </div>
+          </section>
+        </aside>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script src="dies.js"></script>
+<script src="app.js"></script>
+<script src="envelope.js"></script>
+<script>
+const env = Envelope.mount('#prev', { die:'m-pram' }).showOpen();
+
+/* ---- every field writes straight through to the envelope ---- */
+const bind = (id, fn) => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => fn(el.value));
+};
+bind('occ',  v => env.set('card.occasion', v || 'a baby shower'));
+bind('hon',  v => env.set('card.name', (v || 'honouring Amara').replace(' ', '<br>')));
+bind('pmCity', v => env.set('mark.city', v.toUpperCase()));
+bind('stVal',  v => env.set('stamp.value', v.toUpperCase()));
+
+function syncMeta(){
+  const d = document.getElementById('date').value;
+  const t = document.getElementById('time').value;
+  const addr = document.getElementById('addr').value.split(',').slice(0, 2).join(',');
+  const when = d
+    ? new Date(d + 'T00:00').toLocaleDateString('en-CA', {weekday:'long', month:'long', day:'numeric'})
+    : '';
+  const at = t ? new Date('2000-01-01T' + t).toLocaleTimeString('en-CA',
+    {hour:'numeric', minute:'2-digit'}).toLowerCase() : '';
+  env.set('card.meta', `${when} · ${at}<br>${addr}`);
+}
+['date','time','addr'].forEach(id => document.getElementById(id).addEventListener('input', syncMeta));
+
+/* ---- wax ---- */
+const WAXES = [
+  ['Terracotta','#B4736C'], ['Rose gold','#D8A199'], ['Burgundy','#7E2A3C'],
+  ['Antique gold','#C0913F'], ['Post red','#B93A2E'], ['Sage','#7E9070'],
+  ['Dusty blue','#71889D'], ['Ivory','#DFD3BC'], ['Ink','#33302C'], ['Navy','#2F4258']
+];
+const waxes = document.getElementById('waxes');
+waxes.innerHTML = WAXES.map(([n, c], i) =>
+  `<button type="button" class="sw" style="background:${c}" data-c="${c}"
+     aria-pressed="${i === 0}" aria-label="${n}" title="${n}"></button>`).join('');
+waxes.addEventListener('click', e => {
+  const b = e.target.closest('.sw'); if (!b) return;
+  waxes.querySelectorAll('.sw').forEach(x => x.setAttribute('aria-pressed', x === b));
+  document.getElementById('prev').style.setProperty('--wax', b.dataset.c);
+});
+
+/* ---- seal dies ---- */
+const list = document.getElementById('dieList');
+list.innerHTML = DIES.map(([id, name]) =>
+  `<button type="button" class="die-btn" data-die="${id}" aria-pressed="${id === 'm-pram'}">
+     <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#${id}" width="100" height="100"/></svg>
+     <span>${name}</span></button>`).join('');
+list.addEventListener('click', e => {
+  const b = e.target.closest('.die-btn'); if (!b) return;
+  list.querySelectorAll('.die-btn').forEach(x => x.setAttribute('aria-pressed', x === b));
+  env.setDie(b.dataset.die);
+  document.getElementById('monoField').hidden = b.dataset.die !== 'm-mono';
+});
+document.getElementById('mono').addEventListener('input', e => {
+  const v = (e.target.value || 'A').toUpperCase();
+  document.querySelectorAll('.mono-t').forEach(t => t.textContent = v);
+});
+
+/* ---- front / opened ---- */
+document.getElementById('faceFront').onclick = () => env.reset();
+document.getElementById('faceOpen').onclick  = () => env.showOpen();
+
+/* ---- registry rows ---- */
+document.getElementById('addReg').onclick = () => {
+  const row = document.createElement('div');
+  row.className = 'repeat-row';
+  row.innerHTML = `
+    <span class="grip" aria-hidden="true">${icon('dots')}</span>
+    <input class="input lbl" placeholder="Where the list is" aria-label="List name">
+    <input class="input url" placeholder="https://" aria-label="Link">
+    <button class="btn btn--quiet btn--icon" aria-label="Remove this list">${icon('trash')}</button>`;
+  document.getElementById('regRows').appendChild(row);
+  row.querySelector('.lbl').focus();
+};
+document.getElementById('regRows').addEventListener('click', e => {
+  const del = e.target.closest('.btn--icon');
+  if (del) { del.closest('.repeat-row').remove(); toast('List removed'); }
+});
+</script>
+</body>
+</html>
