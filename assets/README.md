@@ -3,8 +3,7 @@
     card-band.webp    1080 × 747, 52 KB
 
 The botanical footer on the invitation. Cropped from the host's own template
-(`docs/Jillian & Derrick's Baby Shower.pdf`, gitignored — 721KB and not
-needed to build anything).
+(in the gitignored `docs/` folder).
 
 ## How it was made
 

@@ -1,3 +1,11 @@
 .DS_Store
 *.log
-docs/*.pdf
+
+# The planning folder stays local. This repository is public and GitHub Pages
+# serves every file in it, so anything committed here is both browsable on
+# GitHub and fetchable from the live site.
+docs/
+
+# Probe pages written while checking a change in a headless browser. They
+# carry a stubbed copy of the real event data.
+_*.html
