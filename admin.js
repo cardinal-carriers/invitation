@@ -11,7 +11,7 @@
 import { initializeApp }
   from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
 import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
-         onAuthStateChanged, signOut }
+         GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
   from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, updateDoc, deleteDoc, collection, query,
          orderBy, onSnapshot, serverTimestamp, Timestamp, arrayUnion, arrayRemove }
@@ -45,6 +45,30 @@ const actionCodeSettings = {
   url: `${location.origin}${BASE}admin.html`,
   handleCodeInApp: true
 };
+
+/* Google sign-in, offered first because it sends nothing. Access here is
+   granted by email address, so the rules insist the address is verified —
+   a Google account already is, and no message has to survive a spam filter
+   to prove it. The email link stays for anyone without a Google account. */
+$('googleBtn').addEventListener('click', async () => {
+  const btn = $('googleBtn');
+  btn.disabled = true;
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch (err) {
+    btn.disabled = false;
+    /* Two of these are worth naming: the provider being switched off is a
+       console setting, and a blocked popup looks identical to nothing
+       happening at all. */
+    if (err.code === 'auth/operation-not-allowed')
+      toast('Turn on Google sign-in in Firebase');
+    else if (err.code === 'auth/popup-blocked')
+      toast('Your browser blocked the popup');
+    else if (err.code !== 'auth/popup-closed-by-user' &&
+             err.code !== 'auth/cancelled-popup-request')
+      toast('That didn\u2019t sign you in');
+  }
+});
 
 $('gateForm').addEventListener('submit', async e => {
   e.preventDefault();
