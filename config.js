@@ -8,16 +8,17 @@
    What must NEVER appear in this repo is a service account JSON from
    Project Settings → Service accounts.
 
-   FILL THESE IN from Firebase Console → Project settings → Your apps → Web.
+   From Firebase Console → Project settings → Your apps → Web. measurementId is
+   deliberately absent: no Analytics (mvp-plan §13).
    ========================================================================== */
 
 window.FIREBASE = {
-  apiKey:            'REPLACE_ME',
-  authDomain:        'REPLACE_ME.firebaseapp.com',
-  projectId:         'REPLACE_ME',
-  storageBucket:     'REPLACE_ME.firebasestorage.app',
-  messagingSenderId: 'REPLACE_ME',
-  appId:             'REPLACE_ME'
+  apiKey:            'AIzaSyDVll4D6ramjMIGCJkldGbo8MFPjdMQPgM',
+  authDomain:        'cardinal-carriers.firebaseapp.com',
+  projectId:         'cardinal-carriers',
+  storageBucket:     'cardinal-carriers.firebasestorage.app',
+  messagingSenderId: '159373025954',
+  appId:             '1:159373025954:web:6ca7c14b4d265902426dfb'
 };
 
 /* The one event, by its fixed document id. */
