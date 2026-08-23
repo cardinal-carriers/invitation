@@ -266,7 +266,7 @@ const TEXT = ['inviteLine','occasionLine','honouree','hosts','locationName','add
               'hostNote','postmarkCity','postmarkRegion','returnLine1','returnLine2'];
 const DEFAULT_INVITE_LINE = 'You\u2019re invited to join us for';
 let wax = '#B4736C', die = 'm-pram';
-let stampCol = '#B93A2E', stampArtId = 'pooh';
+let stampCol = '#B93A2E', stampArtId = 'set-pooh26';
 
 /* A datetime-local reads in the browser's timezone. The host is in Ottawa
    and so is the party, so that is right — but the card always prints the
@@ -377,7 +377,8 @@ $('stampCols').addEventListener('click', e => {
 
 /* Which stamps are a printed detail of the card rather than a drawn symbol.
    Kept in step with PHOTO_STAMPS in envelope.js. */
-const PHOTO_STAMP_IDS = ['pooh','piglet','eeyore','tigger'];
+const PHOTO_STAMP_IDS = ['pooh','piglet','eeyore','tigger',
+  'set-pooh26','set-piglet26','set-eeyore26','set-tigger','set-kanga','set-lumpy'];
 
 function paintStamps(){
   $('stampList').innerHTML = STAMPS.map(([id, name]) => {

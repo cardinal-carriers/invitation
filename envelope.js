@@ -75,10 +75,21 @@ function sealSVG(die, n){
    the stamp's own ink; a printed one is a detail of the host's card and fills
    the stamp edge to edge, the way a real pictorial issue does. */
 const PHOTO_STAMPS = new Set(['pooh','eeyore','piglet','tigger']);
+
+/* The 1926 set. These are already stamps — they come with their own
+   perforated border, their own date and their own honey pot, and the animals
+   lean out past the frame. So they are placed as stickers: no perforation
+   mask, no CANADA, no value, because every one of those would be the second
+   copy of something the picture already has. */
+const STICKER_STAMPS = new Set(['set-tigger','set-kanga','set-lumpy',
+                                'set-pooh26','set-eeyore26','set-piglet26']);
+
+const isPicture = id => PHOTO_STAMPS.has(id) || STICKER_STAMPS.has(id);
+
 function stampArt(id){
-  if (PHOTO_STAMPS.has(id)) return `
+  if (isPicture(id)) return `
     <image href="assets/stamp-${id}.webp" x="0" y="0" width="48" height="48"
-           preserveAspectRatio="xMidYMid slice"/>`;
+           preserveAspectRatio="${STICKER_STAMPS.has(id) ? 'xMidYMid meet' : 'xMidYMid slice'}"/>`;
   return `<use href="#${id}" width="48" height="48"/>`;
 }
 
@@ -91,9 +102,9 @@ function markup(o, n){
       <div class="face front">
         <div class="ret"><b data-f="ret.name">${o.ret.name}</b>
           <span data-f="ret.l1">${o.ret.l1}</span><br><span data-f="ret.l2">${o.ret.l2}</span></div>
-        <div class="stamp"><div class="in">
+        <div class="stamp${STICKER_STAMPS.has(o.stamp.art) ? ' stamp--sticker' : ''}"><div class="in">
           <span class="cty" data-f="stamp.country">${o.stamp.country}</span>
-          <svg class="art${PHOTO_STAMPS.has(o.stamp.art) ? ' art--photo' : ''}" viewBox="0 0 48 48"
+          <svg class="art${isPicture(o.stamp.art) ? ' art--photo' : ''}" viewBox="0 0 48 48"
        preserveAspectRatio="none">${stampArt(o.stamp.art)}</svg>
           <span class="val" data-f="stamp.value">${o.stamp.value}</span>
         </div></div>
@@ -166,7 +177,8 @@ class EnvelopeInstance {
   setStamp(id){
     const svg = this.el.querySelector('.stamp .art');
     if (!svg) return this;
-    svg.classList.toggle('art--photo', PHOTO_STAMPS.has(id));
+    svg.classList.toggle('art--photo', isPicture(id));
+    svg.closest('.stamp')?.classList.toggle('stamp--sticker', STICKER_STAMPS.has(id));
     svg.innerHTML = stampArt(id);
     return this;
   }

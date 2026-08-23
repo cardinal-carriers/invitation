@@ -25,6 +25,13 @@ window.DIES = DIES;
    stamp's ink without any extra art. 'pooh' is the one photographic option and
    is a cropped detail of the host's own card, not a symbol. */
 const STAMPS = [
+  ['set-pooh26',   'Pooh, 1926'],
+  ['set-piglet26', 'Piglet, 1926'],
+  ['set-eeyore26', 'Eeyore, 1926'],
+  ['set-tigger',   'Tigger, 1926'],
+  ['set-kanga',    'Kanga & Roo, 1926'],
+  ['set-lumpy',    'Lumpy, 1926'],
+
   ['pooh',        'Pooh'],
   ['piglet',      'Piglet'],
   ['eeyore',      'Eeyore'],

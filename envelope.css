@@ -124,7 +124,21 @@
 /* A picture stamp is the whole stamp. Boxed into the middle it reads as a
    sticker on a stamp rather than a stamp, and the engraved-symbol layout the
    others use does not suit a photograph. */
-.front .stamp .art--photo{position:absolute;inset:0;width:100%;height:100%}
+/* margin:0 is not decoration. vellum sets `.stamp svg{margin-top:.5em}` to
+   centre the engraved symbol optically, and on an absolutely positioned photo
+   that margin still applies — it pushed the picture down and left a strip of
+   bare stamp colour along the top edge. */
+.front .stamp .art--photo{position:absolute;inset:0;width:100%;height:100%;margin:0}
+
+/* A stamp that is already a stamp. Everything the component would add — the
+   punched edge, the paper behind it, the country, the value — is stripped,
+   because the picture has all of it drawn in and the animals lean out past
+   the frame on purpose. */
+.front .stamp--sticker{background:none;padding:0;-webkit-mask:none;mask:none;
+  filter:drop-shadow(0 .12em .26em rgba(70,50,25,.32))}
+.front .stamp--sticker .in{background:none;overflow:visible;border-radius:0}
+.front .stamp--sticker .cty,.front .stamp--sticker .val{display:none}
+.front .stamp--sticker .art--photo{width:112%;height:112%;inset:-6%}
 .front .stamp:has(.art--photo) .cty,
 .front .stamp:has(.art--photo) .val{text-shadow:0 1px 2px rgba(0,0,0,.55);z-index:1}
 .front .postmark{position:absolute;right:6.8em;top:1.6em;z-index:3}
