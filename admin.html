@@ -20,8 +20,9 @@
   padding:var(--s5) var(--s7);border-bottom:var(--perf);flex-wrap:wrap}
 .top .brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);
   font-size:21px;font-weight:600;letter-spacing:-.03em}
-.top .cardinal{width:40px;height:30px;flex:none;color:#B93A2E;
-  filter:drop-shadow(0 1px 1px rgba(90,30,25,.22))}
+.top .cardinal{width:30px;height:37px;flex:none;
+  --red:#C6362B; --mask:#2E2723; --beak:#E9913A; --branch:#A08A6A;
+  filter:drop-shadow(0 1px 1px rgba(90,30,25,.2))}
 .wrap{padding:var(--s7);max-width:760px;margin:0 auto;width:100%}
 
 /* Signed out: one field, one button, nothing else on the screen. */
@@ -90,18 +91,25 @@
     <!-- A northern cardinal in flight: wings up on the downstroke, crest
          raised, tail streaming. Drawn rather than traced, so it holds at
          26px where a photograph would turn to mud. -->
-    <svg class="cardinal" viewBox="0 0 64 48" aria-hidden="true">
-      <g fill="currentColor">
-      <path d="M25 29.8 C18.5 30.8 10.6 34.2 3.2 40.2 L7 44.4 C13.6 39.4 20 36.4 26 35.4 Z"/>
-      <path d="M33 22.4 C30.2 16.6 29.6 10.4 31.4 5 C33.6 9.8 36.4 12.9 39.9 15
-      C37.7 17.2 36.2 19.6 35.6 22.4 Z" opacity=".45"/>
-      <path d="M38.6 22.2 C38.2 16.6 40.2 12.6 44.6 10 C44.2 14.6 45.2 18.4 47.4 21.4 Z"/>
-      <path d="M21 31 C21 25 27 20.5 35 20 C40 19.7 44 21 46.2 23.4 L55 25.2 L46.2 27.8
-      C44.7 32.2 38.5 35.6 31 35.6 C25 35.6 21 34 21 31 Z"/>
-      <path d="M29.4 26.4 C24.6 19.6 22.2 12 22.9 4.4 L26.4 10.6 L27.6 4 L31.2 10.9
-      L33 4.6 L35.4 12.4 L39.2 8.6 L38.8 16 C35.8 19 33.3 22.4 32.2 26.4 Z"/>
-      </g>
-      <circle cx="44.2" cy="23.6" r="1.1" fill="#FCF7EE"/>
+    <!-- A northern cardinal on a branch: swept crest, black mask around a
+         short conical beak, tail down. Drawn from the reference photo. The
+         three colours are variables so the mark can be recoloured without
+         touching the paths. -->
+    <svg class="cardinal" viewBox="0 0 52 64" aria-hidden="true">
+<g fill="var(--red,#C6362B)">
+  <path d="M20.5 39 L13 62 L22.5 62 L27 43 Z"/>
+  <ellipse cx="25" cy="33" rx="10.4" ry="13.6"/>
+  <circle cx="28.4" cy="17.6" r="8.6"/>
+  <path d="M23 12.2 C19.6 5 22.4 0.2 29.4 -1.4 C26.2 3 27.4 7.6 31.8 11 Z"/>
+</g>
+<path d="M30.6 11.6 C34.8 12.8 37.2 15.6 37.2 19.4 C37.2 23 35 25.4 31.6 26.2
+         C29.2 26.2 27.6 24 27.6 20.8 C27.6 16.4 28.6 13 30.6 11.6 Z" fill="var(--mask,#2E2723)"/>
+<path d="M35.4 15.6 L44 19.2 L35.4 22.8 Z" fill="var(--beak,#E9913A)"/>
+<g fill="var(--branch,#A08A6A)">
+  <path d="M22.4 45.4h2v7.2h-2z"/><path d="M27.4 45.4h2v7.2h-2z"/>
+  <path d="M4 55.6 C13 52.4 26 51 41 51.8 L41 55.2 C26 54.4 13 55.6 4 58.4 Z"/>
+</g>
+<circle cx="31.4" cy="16.4" r="1.5" fill="#FBF6EC"/>
     </svg>
     Cardinal Carriers
   </span>

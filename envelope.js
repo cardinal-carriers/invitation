@@ -77,9 +77,8 @@ function sealSVG(die, n){
    inside a square perforation reads as three frames. */
 function stampArt(id, n){
   if (id === 'pooh') return `
-    <defs><clipPath id="stampClip${n}"><circle cx="24" cy="24" r="23"/></clipPath></defs>
-    <image href="assets/stamp-pooh.webp" x="1" y="1" width="46" height="46"
-           preserveAspectRatio="xMidYMid slice" clip-path="url(#stampClip${n})"/>`;
+    <image class="art--photo" href="assets/stamp-pooh.webp" x="0" y="0" width="48" height="48"
+           preserveAspectRatio="xMidYMid slice"/>`;
   return `<use href="#${id}" width="48" height="48"/>`;
 }
 
@@ -94,7 +93,8 @@ function markup(o, n){
           <span data-f="ret.l1">${o.ret.l1}</span><br><span data-f="ret.l2">${o.ret.l2}</span></div>
         <div class="stamp"><div class="in">
           <span class="cty" data-f="stamp.country">${o.stamp.country}</span>
-          <svg class="art" viewBox="0 0 48 48">${stampArt(o.stamp.art, n)}</svg>
+          <svg class="art${o.stamp.art === 'pooh' ? ' art--photo' : ''}" viewBox="0 0 48 48"
+       preserveAspectRatio="none">${stampArt(o.stamp.art, n)}</svg>
           <span class="val" data-f="stamp.value">${o.stamp.value}</span>
         </div></div>
         <div class="postmark">
@@ -165,7 +165,9 @@ class EnvelopeInstance {
   /** Swap the picture on the stamp, e.g. setStamp('m-pram'). */
   setStamp(id){
     const svg = this.el.querySelector('.stamp .art');
-    if (svg) svg.innerHTML = stampArt(id, this.n);
+    if (!svg) return this;
+    svg.classList.toggle('art--photo', id === 'pooh');
+    svg.innerHTML = stampArt(id, this.n);
     return this;
   }
 

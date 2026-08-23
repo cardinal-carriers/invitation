@@ -40,11 +40,10 @@
   /* Where the card ends up: out of the pocket and forward, in front of the
      envelope. Named because three rules need it — the keyframe, and the two
      ways of reaching the rest state without running the sequence. */
-  /* The card rests at the envelope's own width. It is 59% of that inside, so
-     it scales by 1/0.59 — less the 2.6% the 46px of translateZ already adds
-     under an 1800px perspective, which gives 1.652. Coming out the same size
-     as the letter below it is the point: they are one object seen twice. */
-  --card-rest:translateZ(46px) translateY(-62%) rotate(0deg) scale(1.652);
+  /* Where the card ends up: out of the pocket, turned upright, standing in
+     front. No scale — it is already the size it is, and enlarging live text
+     only softens it. */
+  --card-rest:translateZ(46px) translateY(-22%) rotate(0deg);
 }
 /* Height reserved for the SETTLED composition: the envelope (69.4% of width)
    plus the card resting in front of it, which now overlaps rather than
@@ -55,14 +54,10 @@
    reserving for the peak instead would leave the resting envelope floating
    in a third of a screen of dead space for the whole time anyone is looking
    at it. The transient overlap is the cheaper of the two. */
-/* Two heights. Sealed, the scene is the envelope and a little air; opened,
-   it has to hold a card twice the envelope's height standing in front of it.
-   Reserving the taller figure all the time would leave a sealed envelope
-   floating in a third of a screen of nothing, which is what anyone looking at
-   this page sees first and longest. */
-.scene::before{content:'';display:block;padding-top:107%;
-  transition:padding-top var(--dCard) var(--eCard) var(--tCard)}
-.scene.play::before{padding-top:162%}
+/* One height again. With the card at its true size rather than scaled up, the
+   opened composition needs no more room than the sealed one, so the two-height
+   transition that used to be here is gone. */
+.scene::before{content:'';display:block;padding-top:112%}
 .scene--sm{max-width:300px}
 
 .env{position:absolute;left:0;right:0;bottom:3%;aspect-ratio:1.44/1;transform-style:preserve-3d;
@@ -126,6 +121,12 @@
 .front .stamp .in{background:linear-gradient(158deg,
   color-mix(in srgb,var(--stamp,var(--sky)) 55%,#fff),var(--stamp,var(--sky)))}
 .front .stamp .art{display:block}
+/* A picture stamp is the whole stamp. Boxed into the middle it reads as a
+   sticker on a stamp rather than a stamp, and the engraved-symbol layout the
+   others use does not suit a photograph. */
+.front .stamp .art--photo{position:absolute;inset:0;width:100%;height:100%}
+.front .stamp:has(.art--photo) .cty,
+.front .stamp:has(.art--photo) .val{text-shadow:0 1px 2px rgba(0,0,0,.55);z-index:1}
 .front .postmark{position:absolute;right:6.8em;top:1.6em;z-index:3}
 
 /* ---- back: flap, liner, folds, seal ---- */
@@ -186,16 +187,20 @@
    landscape envelope, so a real one goes in turned — and comes out turned,
    and you rotate it in your hand.
 
-   Sized so that, lying down, it occupies 81% of the envelope's width and 85%
-   of its height: width 59% of the envelope's width, height 117% of its
-   height, which is 81% of the envelope's width. */
-.env-card{position:absolute;left:20.5%;top:-8.5%;width:59%;height:117%;overflow:hidden;
+   Sized to fill the envelope. Lying down it occupies 96% of the envelope in
+   both directions, which fixes the card's own proportions: its height must be
+   the envelope's width and its width the envelope's height, so it is a 1:1.44
+   portrait. In envelope units that is 66.6% wide and 138.3% tall.
+
+   Nothing scales it on the way out. Scaling a card that is made of live text
+   resamples the text, and it goes soft exactly where someone is reading it. */
+.env-card{position:absolute;left:16.7%;top:-19.15%;width:66.6%;height:138.3%;overflow:hidden;
   transform:translateZ(2px) translateY(0) rotate(90deg);
   background-image:var(--grain),linear-gradient(168deg,var(--card),color-mix(in srgb,var(--card) 96%,#C9B79A));
   background-size:170px 170px,auto;background-repeat:repeat,no-repeat;
   border:1px solid color-mix(in srgb,var(--card) 88%,#C9B79A);border-radius:.5em;
   display:flex;flex-direction:column;
-  padding:1.7em 1.2em 0;text-align:center;color:var(--card-ink);
+  padding:1.9em 1.4em 0;text-align:center;color:var(--card-ink);
   transition:box-shadow var(--dCard) ease var(--tCard)}
 .env-card .ci{position:absolute;inset:.6em;border:1.4px dashed color-mix(in srgb,var(--ink) 20%,transparent);
   border-radius:.4em;pointer-events:none}
@@ -223,7 +228,7 @@
    background behind it — percentage padding here would resolve against the
    ENVELOPE's width, not this card's, and the two are different boxes.
    margin-top:auto pins it to the bottom however short the text runs. */
-.env-card .cband{margin:.8em -1.2em 0 -1.2em;margin-top:auto;aspect-ratio:1080/775;
+.env-card .cband{margin:.8em -1.4em 0 -1.4em;margin-top:auto;aspect-ratio:1080/775;
   background-image:var(--card-art,none);background-size:100% auto;
   background-position:center top;background-repeat:no-repeat}
 .env-card .ci{display:var(--card-art-rule,block)}
@@ -247,7 +252,7 @@
    depth, and only then comes toward the viewer. */
 @keyframes card-out{
   0%   {transform:translateZ(2px)  translateY(0)     rotate(90deg)}
-  50%  {transform:translateZ(2px)  translateY(-80%)  rotate(90deg)}  /* drawn out, still sideways */
+  50%  {transform:translateZ(2px)  translateY(-76%)  rotate(90deg)}  /* drawn out, still sideways */
   100% {transform:var(--card-rest)}                                  /* turned upright, in front */
 }
 .scene.play .env-card{
