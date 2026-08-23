@@ -143,14 +143,30 @@
   transform-origin:top center;transform:translateZ(3px) rotateX(0deg);
   transition:transform var(--dFlap) var(--eFlap) var(--tFlap)}
 .fside{position:absolute;inset:0;backface-visibility:hidden}
+/* Passing through vertical, neither face of the flap points at the viewer, so
+   both are hidden and whatever is behind them shows for a frame as a hairline
+   along the fold — which was the green line, the gingham liner seen edge-on.
+   A real flap has paper thickness there. This is that: the flap's own kraft,
+   in its own plane, behind both faces, so the hairline is the envelope's
+   colour and disappears into it. */
+.flap::before{content:'';position:absolute;inset:0;
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  background:color-mix(in srgb,var(--env) 92%,var(--env-dk))}
 .fside.outer{clip-path:polygon(0 0,100% 0,50% 100%);border-radius:.6em .6em 0 0;
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(180deg,color-mix(in srgb,var(--env) 96%,#fff),color-mix(in srgb,var(--env) 88%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
 /* pre-mirrored clip-path, because the face is flipped about its own centre */
+/* The liner is darkest at the fold, as a real one is — it is the part that
+   never sees the light. That also settles the green line: passing through
+   vertical the flap collapses to a sliver of exactly this edge, and a shadowed
+   edge reads as paper thickness where bright gingham read as a glitch. */
 .fside.inner{transform:rotateX(180deg);clip-path:polygon(0 100%,100% 100%,50% 0);border-radius:0 0 .6em .6em;
-  background-image:var(--gingham);background-size:var(--gingham-sz);
-  background-repeat:repeat,repeat,no-repeat}
+  background-image:
+    linear-gradient(0deg,rgba(48,36,20,.55) 0,rgba(48,36,20,.16) 9%,rgba(48,36,20,0) 22%),
+    var(--gingham);
+  background-size:100% 100%,var(--gingham-sz);
+  background-repeat:no-repeat,repeat,repeat,no-repeat}
 /* No lick strip. It was a clip-path chevron drawn on a face that is then
    rotated in 3D, so its two arms never met the flap's edges at the same
    angle and it read as a crooked scribble. A liner this clean does not need
@@ -210,20 +226,22 @@
    landscape envelope, so a real one goes in turned — and comes out turned,
    and you rotate it in your hand.
 
-   Sized to fill the envelope. Lying down it occupies 96% of the envelope in
-   both directions, which fixes the card's own proportions: its height must be
-   the envelope's width and its width the envelope's height, so it is a 1:1.44
-   portrait. In envelope units that is 66.6% wide and 138.3% tall.
+   Sized to fill the envelope exactly, not almost. At 96% the pocket's gingham
+   liner showed around it as a three-pixel sliver along the top edge, which
+   read as a stray green line rather than as an interior. Filling it properly
+   fixes the card's own proportions: its height must be the envelope's width
+   and its width the envelope's height, so it is a 1:1.44 portrait. In
+   envelope units that is 69.4% wide and 144% tall.
 
    Nothing scales it on the way out. Scaling a card that is made of live text
    resamples the text, and it goes soft exactly where someone is reading it. */
-.env-card{position:absolute;left:16.7%;top:-19.15%;width:66.6%;height:138.3%;overflow:hidden;
+.env-card{position:absolute;left:15.3%;top:-22%;width:69.4%;height:144%;overflow:hidden;
   transform:translateZ(2px) translateY(0) rotate(90deg);
   background-image:var(--grain),linear-gradient(168deg,var(--card),color-mix(in srgb,var(--card) 96%,#C9B79A));
   background-size:170px 170px,auto;background-repeat:repeat,no-repeat;
   border:1px solid color-mix(in srgb,var(--card) 88%,#C9B79A);border-radius:.5em;
   display:flex;flex-direction:column;
-  padding:3.425em 2.664em 0;text-align:center;color:var(--card-ink);
+  padding:3.569em 2.776em 0;text-align:center;color:var(--card-ink);
   transition:box-shadow var(--dCard) ease var(--tCard)}
 .env-card .ci{position:absolute;inset:.6em;border:1.4px dashed color-mix(in srgb,var(--ink) 20%,transparent);
   border-radius:.4em;pointer-events:none}
@@ -266,7 +284,7 @@
    background behind it — percentage padding here would resolve against the
    ENVELOPE's width, not this card's, and the two are different boxes.
    margin-top:auto pins it to the bottom however short the text runs. */
-.env-card .cband{margin:0 -2.664em;margin-top:auto;aspect-ratio:1080/775;
+.env-card .cband{margin:0 -2.776em;margin-top:auto;aspect-ratio:1080/775;
   background-image:var(--card-art,none);background-size:100% auto;
   background-position:center top;background-repeat:no-repeat}
 .env-card .ci{display:var(--card-art-rule,block)}

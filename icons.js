@@ -37,12 +37,15 @@ window.hydrateIcons = hydrateIcons;
 document.addEventListener('DOMContentLoaded', () => hydrateIcons());
 
 /** A short confirmation. Says what happened, in the same words as the button. */
-function toast(msg){
+/* A tick means it worked. "Add your name first" is not a thing that worked,
+   so it gets the alert mark instead — pass ok:false for anything the guest
+   still has to deal with. */
+function toast(msg, ok = true){
   document.querySelector('.toast')?.remove();
   const t = document.createElement('div');
-  t.className = 'toast';
-  t.setAttribute('role','status');
-  t.innerHTML = icon('check') + `<span>${msg}</span>`;
+  t.className = 'toast' + (ok ? '' : ' toast--warn');
+  t.setAttribute('role', ok ? 'status' : 'alert');
+  t.innerHTML = icon(ok ? 'check' : 'alert') + `<span>${msg}</span>`;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 3200);
 }

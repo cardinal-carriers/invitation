@@ -64,9 +64,9 @@ $('googleBtn').addEventListener('click', async () => {
     /* Worth naming individually: the provider being switched off is a console
        setting, and a blocked popup is indistinguishable from a dead button. */
     if (err.code === 'auth/operation-not-allowed')
-      toast('Turn on Google sign-in in Firebase');
+      toast('Turn on Google sign-in in Firebase', false);
     else if (err.code === 'auth/popup-blocked')
-      toast('Your browser blocked the popup');
+      toast('Your browser blocked the popup', false);
     else if (err.code !== 'auth/popup-closed-by-user' &&
              err.code !== 'auth/cancelled-popup-request')
       toast('That didn\u2019t sign you in');
@@ -165,7 +165,7 @@ $('published').addEventListener('change', async e => {
     toast(on ? 'Published' : 'Unpublished');
   } catch {
     paintPublish(!on);
-    toast('That didn’t save');
+    toast('That didn’t save', false);
   }
   e.target.disabled = false;
 });
@@ -179,7 +179,7 @@ function watchReplies(){
   stopReplies = onSnapshot(q, snap => {
     const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     paintReplies(all);
-  }, () => toast('Replies stopped updating. Reload the page.'));
+  }, () => toast('Replies stopped updating. Reload the page.', false));
 }
 
 function paintReplies(all){
@@ -252,7 +252,7 @@ function replyRow(r){
   del.onclick = async () => {
     if (!confirm(`Delete ${r.name}’s reply?`)) return;
     try { await deleteDoc(doc(db, 'rsvps', r.id)); toast('Deleted'); }
-    catch { toast('That didn’t delete'); }
+    catch { toast('That didn’t delete', false); }
   };
 
   el.append(who, side, del);
@@ -331,7 +331,7 @@ $('editor').addEventListener('submit', async e => {
     $('saveState').textContent = 'Saved';
     toast('Saved');
   } catch {
-    toast('That didn’t save');
+    toast('That didn’t save', false);
   }
   btn.disabled = false;
 });
@@ -512,7 +512,7 @@ async function loadWatchers(ev){
       await setDoc(accessRef, { hostEmails: arrayUnion(...ev.hostEmails) }, { merge: true });
       await updateDoc(eventRef, { hostEmails: deleteField() });
     } catch {
-      toast('Publish the new rules, then reload');
+      toast('Publish the new rules, then reload', false);
     }
   }
   try {
@@ -555,7 +555,7 @@ function paintWatchers(list){
         await setDoc(accessRef, { hostEmails: arrayRemove(addr) }, { merge: true });
         paintWatchers(watchers.filter(a => a !== addr));
         toast('Removed');
-      } catch { toast('That didn’t save'); }
+      } catch { toast('That didn’t save', false); }
     };
 
     chip.append(x);
@@ -570,7 +570,7 @@ $('watcherForm').addEventListener('submit', async e => {
      like a bug in the sign-in rather than a capital letter. */
   const addr = $('watcherEmail').value.trim().toLowerCase();
   if (!addr) return;
-  if (watchers.includes(addr)) { $('watcherEmail').value = ''; toast('Already added'); return; }
+  if (watchers.includes(addr)) { $('watcherEmail').value = ''; toast('Already added', false); return; }
 
   const btn = $('addWatcher');
   btn.disabled = true;
@@ -583,6 +583,6 @@ $('watcherForm').addEventListener('submit', async e => {
     /* Named so it cannot be read as "invitation sent" — that is the one thing
        this button does not do. */
     toast('Added to the list');
-  } catch { toast('That didn’t save'); }
+  } catch { toast('That didn’t save', false); }
   btn.disabled = false;
 });

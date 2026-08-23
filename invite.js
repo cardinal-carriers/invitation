@@ -254,7 +254,7 @@ $('addOther').onclick = () => addOther(true);
 async function post(attending){
   const nameEl = $('guestName');
   const name = nameEl.value.trim();
-  if (!name) { nameEl.focus(); toast('Add your name first'); return; }
+  if (!name) { nameEl.focus(); toast('Add your name first', false); return; }
 
   const others = [...rows.querySelectorAll('input')]
     .map(i => i.value.trim()).filter(Boolean).slice(0, MAX_OTHERS);
@@ -275,14 +275,14 @@ async function post(attending){
     });
   } catch {
     buttons.forEach(b => b.disabled = false);
-    toast('That didn’t send. Try again.');
+    toast('That didn’t send. Try again.', false);
     return;
   }
   if (!res.ok) {
     buttons.forEach(b => b.disabled = false);
     /* A rules rejection is a 403 with PERMISSION_DENIED. The guest never
        sees that; they see something they can act on. */
-    toast(res.status === 403 ? 'Replies are closed' : 'That didn’t send. Try again.');
+    toast(res.status === 403 ? 'Replies are closed' : 'That didn’t send. Try again.', false);
     return;
   }
 
@@ -335,7 +335,7 @@ function showPosted(saved, returning){
 /* ======================================================================== */
 $('cal').onclick = () => {
   const start = new Date(EV.startsAt);
-  if (isNaN(start)) { toast('No date set yet'); return; }
+  if (isNaN(start)) { toast('No date set yet', false); return; }
   /* The host's end time when there is one. Three hours is the fallback, and
      only a fallback — a calendar entry that runs to the wrong hour is worse
      than one that is obviously a guess. */

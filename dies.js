@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <path fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"
       d="M50 82S18 62 18 40a17 17 0 0132-8 17 17 0 0132 8c0 22-32 42-32 42z"/></symbol>
 <symbol id="m-mono" viewBox="0 0 100 100">
-    <text x="50" y="70" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-size="60"
+    <text x="50" y="70" text-anchor="middle" font-family="Lora,Georgia,serif" font-size="60"
       font-weight="600" fill="currentColor" class="mono-t">A</text></symbol>
 <symbol id="m-rings" viewBox="0 0 100 100">
     <g fill="none" stroke="currentColor" stroke-width="4.6">

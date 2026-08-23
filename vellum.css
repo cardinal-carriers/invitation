@@ -1,6 +1,9 @@
 /* Self-hosted, latin subset, variable. No third-party request on the critical path. */
-@font-face{font-family:'Fraunces';font-style:normal;font-weight:300 700;font-display:swap;
-  src:url("fonts/fraunces.woff2") format("woff2")}
+/* Lora, not Fraunces. Fraunces draws j and f with curled descenders — its own
+   character, and at card size on a phone they read as a smudge. Lora keeps the
+   warmth without the quirk, and its latin subset is half the weight. */
+@font-face{font-family:'Lora';font-style:normal;font-weight:400 700;font-display:swap;
+  src:url("fonts/lora.woff2") format("woff2")}
 @font-face{font-family:'Karla';font-style:normal;font-weight:300 700;font-display:swap;
   src:url("fonts/karla.woff2") format("woff2")}
 @font-face{font-family:'Caveat';font-style:normal;font-weight:500 700;font-display:swap;
@@ -65,7 +68,7 @@
   --yes-bg:#EEF2E9; --no-bg:#F8E9E7; --maybe-bg:#F9EFD9; --waiting-bg:#F2ECE2;
 
   /* --- typefaces -------------------------------------------------------- */
-  --disp:'Fraunces',Georgia,'Times New Roman',serif;
+  --disp:'Lora',Georgia,'Times New Roman',serif;
   --body:'Karla',system-ui,-apple-system,'Segoe UI',sans-serif;
   --hand:'Caveat','Segoe Script',cursive;
 
@@ -491,6 +494,10 @@ table{border-collapse:collapse;width:100%}
 .toast{position:fixed;left:50%;bottom:var(--s7);transform:translateX(-50%);z-index:120;
   display:flex;align-items:center;gap:11px;padding:13px 20px;border-radius:var(--r-pill);
   background:var(--ink);color:var(--cream);font-size:14px;font-weight:500;box-shadow:var(--e4)}
+/* The warning version. Same shape, different mark and a red rule, so it is
+   distinguishable at a glance from the one that means it worked. */
+.toast--warn{border-color:color-mix(in srgb,var(--no) 42%,transparent)}
+.toast--warn svg{color:var(--no)}
 .toast svg{width:17px;height:17px;color:var(--sage)}
 
 
