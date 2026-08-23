@@ -25,7 +25,7 @@
   /* Where the card ends up: out of the pocket and forward, in front of the
      envelope. Named because three rules need it — the keyframe, and the two
      ways of reaching the rest state without running the sequence. */
-  --card-rest:translateZ(46px) translateY(-42%);
+  --card-rest:translateZ(46px) translateY(-30%) rotate(0deg);
 }
 /* Height reserved for the SETTLED composition: the envelope (69.4% of width)
    plus the card resting in front of it, which now overlaps rather than
@@ -36,7 +36,7 @@
    reserving for the peak instead would leave the resting envelope floating
    in a third of a screen of dead space for the whole time anyone is looking
    at it. The transient overlap is the cheaper of the two. */
-.scene::before{content:'';display:block;padding-top:104%}
+.scene::before{content:'';display:block;padding-top:107%}
 .scene--sm{max-width:300px}
 
 .env{position:absolute;left:0;right:0;bottom:3%;aspect-ratio:1.44/1;transform-style:preserve-3d;
@@ -138,23 +138,34 @@
 .w-mot-lo{color:var(--wax-xlo);opacity:.85}
 .w-mot-hi{color:var(--wax-hi);opacity:.72}
 
-/* ---- the card inside ---- */
-.env-card{position:absolute;left:7.5%;right:7.5%;bottom:5%;height:88%;
-  transform:translateZ(2px) translateY(0);
-  background-image:var(--grain),linear-gradient(168deg,var(--card),color-mix(in srgb,var(--card) 93%,#C9B79A));
+/* ---- the card inside ----
+   Portrait, and lying on its side. A portrait card does not fit upright in a
+   landscape envelope, so a real one goes in turned — and comes out turned,
+   and you rotate it in your hand.
+
+   Sized so that, lying down, it occupies 81% of the envelope's width and 85%
+   of its height: width 59% of the envelope's width, height 117% of its
+   height, which is 81% of the envelope's width. */
+.env-card{position:absolute;left:20.5%;top:-8.5%;width:59%;height:117%;
+  transform:translateZ(2px) translateY(0) rotate(90deg);
+  background-image:var(--grain),linear-gradient(168deg,var(--card),color-mix(in srgb,var(--card) 96%,#C9B79A));
   background-size:170px 170px,auto;background-repeat:repeat,no-repeat;
-  border:1px solid color-mix(in srgb,var(--card) 80%,#C9B79A);border-radius:.6em;
-  padding:1.9em 1.5em;text-align:center;color:var(--ink);
-  transition:transform var(--dCard) var(--eCard) var(--tCard),box-shadow var(--dCard) ease var(--tCard)}
+  border:1px solid color-mix(in srgb,var(--card) 88%,#C9B79A);border-radius:.5em;
+  /* Percentage padding resolves against the envelope's width, not the card's,
+     because the envelope is this card's containing block. The card is 59% of
+     that width, so 27% here is 46% of the card — the clearance the band needs. */
+  padding:1.7em 1.2em 27%;text-align:center;color:var(--card-ink);
+  transition:box-shadow var(--dCard) ease var(--tCard)}
 .env-card .ci{position:absolute;inset:.6em;border:1.4px dashed color-mix(in srgb,var(--ink) 20%,transparent);
   border-radius:.4em;pointer-events:none}
-.env-card .ck{font-size:.86em;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
-  color:color-mix(in srgb,var(--accent) 80%,#000);position:relative}
-.env-card .ch{font-family:var(--hand);font-size:2.3em;color:var(--wax);line-height:.95;margin-top:.1em;position:relative}
-.env-card .cn{font-family:var(--disp);font-size:2.3em;font-weight:600;line-height:1.04;margin:.12em 0 .06em;position:relative}
-.env-card .cd{display:flex;gap:.55em;justify-content:center;margin:.8em 0;position:relative}
-.env-card .cd i{width:.55em;height:.55em;border-radius:50%;display:block}
-.env-card .cm{font-size:1.02em;line-height:1.7;color:color-mix(in srgb,var(--ink) 72%,var(--card));position:relative}
+.env-card .ck{font-family:var(--disp);font-size:.92em;font-weight:400;letter-spacing:.01em;
+  text-transform:none;color:var(--card-ink);line-height:1.35;position:relative}
+.env-card .cn{font-family:var(--hand);font-size:2.5em;font-weight:600;line-height:.98;
+  color:var(--card-ink-hd);margin-top:.22em;position:relative}
+.env-card .ch{font-family:var(--hand);font-size:2.2em;font-weight:600;line-height:.98;
+  color:var(--card-ink-hd);position:relative}
+.env-card .cm{font-family:var(--disp);font-size:.96em;line-height:1.5;
+  color:var(--card-ink);margin-top:.9em;position:relative}
 /* The same band the letter carries, so the envelope previews the card
    instead of showing a different design.
 
@@ -163,10 +174,12 @@
    at full width inside a short box anchored to the bottom instead, which
    crops the top of the band away and leaves the row of characters standing
    along the bottom edge — the part that reads at this size. */
-.env-card::after{content:'';position:absolute;left:0;right:0;bottom:0;height:42%;
-  overflow:hidden;border-radius:0 0 .55em .55em;pointer-events:none;
-  background-image:var(--card-art,none);background-size:100% auto;
-  background-position:center bottom;background-repeat:no-repeat}
+.env-card::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background-image:var(--card-art,none);
+  background-size:var(--card-art-size,100% auto);
+  background-position:var(--card-art-pos,center bottom);
+  background-repeat:no-repeat}
+.env-card > *{position:relative}
 .env-card .ci{display:var(--card-art-rule,block)}
 
 /* ---- playback ---- */
@@ -187,9 +200,9 @@
    reads as paper passing through paper. So it clears first, at its original
    depth, and only then comes toward the viewer. */
 @keyframes card-out{
-  0%   {transform:translateZ(2px)  translateY(0)}
-  56%  {transform:translateZ(2px)  translateY(-112%)}   /* clear of the pocket */
-  100% {transform:var(--card-rest)}                     /* resting in front */
+  0%   {transform:translateZ(2px)  translateY(0)     rotate(90deg)}
+  50%  {transform:translateZ(2px)  translateY(-80%)  rotate(90deg)}  /* drawn out, still sideways */
+  100% {transform:var(--card-rest)}                                  /* turned upright, in front */
 }
 .scene.play .env-card{
   animation:card-out calc(var(--dCard)*2.05) var(--eCard) var(--tCard) both;

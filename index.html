@@ -60,6 +60,29 @@ body:not(.opened) #replyWrap{display:none}
 body:not(.opened) .letter{padding-bottom:0}
 .sheet{padding:var(--s10) clamp(24px,6vw,56px) var(--s9)}
 
+/* --- set like the printed card ---------------------------------------
+   The host's template is one muted green serif throughout, with the names
+   and the occasion carried by a single script line. Vellum's default
+   treatment — an uppercase eyebrow, a display-serif name, a dot rule and a
+   labelled detail block — is a different, busier card. This is that card
+   restated as the printed one. */
+.sheet .eyebrow{font-family:var(--disp);font-size:clamp(15px,3.4vw,17px);font-weight:400;
+  letter-spacing:.01em;text-transform:none;color:var(--card-ink);line-height:1.4}
+.sheet .honouree{font-family:var(--hand);font-weight:600;
+  font-size:clamp(40px,9vw,58px);line-height:.98;letter-spacing:0;
+  color:var(--card-ink-hd);text-align:center;margin:var(--s4) 0 0}
+.sheet .occasion{font-family:var(--hand);font-weight:600;
+  font-size:clamp(36px,8vw,52px);line-height:.98;color:var(--card-ink-hd);
+  text-align:center;margin-top:0}
+
+/* Every remaining fact, one centred line each. */
+.line{font-family:var(--disp);font-weight:400;text-align:center;
+  font-size:clamp(15px,3.5vw,17.5px);line-height:1.55;color:var(--card-ink);
+  margin-top:var(--s5)}
+.line--reply{font-size:clamp(13.5px,3vw,15px);color:var(--card-ink-2);margin-top:var(--s4)}
+.line a{color:inherit;font-size:inherit;text-decoration-color:color-mix(in srgb,var(--card-ink) 40%,transparent)}
+.line .sub{display:block;font-size:.94em;color:var(--card-ink-2);margin-top:2px}
+
 /* --- the card artwork -------------------------------------------------
    A host-supplied template paints behind the text. It is its own layer
    rather than a fifth entry in .paper's background stack: that stack is
@@ -79,11 +102,13 @@ body:not(.opened) .letter{padding-bottom:0}
    rather than doubled. */
 .sheet > :not(.sheet-inner){position:relative}
 .sheet-inner{display:var(--card-art-rule,block)}
-.host-note{margin-top:var(--s6);padding-top:var(--s6);border-top:var(--perf-fine);
-  font-size:16.5px;line-height:1.7;text-align:center}
-.host-note .sig{display:block;font-family:var(--hand);font-weight:600;font-size:27px;
-  color:var(--wax);margin-top:var(--s4);line-height:1}
-.sheet-actions{display:flex;justify-content:center;margin-top:var(--s7)}
+.host-note{font-family:var(--disp);font-weight:400;text-align:center;
+  font-size:clamp(15px,3.5vw,17.5px);line-height:1.55;color:var(--card-ink);
+  margin-top:var(--s6)}
+.host-note .sig{display:block;font-family:var(--hand);font-weight:600;font-size:26px;
+  color:var(--card-ink-hd);margin-top:var(--s3);line-height:1}
+.sheet-actions{display:flex;justify-content:center;margin-top:var(--s6)}
+body:not(.opened) .sheet-actions{display:none}
 
 /* --- the reply card --------------------------------------------------- */
 .reply-perf{margin:var(--s9) auto var(--s5)}
@@ -151,16 +176,16 @@ body:not(.opened) .letter{padding-bottom:0}
 
    Percentage padding resolves against width, exactly as the band's
    background-size:100% auto does, so this one number works at every screen
-   size with no media query. It is short of the band's full height on
-   purpose: the top of the band is faded out, and letting the last line
-   settle into it stops the card reading as two stacked panels. */
-.sheet{padding-bottom:calc(var(--card-art-ratio) - 13%)}
+   size with no media query.
 
-/* Attribution, as real text. The template carries this line baked into the
-   artwork at a size that is illegible on a phone; cropping it out and
-   setting it in type is the only version anyone can actually read. */
-.art-credit{max-width:620px;margin:var(--s4) auto 0;text-align:center;
-  font-size:11.5px;line-height:1.5;color:var(--ink-3)}
+   Where the 17% comes from, measured off the image rather than guessed:
+   the band sits 2.5% up from the bottom edge and is 69.2% tall, so its top
+   edge is at 71.7%. The top third of it ramps up from nothing on a slow
+   curve — 23.5% of the card's width where there is barely any paint — so
+   the last line of type can sit inside that and read cleanly. Clearing to
+   52.2% closes the stranded cream without standing anyone in the flowers. */
+.sheet{padding-bottom:calc(var(--card-art-ratio) - 17%)}
+
 </style>
 </head>
 <body>
@@ -175,7 +200,7 @@ body:not(.opened) .letter{padding-bottom:0}
        it. Pointing away from the thing you are being asked to tap is worse
        than no arrow. -->
   <p class="open-hint">
-    <svg viewBox="0 0 34 24" aria-hidden="true"><path d="M2 22c6-9 14-14 27-15"/><path d="M23 11l6-4-2-6"/></svg>
+    <svg viewBox="0 0 34 24" aria-hidden="true"><path d="M3 21C10 22 22 19 26 4"/><path d="M21 9L26 4l2 7"/></svg>
     Tap to open
   </p>
 </div>
@@ -185,37 +210,28 @@ body:not(.opened) .letter{padding-bottom:0}
 
   <article class="paper sheet" id="sheet" hidden>
     <div class="sheet-inner" aria-hidden="true"></div>
-    <p class="eyebrow">Please join us for</p>
-    <p class="occasion" id="occasion"></p>
-    <h1 class="honouree" id="honouree"></h1>
-    <div class="dot-rule" aria-hidden="true">
-      <i style="background:var(--wax)"></i><i style="background:var(--sky)"></i>
-      <i style="background:var(--sage)"></i><i style="background:var(--liner)"></i>
-    </div>
 
-    <dl class="detail-block">
-      <div class="detail">
-        <dt>When</dt>
-        <dd id="dWhen"></dd>
-      </div>
-      <div class="detail">
-        <dt>Where</dt>
-        <dd id="dWhere"></dd>
-      </div>
-      <div class="detail" id="dReplyRow">
-        <dt>Reply by</dt>
-        <dd id="dReply"></dd>
-      </div>
-    </dl>
+    <!-- Set the way the host's own template sets it: one small serif line,
+         the names and the occasion together in script, then the details as
+         plain centred lines. No labels, no rules, no ornament — the printed
+         card has none, and the artwork is the ornament. -->
+    <p class="eyebrow">You&rsquo;re invited to join us for</p>
+    <h1 class="honouree" id="honouree"></h1>
+    <p class="occasion" id="occasion"></p>
 
     <p class="host-note" id="hostNote" hidden></p>
+    <p class="line line--when" id="dWhen"></p>
+    <p class="line line--where" id="dWhere"></p>
+    <p class="line line--reply" id="dReplyRow">Reply by <span id="dReply"></span></p>
 
-    <div class="sheet-actions">
-      <button class="btn btn--ghost" data-icon="cal" id="cal">Add to calendar</button>
-    </div>
   </article>
-  <p class="art-credit">&copy;Disney. Based on the &ldquo;Winnie the Pooh&rdquo; works by
-     A.&thinsp;A. Milne and E.&thinsp;H. Shepard.</p>
+
+  <!-- Outside the card. The printed invitation has no button on it, and the
+       band runs to the bottom edge — anything placed over it is standing in
+       the flowers. -->
+  <div class="sheet-actions">
+    <button class="btn btn--ghost" data-icon="cal" id="cal">Add to calendar</button>
+  </div>
 
   <!-- ============ the reply card ============ -->
   <div id="replyWrap" hidden>

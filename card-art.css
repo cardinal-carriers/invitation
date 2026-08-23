@@ -21,4 +21,24 @@
      1080x747. Both background-size:100% auto and percentage padding resolve
      against width, so this one number drives every clearance below. */
   --card-art-ratio:69.2%;
+  /* The artwork's own background, sampled from the template. The card stock
+     is set to match it so the band has no edge to show: vellum's --paper is
+     #FFFDF8, ten points cooler, and against a full-width watercolour that
+     difference reads as a join. */
+  --card-cream:#FEF7EE;
+
+  /* The template's ink, sampled from the artwork: a muted grey-green, used
+     for everything on the printed card. It measures 3.88:1 against the cream
+     — fine for the large script lines, which need 3:1, and short of the
+     4.5:1 that body text needs on a phone held at arm's length. So the
+     script keeps the sampled colour exactly and the body text is darkened
+     along the same hue until it passes. */
+  --card-ink-hd:#7B7F6C;   /* script headings   3.88:1, large text */
+  --card-ink:#666A57;      /* body              5.25:1 */
+  --card-ink-2:#6E7260;    /* reply-by          4.66:1 */
 }
+/* Both cards, the letter and the one inside the envelope. Each is a local
+   override of the token its own background rules already use, so every
+   gradient and texture built on top of it follows. */
+.sheet{--paper:var(--card-cream)}
+.env-card{--card:var(--card-cream)}

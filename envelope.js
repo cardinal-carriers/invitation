@@ -24,8 +24,8 @@ const DEFAULTS = {
   mark: { city:'OTTAWA', region:'ON · CANADA', date:'09 · V · 26' },
   stamp:{ country:'CANADA', value:'P' },
   die:  'm-pram',
-  card: { kicker:'Please join us for', occasion:'a baby shower',
-          name:'honouring<br>Amara',
+  card: { kicker:"You're invited to join us for", occasion:'a baby shower',
+          name:'Amara &amp; Theo',
           meta:'Saturday, May 9th · 2:00 pm<br>14 Thornbury Lane, Ottawa' }
 };
 
@@ -101,12 +101,8 @@ function markup(o, n){
         <div class="env-card">
           <div class="ci"></div>
           <div class="ck" data-f="card.kicker">${o.card.kicker}</div>
-          <div class="ch" data-f="card.occasion">${o.card.occasion}</div>
           <div class="cn" data-f="card.name">${o.card.name}</div>
-          <div class="cd">
-            <i style="background:var(--wax)"></i><i style="background:var(--sky)"></i>
-            <i style="background:var(--sage)"></i><i style="background:var(--liner)"></i>
-          </div>
+          <div class="ch" data-f="card.occasion">${o.card.occasion}</div>
           <div class="cm" data-f="card.meta">${o.card.meta}</div>
         </div>
         <div class="lip"></div>

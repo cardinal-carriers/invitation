@@ -61,9 +61,12 @@ function shortDate(iso){
   return isNaN(d) ? '' : d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', timeZone:TZ});
 }
 /** A postmark writes its month in roman numerals. */
+/* Roman numerals are the real postal convention for the month, and nobody
+   reading this knows that — it just looks like a serial number on the stamp.
+   Plain letters instead. */
 function postmarkDate(d){
-  const M = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
-  return `${String(d.getDate()).padStart(2,'0')} · ${M[d.getMonth()]} · ${String(d.getFullYear()).slice(2)}`;
+  const M = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  return `${String(d.getDate()).padStart(2,'0')} ${M[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`;
 }
 
 /* --- elements ----------------------------------------------------------- */
@@ -123,7 +126,7 @@ function render(doc){
             date:   postmarkDate(posted) },
     die:  EV.sealDie || 'm-pram',
     card: {
-      kicker:  'Please join us for',
+      kicker:  'You\u2019re invited to join us for',
       occasion: esc(EV.occasionLine || ''),
       name:     esc(EV.honouree || ''),
       meta:     `${esc(when)}<br>${esc(place)}`
