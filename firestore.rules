@@ -85,30 +85,46 @@ service cloud.firestore {
     }
 
     match /rsvps/{rsvpId} {
+      function wellFormed() {
+        return request.resource.data.keys().hasOnly(
+             ['eventId','name','others','attending','note','createdAt','updatedAt'])
+          && request.resource.data.eventId == 'shower'
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 80
+          && request.resource.data.others is list
+          && request.resource.data.others.size() <= 10
+          && request.resource.data.attending is bool
+          && (request.resource.data.note == null ||
+              (request.resource.data.note is string &&
+               request.resource.data.note.size() <= 500))
+          && request.resource.data.createdAt is timestamp
+          && (!('updatedAt' in request.resource.data) ||
+              request.resource.data.updatedAt is timestamp);
+      }
+
       // Anyone may reply to a published invitation, with a well-formed document.
-      allow create: if event().published == true
-        && request.resource.data.keys().hasOnly(
-             ['eventId','name','others','attending','note','createdAt'])
-        && request.resource.data.eventId == 'shower'
-        && request.resource.data.name is string
-        && request.resource.data.name.size() > 0
-        && request.resource.data.name.size() <= 80
-        && request.resource.data.others is list
-        && request.resource.data.others.size() <= 10
-        && request.resource.data.attending is bool
-        && (request.resource.data.note == null ||
-            (request.resource.data.note is string &&
-             request.resource.data.note.size() <= 500))
-        && request.resource.data.createdAt is timestamp;
+      allow create: if event().published == true && wellFormed();
+
+      /* A guest may change their mind. Nobody signs in to reply, so there is
+         no identity here to check: what stands in for one is the document
+         name, which the guest's browser invents at random and keeps. Anyone
+         may write any reply, exactly as they always could — but writing over
+         SOMEONE ELSE'S reply means naming their document, and the collection
+         cannot be read by anyone but the hosts.
+
+         createdAt is pinned so an edit cannot rewrite when the reply
+         arrived, and eventId so a reply cannot be moved to another event. */
+      allow update: if event().published == true
+        && wellFormed()
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.eventId == resource.data.eventId;
 
       // The owner and anyone on hostEmails. Guests never see each other.
       allow read: if canSeeReplies();
 
       // Deleting someone's reply is the owner's call alone.
       allow delete: if isOwner();
-
-      // Nobody edits a reply, including its author.
-      allow update: if false;
     }
   }
 }

@@ -231,13 +231,19 @@ function replyRow(r){
   pill.textContent = r.attending ? `${1 + (r.others?.length || 0)} coming` : 'Can’t make it';
   side.append(pill);
 
+  /* A guest who changes their mind writes over their own reply, so the row
+     shows when it was last touched — and says so, because "3 Sep" against an
+     answer that arrived in August would otherwise be a small lie. The list
+     stays in order of arrival: an edit is not a new reply. */
+  const stamp = d =>
+    d.toLocaleDateString('en-GB', {day:'numeric', month:'short', timeZone:TZ}) + ', ' +
+    d.toLocaleTimeString('en-GB', {hour:'numeric', minute:'2-digit', hour12:true, timeZone:TZ});
+
   const when = document.createElement('div');
   when.className = 'when';
   const at = r.createdAt?.toDate?.();
-  when.textContent = at
-    ? at.toLocaleDateString('en-GB', {day:'numeric', month:'short', timeZone:TZ}) + ', ' +
-      at.toLocaleTimeString('en-GB', {hour:'numeric', minute:'2-digit', hour12:true, timeZone:TZ})
-    : '';
+  const ed = r.updatedAt?.toDate?.();
+  when.textContent = ed ? `${stamp(ed)} · edited` : (at ? stamp(at) : '');
   side.append(when);
 
   /* A watcher has no delete: the rules refuse it, so offering the button
@@ -431,11 +437,22 @@ function clock(v){
   return d.toLocaleTimeString('en-GB', {hour:'numeric', minute:'2-digit', hour12:true, timeZone:TZ})
           .replace(/\s?([ap])m/i, (_, m) => ` ${m.toLowerCase()}m`);
 }
-function whenLine(startV, endV){
-  const d = startV ? new Date(startV) : null;
+function ordinal(n){
+  const teen = n % 100;
+  if (teen >= 11 && teen <= 13) return `${n}th`;
+  return n + ({1:'st', 2:'nd', 3:'rd'}[n % 10] || 'th');
+}
+function longDate(v){
+  const d = v ? new Date(v) : null;
   if (!d || isNaN(d)) return '';
-  const day = d.toLocaleDateString('en-GB',
-    {weekday:'long', day:'numeric', month:'long', year:'numeric', timeZone:TZ});
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    weekday:'long', month:'long', day:'numeric', year:'numeric', timeZone:TZ
+  }).formatToParts(d).map(x => [x.type, x.value]));
+  return `${p.weekday}, ${p.month} ${ordinal(Number(p.day))} ${p.year}`;
+}
+function whenLine(startV, endV){
+  const day = longDate(startV);
+  if (!day) return '';
   const from = clock(startV), to = clock(endV);
   if (!to) return `${day}, ${from}`;
   const mer = t => (t.match(/([ap])m$/) || [])[1];
