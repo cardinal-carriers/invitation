@@ -75,15 +75,26 @@
   background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
 
 /* ---- front: addressed, stamped, cancelled ---- */
-.ret{position:absolute;left:1.6em;top:1.4em;font-size:.84em;line-height:1.5;
-  color:color-mix(in srgb,var(--ink) 58%,var(--env))}
-.ret b{display:block;font-family:var(--disp);font-weight:600;font-size:1.12em;
-  color:color-mix(in srgb,var(--ink) 82%,var(--env))}
-.to{position:absolute;left:50%;top:53%;transform:translate(-50%,-50%);width:76%;
+/* The front is set from the card's palette, not from generic ink. The two
+   are seen four seconds apart and a different grey on each reads as two
+   different stationers.
+
+   Not all of it is green. The stamp keeps the palette's dusty blue and the
+   postmark keeps the wax, so the face has the three or four inks a real
+   franked envelope has rather than one. */
+.ret{position:absolute;left:1.6em;top:1.4em;font-size:.9em;line-height:1.55;
+  font-family:var(--disp);color:var(--card-ink-2,color-mix(in srgb,var(--ink) 58%,var(--env)))}
+.ret b{display:block;font-family:var(--disp);font-weight:600;font-size:1.1em;
+  color:var(--card-ink,color-mix(in srgb,var(--ink) 82%,var(--env)))}
+.to{position:absolute;left:50%;top:53%;transform:translate(-50%,-50%);width:82%;
   text-align:center;font-size:.96em;line-height:1.7}
-.to .nm{font-family:var(--hand);font-size:2.15em;color:var(--ink);line-height:1;margin-bottom:.3em}
-.to .ln{color:color-mix(in srgb,var(--ink) 64%,var(--env))}
-.to .hr{width:3em;height:1px;margin:0 auto .9em;background:color-mix(in srgb,var(--ink) 32%,var(--env));border:0}
+/* The one line anybody reads on the front, and it was set smaller than the
+   return address block. */
+.to .nm{font-family:var(--hand);font-weight:600;font-size:3.4em;line-height:1;
+  color:var(--card-ink-hd,var(--ink));margin-bottom:.24em}
+.to .ln{color:var(--card-ink-2,color-mix(in srgb,var(--ink) 64%,var(--env)))}
+.to .hr{width:3.4em;height:1px;margin:0 auto .8em;border:0;
+  background:color-mix(in srgb,var(--card-ink-hd,var(--ink)) 45%,transparent)}
 .front .stamp{position:absolute;right:1.3em;top:1.2em;width:6em;height:7em;transform:rotate(2.4deg);z-index:2}
 .front .postmark{position:absolute;right:6.8em;top:1.6em;z-index:3}
 
@@ -101,11 +112,10 @@
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(180deg,color-mix(in srgb,var(--liner) 88%,#000),var(--liner));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
-/* dried adhesive along the flap's glued edges */
-.gum{position:absolute;inset:0;pointer-events:none;
-  clip-path:polygon(4% 100%,50% 3%,96% 100%,87% 100%,50% 14%,13% 100%);
-  background:linear-gradient(180deg,rgba(255,249,232,.30),rgba(255,249,232,.13));
-  box-shadow:inset 0 0 .3em rgba(255,250,235,.25)}
+/* No lick strip. It was a clip-path chevron drawn on a face that is then
+   rotated in 3D, so its two arms never met the flap's edges at the same
+   angle and it read as a crooked scribble. A liner this clean does not need
+   one, and a wrong one costs more than a missing one. */
 /* pocket front: lighter than the interior, with a lit edge, so the V reads */
 .lip{position:absolute;inset:-1px;transform:translateZ(3px);border-radius:.6em;
   clip-path:polygon(0 0,50% 58%,100% 0,100% 100%,0 100%);
@@ -166,6 +176,10 @@
   color:var(--card-ink-hd);position:relative}
 .env-card .cm{font-family:var(--disp);font-size:.96em;line-height:1.5;
   color:var(--card-ink);margin-top:.9em;position:relative}
+/* The host's note, under the details, exactly where the letter puts it. */
+.env-card .cnote{font-family:var(--disp);font-size:.92em;line-height:1.45;
+  color:var(--card-ink-2);margin-top:.55em;position:relative}
+.env-card .cnote:empty{display:none}
 /* The same band the letter carries, so the envelope previews the card
    instead of showing a different design.
 

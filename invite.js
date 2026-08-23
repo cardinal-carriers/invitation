@@ -120,7 +120,12 @@ function render(doc){
   /* --- the envelope --- */
   const posted = new Date(EV.updatedAt || doc.updateTime || Date.now());
   env = Envelope.mount('#sc', {
-    ret:  { name: esc(hosts), l1: esc(EV.locationName || ''), l2: esc(EV.address || '') },
+    /* The return address is where the post would come back to, which is
+       not necessarily where the party is — a hall booked for the afternoon
+       is nobody's address. Falls back to the venue when it is left blank. */
+    ret:  { name: esc(hosts),
+            l1:   esc(EV.returnLine1 || EV.locationName || ''),
+            l2:   esc(EV.returnLine2 || EV.address || '') },
     mark: { city:   esc((EV.postmarkCity || '').toUpperCase()),
             region: esc((EV.postmarkRegion || '').toUpperCase()),
             date:   postmarkDate(posted) },
@@ -129,7 +134,8 @@ function render(doc){
       kicker:  'You\u2019re invited to join us for',
       occasion: esc(EV.occasionLine || ''),
       name:     esc(EV.honouree || ''),
-      meta:     `${esc(when)}<br>${esc(place)}`
+      meta:     `${esc(when)}<br>${esc(place)}`,
+      note:     esc(EV.hostNote || '')
     }
   }).onOpen(() => {
     document.body.classList.add('opened');

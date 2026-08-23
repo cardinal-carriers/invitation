@@ -263,7 +263,7 @@ function replyRow(r){
 /*  3. The editor. Fields map 1:1 to events/shower. One Save, no autosave.   */
 /* ======================================================================== */
 const TEXT = ['occasionLine','honouree','hosts','locationName','address','hostNote',
-              'postmarkCity','postmarkRegion'];
+              'postmarkCity','postmarkRegion','returnLine1','returnLine2'];
 let wax = '#B4736C', die = 'm-pram';
 
 /* A datetime-local reads in the browser's timezone. The host is in Ottawa
@@ -419,8 +419,9 @@ function paintPreview(){
   if (!env) return;
   const place = [val('locationName'), val('address')].filter(Boolean).join(', ');
   env.set('ret.name', esc(val('hosts')))
-     .set('ret.l1',   esc(val('locationName')))
-     .set('ret.l2',   esc(val('address')))
+     .set('ret.l1',   esc(val('returnLine1') || val('locationName')))
+     .set('ret.l2',   esc(val('returnLine2') || val('address')))
+     .set('card.note', esc(val('hostNote')))
      .set('mark.city',   esc(val('postmarkCity').toUpperCase()))
      .set('mark.region', esc(val('postmarkRegion').toUpperCase()))
      /* The guest page postmarks with the date the invitation was last

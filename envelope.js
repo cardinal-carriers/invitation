@@ -26,7 +26,8 @@ const DEFAULTS = {
   die:  'm-pram',
   card: { kicker:"You're invited to join us for", occasion:'a baby shower',
           name:'Amara &amp; Theo',
-          meta:'Saturday, May 9th · 2:00 pm<br>14 Thornbury Lane, Ottawa' }
+          meta:'Saturday, May 9th · 2:00 pm<br>14 Thornbury Lane, Ottawa',
+          note:'' }
 };
 
 /** The wax seal. Its ids are per-instance so two envelopes can share a page. */
@@ -104,6 +105,7 @@ function markup(o, n){
           <div class="cn" data-f="card.name">${o.card.name}</div>
           <div class="ch" data-f="card.occasion">${o.card.occasion}</div>
           <div class="cm" data-f="card.meta">${o.card.meta}</div>
+          <div class="cnote" data-f="card.note">${o.card.note}</div>
         </div>
         <div class="lip"></div>
         <div class="botflap"></div>
@@ -111,7 +113,7 @@ function markup(o, n){
           <path class="cr-hi" d="M0 100.7 L72 58.7"/><path class="cr-lo" d="M0 100 L72 58"/>
           <path class="cr-hi" d="M144 100.7 L72 58.7"/><path class="cr-lo" d="M144 100 L72 58"/>
         </svg>
-        <div class="flap"><div class="fside outer"></div><div class="fside inner"><div class="gum"></div></div></div>
+        <div class="flap"><div class="fside outer"></div><div class="fside inner"></div></div>
         ${sealSVG(o.die, n)}
       </div>
 

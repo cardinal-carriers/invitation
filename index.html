@@ -178,13 +178,17 @@ body:not(.opened) .sheet-actions{display:none}
    background-size:100% auto does, so this one number works at every screen
    size with no media query.
 
-   Where the 17% comes from, measured off the image rather than guessed:
-   the band sits 2.5% up from the bottom edge and is 69.2% tall, so its top
-   edge is at 71.7%. The top third of it ramps up from nothing on a slow
-   curve — 23.5% of the card's width where there is barely any paint — so
-   the last line of type can sit inside that and read cleanly. Clearing to
-   52.2% closes the stranded cream without standing anyone in the flowers. */
-.sheet{padding-bottom:calc(var(--card-art-ratio) - 17%)}
+   The 2% is arithmetic, not taste. The band sits 2.5% up from the bottom
+   edge and is 69.2% tall, so its top edge is at 71.7%. The fade is only 6.2%
+   of the band — Tigger's ears are the tallest thing in the picture and start
+   51px down, so anything longer washes him out — which is 4.3% of the card's
+   width. The paint is therefore solid from 67.4%, and clearing to 67.2% sets
+   the last line directly on top of it.
+
+   That number is larger than it was and the card is tighter for it: what
+   read as a gap was never empty, it was a third of the band faded to almost
+   nothing. Showing the artwork is what closed it. */
+.sheet{padding-bottom:calc(var(--card-art-ratio) - 2%)}
 
 </style>
 </head>
@@ -219,9 +223,9 @@ body:not(.opened) .sheet-actions{display:none}
     <h1 class="honouree" id="honouree"></h1>
     <p class="occasion" id="occasion"></p>
 
-    <p class="host-note" id="hostNote" hidden></p>
     <p class="line line--when" id="dWhen"></p>
     <p class="line line--where" id="dWhere"></p>
+    <p class="host-note" id="hostNote" hidden></p>
     <p class="line line--reply" id="dReplyRow">Reply by <span id="dReply"></span></p>
 
   </article>
