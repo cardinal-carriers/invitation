@@ -283,18 +283,16 @@ function toDateInput(ts){
 }
 
 function paintReads(){
-  const v = $('f-startsAt').value;
-  const d = v ? new Date(v) : null;
-  $('readsStart').innerHTML = d && !isNaN(d)
-    ? `Guests read this as <b>${d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:TZ})}, ` +
-      `${d.toLocaleTimeString('en-GB',{hour:'numeric',minute:'2-digit',hour12:true,timeZone:TZ})}</b>`
-    : '';
+  const line = whenLine($('f-startsAt').value, $('f-endsAt').value);
+  $('readsStart').innerHTML = line ? `Guests read this as <b>${line}</b>` : '';
 }
 $('f-startsAt').addEventListener('input', paintReads);
+$('f-endsAt').addEventListener('input', paintReads);
 
 function fillEditor(ev){
   TEXT.forEach(k => $('f-' + k).value = ev[k] ?? '');
   $('f-startsAt').value = toLocalInput(ev.startsAt);
+  $('f-endsAt').value   = toLocalInput(ev.endsAt);
   $('f-replyBy').value  = toDateInput(ev.replyBy);
   wax = ev.waxColor || wax;
   die = ev.sealDie  || die;
@@ -313,6 +311,10 @@ $('editor').addEventListener('submit', async e => {
 
   const s = $('f-startsAt').value;
   patch.startsAt = s ? Timestamp.fromDate(new Date(s)) : null;
+  /* Not `e`: this runs inside the submit handler, whose event argument is
+     already called that. */
+  const en = $('f-endsAt').value;
+  patch.endsAt = en ? Timestamp.fromDate(new Date(en)) : null;
   const r = $('f-replyBy').value;
   /* End of the reply-by day, so a reply that lands that evening is on time. */
   patch.replyBy = r ? Timestamp.fromDate(new Date(`${r}T23:59:59`)) : null;
@@ -375,13 +377,22 @@ function postmarkDate(d){
 
 /* Formatted exactly as invite.js formats it. The preview is worth nothing if
    it renders the date differently from the page it is previewing. */
-function longDateTime(v){
+function clock(v){
   const d = v ? new Date(v) : null;
   if (!d || isNaN(d)) return '';
-  const day  = d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric', timeZone:TZ});
-  const time = d.toLocaleTimeString('en-GB', {hour:'numeric', minute:'2-digit', hour12:true, timeZone:TZ})
-                .replace(/\s?([ap])m/i, (_, p) => ` ${p.toLowerCase()}m`);
-  return `${day}, ${time}`;
+  return d.toLocaleTimeString('en-GB', {hour:'numeric', minute:'2-digit', hour12:true, timeZone:TZ})
+          .replace(/\s?([ap])m/i, (_, m) => ` ${m.toLowerCase()}m`);
+}
+function whenLine(startV, endV){
+  const d = startV ? new Date(startV) : null;
+  if (!d || isNaN(d)) return '';
+  const day = d.toLocaleDateString('en-GB',
+    {weekday:'long', day:'numeric', month:'long', year:'numeric', timeZone:TZ});
+  const from = clock(startV), to = clock(endV);
+  if (!to) return `${day}, ${from}`;
+  const mer = t => (t.match(/([ap])m$/) || [])[1];
+  const lead = mer(from) === mer(to) ? from.replace(/\s[ap]m$/, '') : from;
+  return `${day}, ${lead} \u2013 ${to}`;
 }
 
 const val = id => $('f-' + id).value.trim();
@@ -429,7 +440,7 @@ function paintPreview(){
      .set('mark.date', postmarkDate(new Date()))
      .set('card.occasion', esc(val('occasionLine')))
      .set('card.name',     esc(val('honouree')))
-     .set('card.meta', `${esc(longDateTime($('f-startsAt').value))}<br>${esc(place)}`)
+     .set('card.meta', `${esc(whenLine($('f-startsAt').value, $('f-endsAt').value))}<br>${esc(place)}`)
      .setDie(die);
 }
 $('editor').addEventListener('input', paintPreview);

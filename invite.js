@@ -46,15 +46,29 @@ const writeFields = o => Object.fromEntries(Object.entries(o).map(([k,v]) => [k,
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-/** "Saturday 9 May 2026, 2:00 pm" */
-function longDateTime(iso){
+/** "4:00 pm" in the party's clock. */
+function clock(iso){
   const d = new Date(iso);
   if (isNaN(d)) return '';
-  const day = d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric', timeZone:TZ});
-  const time = d.toLocaleTimeString('en-GB', {hour:'numeric', minute:'2-digit', hour12:true, timeZone:TZ})
-                .replace(/\s?([ap])m/i, (_,p) => ` ${p.toLowerCase()}m`);
-  return `${day}, ${time}`;
+  return d.toLocaleTimeString('en-GB', {hour:'numeric', minute:'2-digit', hour12:true, timeZone:TZ})
+          .replace(/\s?([ap])m/i, (_, m) => ` ${m.toLowerCase()}m`);
 }
+
+/** The line that says when. A range shares its meridiem where it can —
+    "1:30 – 4:00 pm", not "1:30 pm – 4:00 pm", which is how it is said. */
+function whenLine(startIso, endIso){
+  const d = new Date(startIso);
+  if (isNaN(d)) return '';
+  const day = d.toLocaleDateString('en-GB',
+    {weekday:'long', day:'numeric', month:'long', year:'numeric', timeZone:TZ});
+  const from = clock(startIso);
+  const to   = endIso ? clock(endIso) : '';
+  if (!to) return `${day}, ${from}`;
+  const mer = t => (t.match(/([ap])m$/) || [])[1];
+  const lead = mer(from) === mer(to) ? from.replace(/\s[ap]m$/, '') : from;
+  return `${day}, ${lead} \u2013 ${to}`;
+}
+
 /** "Saturday 25 April" — a reply-by date needs no year or clock. */
 function shortDate(iso){
   const d = new Date(iso);
@@ -111,7 +125,7 @@ async function load(){
 
 function render(doc){
   const hosts = EV.hosts || '';
-  const when  = longDateTime(EV.startsAt);
+  const when  = whenLine(EV.startsAt, EV.endsAt);
   const place = [EV.locationName, EV.address].filter(Boolean).join(', ');
 
   document.title = `${EV.occasionLine || 'You’re invited'}${hosts ? ' · ' + hosts : ''}`;
@@ -317,7 +331,12 @@ function showPosted(saved, returning){
 $('cal').onclick = () => {
   const start = new Date(EV.startsAt);
   if (isNaN(start)) { toast('No date set yet'); return; }
-  const end = new Date(start.getTime() + 3 * 3600 * 1000);
+  /* The host's end time when there is one. Three hours is the fallback, and
+     only a fallback — a calendar entry that runs to the wrong hour is worse
+     than one that is obviously a guess. */
+  const ended = EV.endsAt ? new Date(EV.endsAt) : null;
+  const end = (ended && !isNaN(ended) && ended > start)
+    ? ended : new Date(start.getTime() + 3 * 3600 * 1000);
   const z = d => d.toISOString().replace(/[-:]|\.\d{3}/g, '');
   const fold = s => String(s).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n');
 

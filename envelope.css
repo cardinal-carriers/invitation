@@ -16,6 +16,21 @@
   perspective:1800px;perspective-origin:50% 40%;
   --u:1s;                       /* one beat. scale the whole sequence here.  */
   --env:var(--kraft); --env-dk:var(--kraft-dk); --accent:var(--sage);
+  /* Gingham: two half-opaque stripe sets crossing over a pale ground. Where
+     one passes you get the mid tone, where both cross you get the dark — the
+     three tones a woven check actually has, from two gradients.
+
+     Sized in em, which is set from container width further down, so the
+     check scales with the envelope instead of pixelling at small sizes. */
+  --gingham-c:var(--sage);
+  --gingham:
+    repeating-linear-gradient(90deg,color-mix(in srgb,var(--gingham-c) 62%,transparent) 0 .62em,
+      transparent .62em 1.24em),
+    repeating-linear-gradient(180deg,color-mix(in srgb,var(--gingham-c) 62%,transparent) 0 .62em,
+      transparent .62em 1.24em),
+    linear-gradient(color-mix(in srgb,var(--gingham-c) 12%,#FDFBF4),
+      color-mix(in srgb,var(--gingham-c) 12%,#FDFBF4));
+  --gingham-sz:1.24em 1.24em,1.24em 1.24em,auto;
   /* the beats */
   --tLift:0s;                  --dLift:calc(var(--u)*.55); --eLift:cubic-bezier(.3,.9,.3,1);
   --tFlip:calc(var(--u)*.35);  --dFlip:calc(var(--u)*1.1);  --eFlip:cubic-bezier(.62,.02,.38,.98);
@@ -69,10 +84,10 @@
    family as the flap liner, so the open envelope reads with real depth. */
 .throat{position:absolute;inset:0;transform:translateZ(.5px);border-radius:.6em .6em 0 0;
   clip-path:polygon(0 0,100% 0,50% 58%);
-  background-image:var(--fibre),var(--grain),var(--fleck),
-    linear-gradient(180deg,color-mix(in srgb,var(--liner) 76%,#000) 0%,
-      color-mix(in srgb,var(--liner) 94%,#000) 42%,color-mix(in srgb,var(--liner) 70%,#000) 100%);
-  background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
+  background-image:var(--gingham);background-size:var(--gingham-sz);
+  background-repeat:repeat,repeat,no-repeat;
+  /* Deeper than the flap: this is the inside of the pocket, in shadow. */
+  filter:brightness(.86)}
 
 /* ---- front: addressed, stamped, cancelled ---- */
 /* The front is set from the card's palette, not from generic ink. The two
@@ -109,9 +124,8 @@
   background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
 /* pre-mirrored clip-path, because the face is flipped about its own centre */
 .fside.inner{transform:rotateX(180deg);clip-path:polygon(0 100%,100% 100%,50% 0);border-radius:0 0 .6em .6em;
-  background-image:var(--fibre),var(--grain),var(--fleck),
-    linear-gradient(180deg,color-mix(in srgb,var(--liner) 88%,#000),var(--liner));
-  background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
+  background-image:var(--gingham);background-size:var(--gingham-sz);
+  background-repeat:repeat,repeat,no-repeat}
 /* No lick strip. It was a clip-path chevron drawn on a face that is then
    rotated in 3D, so its two arms never met the flap's edges at the same
    angle and it read as a crooked scribble. A liner this clean does not need
@@ -156,15 +170,13 @@
    Sized so that, lying down, it occupies 81% of the envelope's width and 85%
    of its height: width 59% of the envelope's width, height 117% of its
    height, which is 81% of the envelope's width. */
-.env-card{position:absolute;left:20.5%;top:-8.5%;width:59%;height:117%;
+.env-card{position:absolute;left:20.5%;top:-8.5%;width:59%;height:117%;overflow:hidden;
   transform:translateZ(2px) translateY(0) rotate(90deg);
   background-image:var(--grain),linear-gradient(168deg,var(--card),color-mix(in srgb,var(--card) 96%,#C9B79A));
   background-size:170px 170px,auto;background-repeat:repeat,no-repeat;
   border:1px solid color-mix(in srgb,var(--card) 88%,#C9B79A);border-radius:.5em;
-  /* Percentage padding resolves against the envelope's width, not the card's,
-     because the envelope is this card's containing block. The card is 59% of
-     that width, so 27% here is 46% of the card — the clearance the band needs. */
-  padding:1.7em 1.2em 27%;text-align:center;color:var(--card-ink);
+  display:flex;flex-direction:column;
+  padding:1.7em 1.2em 0;text-align:center;color:var(--card-ink);
   transition:box-shadow var(--dCard) ease var(--tCard)}
 .env-card .ci{position:absolute;inset:.6em;border:1.4px dashed color-mix(in srgb,var(--ink) 20%,transparent);
   border-radius:.4em;pointer-events:none}
@@ -188,12 +200,13 @@
    at full width inside a short box anchored to the bottom instead, which
    crops the top of the band away and leaves the row of characters standing
    along the bottom edge — the part that reads at this size. */
-.env-card::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background-image:var(--card-art,none);
-  background-size:var(--card-art-size,100% auto);
-  background-position:var(--card-art-pos,center bottom);
-  background-repeat:no-repeat}
-.env-card > *{position:relative}
+/* The same band the letter carries, as an element rather than padding with a
+   background behind it — percentage padding here would resolve against the
+   ENVELOPE's width, not this card's, and the two are different boxes.
+   margin-top:auto pins it to the bottom however short the text runs. */
+.env-card .cband{margin:.8em -1.2em 0 -1.2em;margin-top:auto;aspect-ratio:1080/775;
+  background-image:var(--card-art,none);background-size:100% auto;
+  background-position:center top;background-repeat:no-repeat}
 .env-card .ci{display:var(--card-art-rule,block)}
 
 /* ---- playback ---- */

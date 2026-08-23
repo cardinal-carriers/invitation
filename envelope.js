@@ -106,6 +106,7 @@ function markup(o, n){
           <div class="ch" data-f="card.occasion">${o.card.occasion}</div>
           <div class="cm" data-f="card.meta">${o.card.meta}</div>
           <div class="cnote" data-f="card.note">${o.card.note}</div>
+          <div class="cband"></div>
         </div>
         <div class="lip"></div>
         <div class="botflap"></div>

@@ -58,7 +58,11 @@ body.opened .open-hint{visibility:hidden}
 body:not(.opened) #sheet,
 body:not(.opened) #replyWrap{display:none}
 body:not(.opened) .letter{padding-bottom:0}
-.sheet{padding:var(--s10) clamp(24px,6vw,56px) var(--s9)}
+/* The card and the envelope are the same object seen twice, so they are the
+   same width. The scene caps at 560px; this used to cap at 620 and the two
+   never lined up. */
+.sheet{--sheet-pad:clamp(24px,6vw,56px);max-width:560px;
+  padding:var(--s10) var(--sheet-pad) 0;overflow:hidden}
 
 /* --- set like the printed card ---------------------------------------
    The host's template is one muted green serif throughout, with the names
@@ -92,15 +96,6 @@ body:not(.opened) .letter{padding-bottom:0}
    Nothing is requested until --card-art is set, so with no file in
    assets/ there is no 404 and nothing to download. See assets/README.md
    for how to switch it on. */
-.sheet::before{content:"";position:absolute;inset:0;border-radius:inherit;
-  background-image:var(--card-art,none);
-  background-size:var(--card-art-size,cover);
-  background-position:var(--card-art-pos,center);
-  background-repeat:no-repeat;pointer-events:none}
-/* The text sits above the artwork. .sheet-inner is left out deliberately:
-   it is the dashed rule, and a template with its own frame wants it gone
-   rather than doubled. */
-.sheet > :not(.sheet-inner){position:relative}
 .sheet-inner{display:var(--card-art-rule,block)}
 .host-note{font-family:var(--disp);font-weight:400;text-align:center;
   font-size:clamp(15px,3.5vw,17.5px);line-height:1.55;color:var(--card-ink);
@@ -164,31 +159,30 @@ body:not(.opened) .sheet-actions{display:none}
 .notice p{color:var(--ink-2)}
 
 @media(max-width:560px){
-  .sheet{padding:var(--s8) var(--s5) var(--s7)}
+  /* Only the variable: the shorthand would drop padding-bottom to a value
+     and the band bleeds out by --sheet-pad, so the two must stay in step. */
+  .sheet{--sheet-pad:var(--s5);padding-top:var(--s8)}
   .reply{padding:var(--s8) var(--s5) var(--s7)}
-  .detail{grid-template-columns:1fr;gap:4px}
 }
 
 /* --- the card artwork -------------------------------------------------
-   The variables live in card-art.css, shared with the envelope's inner
-   card. Only the clearance is here, because only this card has text to
-   clear.
+   The band is a real element, not padding with a background behind it.
 
-   Percentage padding resolves against width, exactly as the band's
-   background-size:100% auto does, so this one number works at every screen
-   size with no media query.
+   It was percentage padding, and that was the bug behind the gap growing as
+   the page zoomed out: percentage padding resolves against the CONTAINING
+   BLOCK's width, which is .letter and keeps growing, while the band is drawn
+   at a percentage of .sheet's own width, which stops at its max-width. The
+   two tracked each other only while the card was narrower than its cap.
 
-   The 2% is arithmetic, not taste. The band sits 2.5% up from the bottom
-   edge and is 69.2% tall, so its top edge is at 71.7%. The fade is only 6.2%
-   of the band — Tigger's ears are the tallest thing in the picture and start
-   51px down, so anything longer washes him out — which is 4.3% of the card's
-   width. The paint is therefore solid from 67.4%, and clearing to 67.2% sets
-   the last line directly on top of it.
+   aspect-ratio sizes the element from its own width, so there is nothing
+   left to diverge. The gap above it is now one fixed value that means what
+   it says.
 
-   That number is larger than it was and the card is tighter for it: what
-   read as a gap was never empty, it was a third of the band faded to almost
-   nothing. Showing the artwork is what closed it. */
-.sheet{padding-bottom:calc(var(--card-art-ratio) - 2%)}
+   The box is 1080x775 against an image of 1080x747 — the spare 28px is the
+   breath under the characters, so they are not standing on the cut edge. */
+.card-band{margin:var(--s6) calc(-1 * var(--sheet-pad)) 0;aspect-ratio:1080/775;
+  background-image:var(--card-art,none);background-size:100% auto;
+  background-position:center top;background-repeat:no-repeat}
 
 </style>
 </head>
@@ -228,6 +222,7 @@ body:not(.opened) .sheet-actions{display:none}
     <p class="host-note" id="hostNote" hidden></p>
     <p class="line line--reply" id="dReplyRow">Reply by <span id="dReply"></span></p>
 
+    <div class="card-band" aria-hidden="true"></div>
   </article>
 
   <!-- Outside the card. The printed invitation has no button on it, and the

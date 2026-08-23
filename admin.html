@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The invitation</title>
+<title>Cardinal Carriers</title>
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#FCF7EE">
 <link rel="stylesheet" href="vellum.css">
@@ -20,9 +20,8 @@
   padding:var(--s5) var(--s7);border-bottom:var(--perf);flex-wrap:wrap}
 .top .brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);
   font-size:21px;font-weight:600;letter-spacing:-.03em}
-.top .wax-mark{width:26px;height:26px;flex:none;border-radius:50%;
-  background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--wax) 58%,#fff),var(--wax));
-  box-shadow:inset 0 -2px 4px rgba(0,0,0,.22),inset 0 2px 4px rgba(255,255,255,.3);}
+.top .cardinal{width:40px;height:30px;flex:none;color:#B93A2E;
+  filter:drop-shadow(0 1px 1px rgba(90,30,25,.22))}
 .wrap{padding:var(--s7);max-width:760px;margin:0 auto;width:100%}
 
 /* Signed out: one field, one button, nothing else on the screen. */
@@ -87,7 +86,25 @@
 <body>
 
 <header class="top">
-  <span class="brand"><span class="wax-mark" aria-hidden="true"></span>The invitation</span>
+  <span class="brand">
+    <!-- A northern cardinal in flight: wings up on the downstroke, crest
+         raised, tail streaming. Drawn rather than traced, so it holds at
+         26px where a photograph would turn to mud. -->
+    <svg class="cardinal" viewBox="0 0 64 48" aria-hidden="true">
+      <g fill="currentColor">
+      <path d="M25 29.8 C18.5 30.8 10.6 34.2 3.2 40.2 L7 44.4 C13.6 39.4 20 36.4 26 35.4 Z"/>
+      <path d="M33 22.4 C30.2 16.6 29.6 10.4 31.4 5 C33.6 9.8 36.4 12.9 39.9 15
+      C37.7 17.2 36.2 19.6 35.6 22.4 Z" opacity=".45"/>
+      <path d="M38.6 22.2 C38.2 16.6 40.2 12.6 44.6 10 C44.2 14.6 45.2 18.4 47.4 21.4 Z"/>
+      <path d="M21 31 C21 25 27 20.5 35 20 C40 19.7 44 21 46.2 23.4 L55 25.2 L46.2 27.8
+      C44.7 32.2 38.5 35.6 31 35.6 C25 35.6 21 34 21 31 Z"/>
+      <path d="M29.4 26.4 C24.6 19.6 22.2 12 22.9 4.4 L26.4 10.6 L27.6 4 L31.2 10.9
+      L33 4.6 L35.4 12.4 L39.2 8.6 L38.8 16 C35.8 19 33.3 22.4 32.2 26.4 Z"/>
+      </g>
+      <circle cx="44.2" cy="23.6" r="1.1" fill="#FCF7EE"/>
+    </svg>
+    Cardinal Carriers
+  </span>
   <button class="btn btn--quiet" id="signOut" hidden>Sign out</button>
 </header>
 
@@ -198,6 +215,11 @@
           <label class="label" for="f-startsAt">Starts</label>
           <input class="input" id="f-startsAt" type="datetime-local">
           <p class="reads" id="readsStart"></p>
+        </div>
+        <div class="field">
+          <label class="label" for="f-endsAt">Ends</label>
+          <input class="input" id="f-endsAt" type="datetime-local">
+          <p class="help">Optional. Sets the end of the calendar entry too.</p>
         </div>
         <div class="field">
           <label class="label" for="f-replyBy">Reply by</label>
