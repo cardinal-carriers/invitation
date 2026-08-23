@@ -20,9 +20,8 @@
   padding:var(--s5) var(--s7);border-bottom:var(--perf);flex-wrap:wrap}
 .top .brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);
   font-size:21px;font-weight:600;letter-spacing:-.03em}
-.top .cardinal{width:30px;height:37px;flex:none;
-  --red:#C6362B; --mask:#2E2723; --beak:#E9913A; --branch:#A08A6A;
-  filter:drop-shadow(0 1px 1px rgba(90,30,25,.2))}
+.top .cardinal{height:38px;width:auto;flex:none;
+  filter:drop-shadow(0 1px 2px rgba(90,30,25,.18))}
 .wrap{padding:var(--s7);max-width:760px;margin:0 auto;width:100%}
 
 /* Signed out: one field, one button, nothing else on the screen. */
@@ -98,26 +97,11 @@
     <!-- A northern cardinal in flight: wings up on the downstroke, crest
          raised, tail streaming. Drawn rather than traced, so it holds at
          26px where a photograph would turn to mud. -->
-    <!-- A northern cardinal on a branch: swept crest, black mask around a
-         short conical beak, tail down. Drawn from the reference photo. The
-         three colours are variables so the mark can be recoloured without
-         touching the paths. -->
-    <svg class="cardinal" viewBox="0 0 52 64" aria-hidden="true">
-<g fill="var(--red,#C6362B)">
-  <path d="M20.5 39 L13 62 L22.5 62 L27 43 Z"/>
-  <ellipse cx="25" cy="33" rx="10.4" ry="13.6"/>
-  <circle cx="28.4" cy="17.6" r="8.6"/>
-  <path d="M23 12.2 C19.6 5 22.4 0.2 29.4 -1.4 C26.2 3 27.4 7.6 31.8 11 Z"/>
-</g>
-<path d="M30.6 11.6 C34.8 12.8 37.2 15.6 37.2 19.4 C37.2 23 35 25.4 31.6 26.2
-         C29.2 26.2 27.6 24 27.6 20.8 C27.6 16.4 28.6 13 30.6 11.6 Z" fill="var(--mask,#2E2723)"/>
-<path d="M35.4 15.6 L44 19.2 L35.4 22.8 Z" fill="var(--beak,#E9913A)"/>
-<g fill="var(--branch,#A08A6A)">
-  <path d="M22.4 45.4h2v7.2h-2z"/><path d="M27.4 45.4h2v7.2h-2z"/>
-  <path d="M4 55.6 C13 52.4 26 51 41 51.8 L41 55.2 C26 54.4 13 55.6 4 58.4 Z"/>
-</g>
-<circle cx="31.4" cy="16.4" r="1.5" fill="#FBF6EC"/>
-    </svg>
+    <!-- The host's own cardinal. Cut out of its background by hue rather
+         than luminance: the glow behind it is saturated amber sitting around
+         24 degrees, the bird's reds under 16, and a plain brightness key
+         either ate the shadowed feathers or kept the halo. -->
+    <img class="cardinal" src="assets/logo-cardinal.webp" alt="" width="240" height="160">
     Cardinal Carriers
   </span>
   <button class="btn btn--quiet" id="signOut" hidden>Sign out</button>
