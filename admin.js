@@ -10,8 +10,7 @@
    ========================================================================== */
 import { initializeApp }
   from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js';
-import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
-         GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
   from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField,
          collection, query, orderBy, onSnapshot, serverTimestamp, Timestamp,
@@ -44,17 +43,17 @@ const $ = id => document.getElementById(id);
 const show = (id, on) => { $(id).hidden = !on; };
 
 /* ======================================================================== */
-/*  Sign in — email link, no password                                       */
+/*  Sign in — Google, and only Google                                       */
+/*                                                                          */
+/*  Email-link sign-in was removed rather than kept as a fallback. Access    */
+/*  here is granted by email address, so the rules require a verified one;   */
+/*  a Google account arrives already verified and no message has to survive  */
+/*  a spam filter to prove it. Institutional mail filters those links, and   */
+/*  the people who need this page are on university addresses.               */
+/*                                                                          */
+/*  Passwords are not offered. They prove nothing about who owns an address, */
+/*  and verifying the address is an email again.                             */
 /* ======================================================================== */
-const actionCodeSettings = {
-  url: `${location.origin}${BASE}admin.html`,
-  handleCodeInApp: true
-};
-
-/* Google sign-in, offered first because it sends nothing. Access here is
-   granted by email address, so the rules insist the address is verified —
-   a Google account already is, and no message has to survive a spam filter
-   to prove it. The email link stays for anyone without a Google account. */
 $('googleBtn').addEventListener('click', async () => {
   const btn = $('googleBtn');
   btn.disabled = true;
@@ -62,9 +61,8 @@ $('googleBtn').addEventListener('click', async () => {
     await signInWithPopup(auth, new GoogleAuthProvider());
   } catch (err) {
     btn.disabled = false;
-    /* Two of these are worth naming: the provider being switched off is a
-       console setting, and a blocked popup looks identical to nothing
-       happening at all. */
+    /* Worth naming individually: the provider being switched off is a console
+       setting, and a blocked popup is indistinguishable from a dead button. */
     if (err.code === 'auth/operation-not-allowed')
       toast('Turn on Google sign-in in Firebase');
     else if (err.code === 'auth/popup-blocked')
@@ -75,38 +73,6 @@ $('googleBtn').addEventListener('click', async () => {
   }
 });
 
-$('gateForm').addEventListener('submit', async e => {
-  e.preventDefault();
-  const email = $('email').value.trim();
-  if (!email) return;
-  const btn = $('sendLink');
-  btn.disabled = true;
-  try {
-    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-    localStorage.setItem('emailForSignIn', email);
-    $('gateForm').hidden = true;
-    show('sent', true);
-  } catch (err) {
-    btn.disabled = false;
-    toast(err.code === 'auth/invalid-email' ? 'That email doesn’t look right' : 'That didn’t send');
-  }
-});
-
-/* Complete a sign-in the moment the emailed link is opened, before anything
-   else renders, then take the token out of the URL. */
-async function completeSignIn(){
-  if (!isSignInWithEmailLink(auth, location.href)) return;
-  const email = localStorage.getItem('emailForSignIn') || prompt('Confirm your email');
-  if (!email) return;
-  try {
-    await signInWithEmailLink(auth, email, location.href);
-    localStorage.removeItem('emailForSignIn');
-  } catch {
-    toast('That link has expired. Send a new one.');
-  }
-  history.replaceState(null, '', location.pathname);
-}
-
 $('signOut').onclick = $('strangerOut').onclick = () => signOut(auth);
 
 /* ======================================================================== */
@@ -115,8 +81,6 @@ $('signOut').onclick = $('strangerOut').onclick = () => signOut(auth);
 /* ======================================================================== */
 let stopReplies = null;
 let isOwner = false;
-
-await completeSignIn();
 
 onAuthStateChanged(auth, async user => {
   stopReplies?.(); stopReplies = null;
