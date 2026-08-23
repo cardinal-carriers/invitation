@@ -14,8 +14,14 @@ rules_version = '2';
 
      the owner    events/shower.hostUid — one uid. Edits the invitation,
                   publishes it, deletes replies.
-     a watcher    events/shower.hostEmails — a list of addresses. Reads the
+     a watcher    access/shower.hostEmails — a list of addresses. Reads the
                   replies as they arrive and nothing else.
+
+   The list lives in access/shower and NOT on the event. events/shower is
+   world-readable the moment it is published — that is what makes it an
+   invitation — so an address stored there is an address published to
+   everyone holding the link. Nobody reads access/shower directly; the rules
+   below reach it with get(), which is not itself subject to these rules.
 
    A watcher is matched on email rather than uid on purpose: it means the
    owner can add someone before that person has ever signed in, and they get
@@ -29,6 +35,9 @@ service cloud.firestore {
 
     function event() {
       return get(/databases/$(database)/documents/events/shower).data;
+    }
+    function accessData() {
+      return get(/databases/$(database)/documents/access/shower).data;
     }
 
     function isOwner() {
@@ -45,9 +54,10 @@ service cloud.firestore {
       return request.auth != null
         && request.auth.token.email_verified == true
         && request.auth.token.email != null
-        && 'hostEmails' in event()
-        && event().hostEmails is list
-        && request.auth.token.email.lower() in event().hostEmails;
+        && exists(/databases/$(database)/documents/access/shower)
+        && 'hostEmails' in accessData()
+        && accessData().hostEmails is list
+        && request.auth.token.email.lower() in accessData().hostEmails;
     }
 
     function canSeeReplies() { return isOwner() || isWatcher(); }
@@ -64,6 +74,14 @@ service cloud.firestore {
 
       // There is exactly one event and it is created by hand in the console.
       allow create, delete: if false;
+    }
+
+    /* The watcher list. Only the owner reads or writes it — a watcher has no
+       need to see who else is watching, and a guest has no business seeing
+       any of it. exists() is checked before the document is read, because
+       reading a document that isn't there aborts the whole rule. */
+    match /access/{docId} {
+      allow read, write: if isOwner();
     }
 
     match /rsvps/{rsvpId} {

@@ -13,8 +13,9 @@ import { initializeApp }
 import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
          GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
   from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
-import { getFirestore, doc, getDoc, updateDoc, deleteDoc, collection, query,
-         orderBy, onSnapshot, serverTimestamp, Timestamp, arrayUnion, arrayRemove }
+import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, deleteField,
+         collection, query, orderBy, onSnapshot, serverTimestamp, Timestamp,
+         arrayUnion, arrayRemove, getDocs, limit }
   from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 
 /* config.js ships with placeholders. Without this the SDK initialises against
@@ -33,6 +34,10 @@ const app  = initializeApp(FIREBASE);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 const eventRef = doc(db, 'events', EVENT_ID);
+/* Deliberately not a field on the event: that document is world-readable
+   once published, so an address kept there is an address handed to every
+   guest. See firestore.rules. */
+const accessRef = doc(db, 'access', EVENT_ID);
 const TZ = 'America/Toronto';
 
 const $ = id => document.getElementById(id);
@@ -132,8 +137,14 @@ onAuthStateChanged(auth, async user => {
   /* Matched on email, lowercased at both ends, exactly as the rules do it.
      This is only what the page chooses to draw — the rules are what actually
      decide, and they will refuse the reads if this is wrong. */
-  const watcher = !!ev && !owner && !!user.email &&
-    (ev.hostEmails || []).includes(user.email.toLowerCase());
+  /* Only the rules can see the list now, which is the point of moving it.
+     The page finds out whether it is looking at a watcher by trying the read
+     the rules guard and seeing whether it is allowed. */
+  let watcher = false;
+  if (ev && !owner) {
+    try { await getDocs(query(collection(db, 'rsvps'), limit(1))); watcher = true; }
+    catch { watcher = false; }
+  }
 
   if (!owner && !watcher) {
     $('strangerEmail').textContent = user.email || '';
@@ -145,7 +156,7 @@ onAuthStateChanged(auth, async user => {
   applyRole();
   show('signOut', true);
   show('host', true);
-  if (owner) { fillEditor(ev); mountPreview(); paintWatchers(ev.hostEmails || []); }
+  if (owner) { fillEditor(ev); mountPreview(); loadWatchers(ev); }
   watchReplies();
 });
 
@@ -454,6 +465,28 @@ $('editor').addEventListener('input', paintPreview);
 /* ======================================================================== */
 let watchers = [];
 
+/* The list used to live on events/shower, which is world-readable once the
+   invitation is published — every address in it was readable by anyone
+   holding the guest link. Move it on sight and clear the old field. Anyone
+   who was on that list should be treated as having had their address
+   exposed for as long as the invitation was live. */
+async function loadWatchers(ev){
+  if (Array.isArray(ev.hostEmails) && ev.hostEmails.length) {
+    try {
+      await setDoc(accessRef, { hostEmails: arrayUnion(...ev.hostEmails) }, { merge: true });
+      await updateDoc(eventRef, { hostEmails: deleteField() });
+    } catch {
+      toast('Publish the new rules, then reload');
+    }
+  }
+  try {
+    const snap = await getDoc(accessRef);
+    paintWatchers(snap.exists() ? (snap.data().hostEmails || []) : []);
+  } catch {
+    paintWatchers([]);
+  }
+}
+
 /* The host page is its own sign-in page, so the link to send a watcher is
    just this URL. Nothing about it is secret: it grants nothing on its own,
    and whoever opens it gets in only if their address is on the list. */
@@ -483,7 +516,7 @@ function paintWatchers(list){
     x.setAttribute('aria-label', `Remove ${addr}`);
     x.onclick = async () => {
       try {
-        await updateDoc(eventRef, { hostEmails: arrayRemove(addr), updatedAt: serverTimestamp() });
+        await setDoc(accessRef, { hostEmails: arrayRemove(addr) }, { merge: true });
         paintWatchers(watchers.filter(a => a !== addr));
         toast('Removed');
       } catch { toast('That didn’t save'); }
@@ -506,7 +539,9 @@ $('watcherForm').addEventListener('submit', async e => {
   const btn = $('addWatcher');
   btn.disabled = true;
   try {
-    await updateDoc(eventRef, { hostEmails: arrayUnion(addr), updatedAt: serverTimestamp() });
+    /* setDoc-with-merge rather than updateDoc: access/shower does not exist
+       until the first person is added, and updateDoc will not create it. */
+    await setDoc(accessRef, { hostEmails: arrayUnion(addr) }, { merge: true });
     paintWatchers([...watchers, addr]);
     $('watcherEmail').value = '';
     /* Named so it cannot be read as "invitation sent" — that is the one thing
