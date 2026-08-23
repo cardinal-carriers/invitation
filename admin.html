@@ -227,10 +227,8 @@
     <div class="desk-hd"><h2 class="h3">Who else can see the replies</h2></div>
     <div class="desk-bd">
       <p class="help" id="peopleSay">
-        Add an email and that person can sign in on this page and watch the
-        replies arrive. They can&rsquo;t change the invitation, publish it, or
-        delete a reply. They don&rsquo;t need a Firebase account &mdash; they sign
-        in the same way you did.
+        Add someone&rsquo;s email and they can watch the replies arrive. They
+        can&rsquo;t change the invitation, publish it, or delete a reply.
       </p>
       <div class="chips" id="watchers"></div>
       <form class="watcher-add" id="watcherForm">
@@ -241,6 +239,22 @@
         </div>
         <button class="btn btn--ghost" type="submit" data-icon="plus" id="addWatcher">Add</button>
       </form>
+    </div>
+
+    <!-- Adding an address grants access. It does not send anything, and there
+         is no way for it to: the address is a name on a list until the person
+         behind it signs in. Saying so here is cheaper than letting someone
+         wait on an email that was never sent. -->
+    <div class="desk-ft">
+      <p class="help" style="margin-bottom:var(--s4)">
+        <b>Adding someone doesn&rsquo;t send them anything.</b> Pass them this
+        link. They put in their <em>own</em> email, get their own sign-in link,
+        and land on the replies.
+      </p>
+      <div class="link-row">
+        <input class="input" id="watcherLink" readonly aria-label="The sign-in link to send">
+        <button class="btn btn--ghost" data-icon="copy" id="copyWatcherLink" type="button">Copy</button>
+      </div>
     </div>
   </section>
 </main>

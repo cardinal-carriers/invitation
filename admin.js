@@ -430,6 +430,20 @@ $('editor').addEventListener('input', paintPreview);
 /* ======================================================================== */
 let watchers = [];
 
+/* The host page is its own sign-in page, so the link to send a watcher is
+   just this URL. Nothing about it is secret: it grants nothing on its own,
+   and whoever opens it gets in only if their address is on the list. */
+const signInUrl = `${location.origin}${BASE}admin.html`;
+$('watcherLink').value = signInUrl;
+$('copyWatcherLink').onclick = async () => {
+  try {
+    await navigator.clipboard.writeText(signInUrl);
+  } catch {
+    $('watcherLink').select(); document.execCommand('copy');
+  }
+  toast('Copied');
+};
+
 function paintWatchers(list){
   watchers = [...list];
   const box = $('watchers');
@@ -471,7 +485,9 @@ $('watcherForm').addEventListener('submit', async e => {
     await updateDoc(eventRef, { hostEmails: arrayUnion(addr), updatedAt: serverTimestamp() });
     paintWatchers([...watchers, addr]);
     $('watcherEmail').value = '';
-    toast('Added');
+    /* Named so it cannot be read as "invitation sent" — that is the one thing
+       this button does not do. */
+    toast('Added to the list');
   } catch { toast('That didn’t save'); }
   btn.disabled = false;
 });
