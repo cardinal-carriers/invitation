@@ -24,6 +24,14 @@ window.FIREBASE = {
 /* The one event, by its fixed document id. */
 window.EVENT_ID = 'shower';
 
+/* The party's clock — not the reader's, and not the host's. Every date the
+   card prints is formatted in this zone, so a guest reading the invitation
+   in another province still sees the time they should arrive.
+
+   Calgary is Mountain. Getting this wrong is a quiet two-hour error that
+   nothing else in the page would catch. */
+window.EVENT_TZ = 'America/Edmonton';
+
 /* The subpath GitHub Pages serves this from: '/repo-name/' on a project
    page, '/' on a custom domain or a user page. Derived rather than
    hard-coded so the same file works on localhost and in production. */

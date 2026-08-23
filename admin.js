@@ -37,7 +37,7 @@ const eventRef = doc(db, 'events', EVENT_ID);
    once published, so an address kept there is an address handed to every
    guest. See firestore.rules. */
 const accessRef = doc(db, 'access', EVENT_ID);
-const TZ = 'America/Toronto';
+const TZ = EVENT_TZ;
 
 const $ = id => document.getElementById(id);
 const show = (id, on) => { $(id).hidden = !on; };

@@ -10,7 +10,7 @@
 const KEY = FIREBASE.apiKey;
 const DOC = `${REST}/events/${EVENT_ID}`;
 const SAVED = `rsvp:${EVENT_ID}`;          /* localStorage: this device's reply */
-const TZ = 'America/Toronto';              /* the party's clock, not the reader's */
+const TZ = EVENT_TZ;                       /* the party's clock, not the reader's */
 
 /* --- Firestore's typed-value JSON <-> plain objects --------------------- */
 
