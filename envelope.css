@@ -88,7 +88,7 @@
 
 /* The throat: the lined interior you see once the card is out. Same colour
    family as the flap liner, so the open envelope reads with real depth. */
-.throat{position:absolute;inset:0;transform:translateZ(.5px);border-radius:.6em .6em 0 0;
+.throat{position:absolute;inset:0;transform:translateZ(1px);border-radius:.6em .6em 0 0;
   clip-path:polygon(0 0,100% 0,50% 58%);
   background-image:var(--gingham);background-size:var(--gingham-sz);
   background-repeat:repeat,repeat,no-repeat;
@@ -130,26 +130,13 @@
    bare stamp colour along the top edge. */
 .front .stamp .art--photo{position:absolute;inset:0;width:100%;height:100%;margin:0}
 
-/* A stamp that is already a stamp. Everything the component would add — the
-   punched edge, the paper behind it, the country, the value — is stripped,
-   because the picture has all of it drawn in and the animals lean out past
-   the frame on purpose. */
-.front .stamp--sticker{background:none;padding:0;-webkit-mask:none;mask:none;
-  filter:drop-shadow(0 .12em .26em rgba(70,50,25,.32))}
-.front .stamp--sticker .in{background:none;overflow:visible;border-radius:0}
-.front .stamp--sticker .cty,.front .stamp--sticker .val{display:none}
-/* The artwork is cut so its drawn frame is 1/1.34 of the file and sits at the
-   file's centre, in the stamp's own 6:7. Drawn at 134% the frame lands exactly
-   on the stamp box — same footprint as every other stamp — and the 17% margin
-   is where the animals that lean out of their frames go. */
-.front .stamp--sticker .art--photo{width:134%;height:134%;inset:-17%}
 .front .stamp:has(.art--photo) .cty,
 .front .stamp:has(.art--photo) .val{text-shadow:0 1px 2px rgba(0,0,0,.55);z-index:1}
 .front .postmark{position:absolute;right:6.8em;top:1.6em;z-index:3}
 
 /* ---- back: flap, liner, folds, seal ---- */
 .flap{position:absolute;left:-1px;right:-1px;top:-1px;height:58%;transform-style:preserve-3d;
-  transform-origin:top center;transform:translateZ(4px) rotateX(0deg);
+  transform-origin:top center;transform:translateZ(14px) rotateX(0deg);
   transition:transform var(--dFlap) var(--eFlap) var(--tFlap)}
 .fside{position:absolute;inset:0;backface-visibility:hidden}
 .fside.outer{clip-path:polygon(0 0,100% 0,50% 100%);border-radius:.6em .6em 0 0;
@@ -164,30 +151,34 @@
    rotated in 3D, so its two arms never met the flap's edges at the same
    angle and it read as a crooked scribble. A liner this clean does not need
    one, and a wrong one costs more than a missing one. */
+/* The pocket, the bottom flap, the creases and the flap itself were stacked
+   at 3, 3.1, 3.2 and 4px. That is finer than the depth buffer can separate
+   once the envelope is turning, so they traded places for a frame at a time
+   and threw hairlines across the paper. They are spaced properly now. */
 /* pocket front: lighter than the interior, with a lit edge, so the V reads */
 /* The notch stops at 57.4%, not 58%, so it is a shade SMALLER than the flap
    triangle that covers it. Cut to exactly the same line, the two shapes share
    an edge and antialiasing lets the card behind them show as a hairline down
    both diagonals on a sealed envelope. The overlap is hidden under the flap. */
-.lip{position:absolute;inset:-1px;transform:translateZ(3px);border-radius:.6em;
+.lip{position:absolute;inset:-1px;transform:translateZ(6px);border-radius:.6em;
   clip-path:polygon(0 0,50% 57.4%,100% 0,100% 100%,0 100%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(168deg,color-mix(in srgb,var(--env) 99%,#fff),color-mix(in srgb,var(--env) 83%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp);
   filter:drop-shadow(0 -.16em .3em rgba(60,38,20,.42))}
 /* bottom flap, folded up over the two side flaps, so it sits slightly proud */
-.botflap{position:absolute;inset:-1px;transform:translateZ(3.1px);border-radius:.6em;pointer-events:none;
+.botflap{position:absolute;inset:-1px;transform:translateZ(8px);border-radius:.6em;pointer-events:none;
   clip-path:polygon(0 100%,50% 58%,100% 100%);
   background:linear-gradient(190deg,rgba(255,255,255,.12),rgba(255,255,255,0) 42%,rgba(107,86,54,.07))}
 /* the folds themselves: a lit side and a shaded side, as a real crease has */
-.creases{position:absolute;inset:0;width:100%;height:100%;transform:translateZ(3.2px);
+.creases{position:absolute;inset:0;width:100%;height:100%;transform:translateZ(10px);
   pointer-events:none;overflow:visible}
 .creases path{fill:none;stroke-width:1;vector-effect:non-scaling-stroke}
 .cr-lo{stroke:rgba(96,72,42,.30)}
 .cr-hi{stroke:rgba(255,255,255,.20)}
 
 .seal{position:absolute;left:50%;top:52%;width:9.4em;height:9.4em;margin:-4.7em 0 0 -4.7em;
-  transform:translateZ(5px) rotate(-5deg);transform-style:preserve-3d;
+  transform:translateZ(18px) rotate(-5deg);transform-style:preserve-3d;
   transition:transform var(--dSeal) var(--eSeal) var(--tSeal),opacity var(--dSeal) ease var(--tSeal)}
 .sealsvg{width:100%;height:100%;display:block;
   filter:drop-shadow(0 .2em .26em rgba(74,32,30,.42));
@@ -238,10 +229,16 @@
   color:var(--card-ink-hd);margin-top:.276em}          /* 16px/560 of the card */
 .env-card .ch{font-family:var(--hand);font-size:2.474em;font-weight:600;line-height:.98;
   color:var(--card-ink-hd)}
-.env-card .cm{font-family:var(--disp);font-size:.833em;line-height:1.55;
-  color:var(--card-ink);margin-top:2.285em}            /* 40px/560 of the card */
+/* One line each, spaced exactly as the letter spaces them: 40px above the
+   block, 20px between the two lines inside it, all converted to this card's
+   em. Set as a single block with a <br> they drifted apart from the letter. */
+.env-card .cwhen{font-family:var(--disp);font-size:.833em;line-height:1.55;
+  color:var(--card-ink);margin-top:1.903em}            /* 40px/560 of the card */
+.env-card .cwhere{font-family:var(--disp);font-size:.833em;line-height:1.55;
+  color:var(--card-ink);margin-top:.951em}             /* 20px/560 */
+.env-card .cwhere .sub{display:block;font-size:.94em;color:var(--card-ink-2);margin-top:.1em}
 .env-card .cnote{font-family:var(--disp);font-size:.833em;line-height:1.55;
-  color:var(--card-ink);margin-top:2.285em}
+  color:var(--card-ink);margin-top:1.903em}
 .env-card .cnote:empty{display:none}
 /* The same band the letter carries, so the envelope previews the card
    instead of showing a different design.
@@ -266,8 +263,8 @@
 .scene.play .back{visibility:visible}
 .scene.play .env{transform:translateY(-2.4%)}
 .scene.play .env-shadow{transform:scale(.9);opacity:.7}
-.scene.play .flap{transform:translateZ(-2px) rotateX(-172deg)}
-.scene.play .seal{opacity:0;transform:translateZ(5px) rotate(-24deg) scale(.34)}
+.scene.play .flap{transform:translateZ(-6px) rotateX(-172deg)}
+.scene.play .seal{opacity:0;transform:translateZ(18px) rotate(-24deg) scale(.34)}
 
 /* The card is drawn right out of the pocket and then settles forward, in
    front of the envelope, the way it ends up in your hand.

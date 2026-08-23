@@ -151,7 +151,9 @@ function render(doc){
       kicker:  esc(EV.inviteLine || DEFAULT_INVITE_LINE),
       occasion: esc(EV.occasionLine || ''),
       name:     esc(EV.honouree || ''),
-      meta:     `${esc(when)}<br>${esc(place)}`,
+      when:     esc(when),
+      where:    esc(EV.locationName || EV.address || '') +
+                (EV.locationName && EV.address ? `<span class="sub">${esc(EV.address)}</span>` : ''),
       note:     esc(EV.hostNote || '')
     }
   }).onOpen(() => {

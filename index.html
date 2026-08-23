@@ -146,7 +146,10 @@ body:not(.opened) .sheet-actions{display:none}
 .reply-actions{margin-top:var(--s7);display:flex;flex-direction:column;align-items:center;gap:var(--s3)}
 .cant{font-size:14px;color:var(--ink-2);padding:8px 14px;border-radius:var(--r-pill);
   transition:background .16s,color .16s}
-.cant:hover{background:color-mix(in srgb,var(--kraft) 30%,transparent);color:var(--ink)}
+/* Declining is a real answer, so it gets a real hover — the same red the
+   card uses for a cancelled reply, not a beige nudge. */
+.cant:hover,.cant:focus-visible{background:color-mix(in srgb,var(--no) 14%,transparent);
+  color:var(--no);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--no) 34%,transparent)}
 
 /* A guest coming back finds the card already cancelled — no replay. */
 .reply.settled .cancel,.reply.settled .reply-form{transition:none}

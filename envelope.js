@@ -26,7 +26,8 @@ const DEFAULTS = {
   die:  'm-pram',
   card: { kicker:"You're invited to join us for", occasion:'a baby shower',
           name:'Amara &amp; Theo',
-          meta:'Saturday, May 9th · 2:00 pm<br>14 Thornbury Lane, Ottawa',
+          when:'Saturday, 9 May 2026, 2:00 pm',
+          where:'14 Thornbury Lane<span class="sub">Ottawa, ON</span>',
           note:'' }
 };
 
@@ -76,20 +77,12 @@ function sealSVG(die, n){
    the stamp edge to edge, the way a real pictorial issue does. */
 const PHOTO_STAMPS = new Set(['pooh','eeyore','piglet','tigger']);
 
-/* The 1926 set. These are already stamps — they come with their own
-   perforated border, their own date and their own honey pot, and the animals
-   lean out past the frame. So they are placed as stickers: no perforation
-   mask, no CANADA, no value, because every one of those would be the second
-   copy of something the picture already has. */
-const STICKER_STAMPS = new Set(['set-tigger','set-kanga','set-lumpy',
-                                'set-pooh26','set-eeyore26','set-piglet26']);
-
-const isPicture = id => PHOTO_STAMPS.has(id) || STICKER_STAMPS.has(id);
+const isPicture = id => PHOTO_STAMPS.has(id);
 
 function stampArt(id){
   if (isPicture(id)) return `
     <image href="assets/stamp-${id}.webp" x="0" y="0" width="48" height="48"
-           preserveAspectRatio="${STICKER_STAMPS.has(id) ? 'xMidYMid meet' : 'xMidYMid slice'}"/>`;
+           preserveAspectRatio="xMidYMid slice"/>`;
   return `<use href="#${id}" width="48" height="48"/>`;
 }
 
@@ -102,7 +95,7 @@ function markup(o, n){
       <div class="face front">
         <div class="ret"><b data-f="ret.name">${o.ret.name}</b>
           <span data-f="ret.l1">${o.ret.l1}</span><br><span data-f="ret.l2">${o.ret.l2}</span></div>
-        <div class="stamp${STICKER_STAMPS.has(o.stamp.art) ? ' stamp--sticker' : ''}"><div class="in">
+        <div class="stamp"><div class="in">
           <span class="cty" data-f="stamp.country">${o.stamp.country}</span>
           <svg class="art${isPicture(o.stamp.art) ? ' art--photo' : ''}" viewBox="0 0 48 48"
        preserveAspectRatio="none">${stampArt(o.stamp.art)}</svg>
@@ -127,7 +120,8 @@ function markup(o, n){
           <div class="ck" data-f="card.kicker">${o.card.kicker}</div>
           <div class="cn" data-f="card.name">${o.card.name}</div>
           <div class="ch" data-f="card.occasion">${o.card.occasion}</div>
-          <div class="cm" data-f="card.meta">${o.card.meta}</div>
+          <div class="cwhen"  data-f="card.when">${o.card.when}</div>
+          <div class="cwhere" data-f="card.where">${o.card.where}</div>
           <div class="cnote" data-f="card.note">${o.card.note}</div>
           <div class="cband"></div>
         </div>
@@ -178,7 +172,6 @@ class EnvelopeInstance {
     const svg = this.el.querySelector('.stamp .art');
     if (!svg) return this;
     svg.classList.toggle('art--photo', isPicture(id));
-    svg.closest('.stamp')?.classList.toggle('stamp--sticker', STICKER_STAMPS.has(id));
     svg.innerHTML = stampArt(id);
     return this;
   }

@@ -20,8 +20,8 @@
   padding:var(--s5) var(--s7);border-bottom:var(--perf);flex-wrap:wrap}
 .top .brand{display:flex;align-items:center;gap:10px;font-family:var(--disp);
   font-size:21px;font-weight:600;letter-spacing:-.03em}
-.top .cardinal{height:38px;width:auto;flex:none;
-  filter:drop-shadow(0 1px 2px rgba(90,30,25,.18))}
+.top .cardinal{height:34px;width:auto;flex:none;
+  filter:drop-shadow(0 1px 1px rgba(90,30,25,.16))}
 .wrap{padding:var(--s7);max-width:760px;margin:0 auto;width:100%}
 
 /* Signed out: one field, one button, nothing else on the screen. */
@@ -97,13 +97,11 @@
     <!-- A northern cardinal in flight: wings up on the downstroke, crest
          raised, tail streaming. Drawn rather than traced, so it holds at
          26px where a photograph would turn to mud. -->
-    <!-- The host's own cardinal, cut out of a black ground. The face mask is
-         the whole difficulty: it is black, so it is indistinguishable from the
-         background by colour, and it is an open bay in the silhouette rather
-         than an enclosed hole, so filling holes never reaches it. It is filled
-         directly instead — dark pixels beside the body, in the one place the
-         face is. See the commit for the rest. -->
-    <img class="cardinal" src="assets/logo-cardinal.webp" alt="" width="260" height="247">
+    <!-- Drawn to the reference rather than cut out of it. That artwork's
+         wing and tail taper into its glow, not into shape, so on a cream
+         ground the cut-out keeps only a chunky core; a trace of it is
+         faithful and still chunky. This is the same pose, drawn. -->
+    <img class="cardinal" src="assets/logo-cardinal.svg" alt="" width="124" height="100">
     Cardinal Carriers
   </span>
   <button class="btn btn--quiet" id="signOut" hidden>Sign out</button>
