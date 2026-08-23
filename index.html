@@ -133,6 +133,35 @@ body.opened .open-hint{visibility:hidden}
   .reply{padding:var(--s8) var(--s5) var(--s7)}
   .detail{grid-template-columns:1fr;gap:4px}
 }
+
+/* --- the card artwork, switched on ------------------------------------
+   Cropped from the host's own template. The band is the botanical footer
+   only: the template's baked-in address lines were cropped away rather
+   than faded, because the page prints the real address from Firestore and
+   two addresses on one card is worse than none.
+
+   Last in the file so the padding below beats the mobile override above. */
+:root{
+  --card-art:url('assets/card-band.webp');
+  --card-art-size:100% auto;
+  --card-art-pos:bottom center;
+  /* The watercolour brings its own edge. A dashed rule ruled across the
+     flowers reads as two frames arguing. */
+  --card-art-rule:none;
+}
+/* The band is 69% as tall as the card is wide, and background-size:100% auto
+   scales it with the width. Percentage padding also resolves against width,
+   so this one number clears the artwork at every size with no media query.
+   It is short of the full 69% on purpose: the top fifth of the band is faded
+   out, and letting the last line settle into it stops the card feeling like
+   two stacked panels. */
+.sheet{padding-bottom:58%}
+
+/* Attribution, as real text. The template carries this line baked into the
+   artwork at a size that is illegible on a phone; cropping it out and
+   setting it in type is the only version anyone can actually read. */
+.art-credit{max-width:620px;margin:var(--s4) auto 0;text-align:center;
+  font-size:11.5px;line-height:1.5;color:var(--ink-3)}
 </style>
 </head>
 <body>
@@ -185,6 +214,8 @@ body.opened .open-hint{visibility:hidden}
       <button class="btn btn--ghost" data-icon="cal" id="cal">Add to calendar</button>
     </div>
   </article>
+  <p class="art-credit">&copy;Disney. Based on the &ldquo;Winnie the Pooh&rdquo; works by
+     A.&thinsp;A. Milne and E.&thinsp;H. Shepard.</p>
 
   <!-- ============ the reply card ============ -->
   <div id="replyWrap" hidden>

@@ -1,38 +1,58 @@
 # Card artwork
 
-Drop a card template in here and the invitation paints it behind the text.
+    card-band.webp    1080 × 747, 52 KB
 
-    assets/card.png        (or .jpg / .webp — any name, it is referenced by
-                            the CSS variable below, not by convention)
+The botanical footer on the invitation. Cropped from the host's own template
+(`docs/Jillian & Derrick's Baby Shower.pdf`, gitignored — 721KB and not
+needed to build anything).
 
-Then switch it on by adding a `:root` block to the `<style>` in `index.html`:
+## How it was made
+
+`pdftoppm -r 300` to render, then in Pillow:
+
+1. **Find the card.** The template is an A4 landscape print-to-PDF with the
+   card sitting in the left half. Located by colour: the card body is cream
+   (#FEF7EE) against a pure white page.
+2. **Crop to rows 715–1462.** Above 715 are the template's own address lines
+   — cropped away, not faded, because the page prints the real address from
+   Firestore and two addresses on one card is worse than none. Below 1462 is
+   the baked-in ©Disney line, which is set as real text in `index.html`
+   instead; at card width the printed version is about 8px and illegible.
+3. **Fade the top fifth** to alpha, so the band dissolves into the card. The
+   artwork's cream is a few points warmer than vellum's `--paper` (#FFFDF8)
+   and a hard cut shows that seam.
+4. **WebP, quality 86** — 52 KB. PNG was 694 KB.
+
+## How it is switched on
+
+Three variables at the end of the `<style>` in `index.html`:
 
 ```css
 :root{
-  --card-art: url('assets/card.png');
-  --card-art-size: cover;    /* or 100% 100% to stretch to the sheet exactly */
-  --card-art-pos: center;
-  --card-art-rule: none;     /* drop vellum's dashed inset border — most
-                                templates bring a frame of their own */
+  --card-art: url('assets/card-band.webp');
+  --card-art-size: 100% auto;
+  --card-art-pos: bottom center;
+  --card-art-rule: none;   /* drop vellum's dashed inset border */
 }
+.sheet{padding-bottom:58%}
 ```
 
-Until `--card-art` is set nothing is requested, so an empty `assets/` costs a
-guest nothing. That matters here: this page is opened on phones over cellular
-inside WhatsApp's in-app browser, and the whole page is budgeted at 300KB.
+`.sheet::before` paints it as its own layer rather than a fifth entry in
+`.paper`'s four-deep background stack. Unset `--card-art` and nothing is
+requested at all — no 404, no download.
 
-## What makes a good file
+The `58%` is the one number to re-tune if the art changes. The band is 69% as
+tall as the card is wide, and both `background-size:100% auto` and percentage
+padding resolve against width — so a single figure clears the artwork at every
+screen size with no media query. It is deliberately short of 69% so the last
+line settles into the faded top of the band, rather than the card reading as
+two stacked panels.
 
-- **Portrait**, and roughly the shape of the sheet — it is about 3:4 on a
-  phone and taller on a desktop. `cover` crops the overflow from the centre.
-- **Under ~150KB.** Export as WebP if you can; the three fonts already spend
-  170KB of the budget. A 2MB PNG will be the slowest thing on the page by an
-  order of magnitude.
-- **Quiet in the middle.** The occasion, the honouree's name and the details
-  all sit centred over it. Artwork with a busy centre will fight the text and
-  the text will lose.
-- **No text of its own.** The card prints the real date and address from
-  Firestore; a template with dates baked in will contradict them.
+## Replacing it
 
-Send the file over and the padding and crop can be tuned to it — the defaults
-above are a starting point, not a fit.
+Portrait or a wide band, under ~150KB, quiet where text sits, and **no text of
+its own** — the card prints the real date and address from Firestore, so a
+template with details baked in will contradict them.
+
+Current page weight is 255 KB served against a 300 KB budget. The three fonts
+are 170 KB of that, so there is roughly 45 KB of headroom for a larger image.
