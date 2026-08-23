@@ -71,13 +71,13 @@ function sealSVG(die, n){
   </div>`;
 }
 
-/* The picture on the stamp. Everything but the photographic one is a symbol
-   from dies.js drawn in stroke, so it takes the stamp's ink; the photographic
-   one is clipped to a circle because a square photo inside a square stamp
-   inside a square perforation reads as three frames. */
-function stampArt(id, n){
-  if (id === 'pooh') return `
-    <image class="art--photo" href="assets/stamp-pooh.webp" x="0" y="0" width="48" height="48"
+/* The picture on the stamp. A drawn one is a symbol from dies.js, stroked in
+   the stamp's own ink; a printed one is a detail of the host's card and fills
+   the stamp edge to edge, the way a real pictorial issue does. */
+const PHOTO_STAMPS = new Set(['pooh','eeyore','piglet','tigger']);
+function stampArt(id){
+  if (PHOTO_STAMPS.has(id)) return `
+    <image href="assets/stamp-${id}.webp" x="0" y="0" width="48" height="48"
            preserveAspectRatio="xMidYMid slice"/>`;
   return `<use href="#${id}" width="48" height="48"/>`;
 }
@@ -93,8 +93,8 @@ function markup(o, n){
           <span data-f="ret.l1">${o.ret.l1}</span><br><span data-f="ret.l2">${o.ret.l2}</span></div>
         <div class="stamp"><div class="in">
           <span class="cty" data-f="stamp.country">${o.stamp.country}</span>
-          <svg class="art${o.stamp.art === 'pooh' ? ' art--photo' : ''}" viewBox="0 0 48 48"
-       preserveAspectRatio="none">${stampArt(o.stamp.art, n)}</svg>
+          <svg class="art${PHOTO_STAMPS.has(o.stamp.art) ? ' art--photo' : ''}" viewBox="0 0 48 48"
+       preserveAspectRatio="none">${stampArt(o.stamp.art)}</svg>
           <span class="val" data-f="stamp.value">${o.stamp.value}</span>
         </div></div>
         <div class="postmark">
@@ -166,8 +166,8 @@ class EnvelopeInstance {
   setStamp(id){
     const svg = this.el.querySelector('.stamp .art');
     if (!svg) return this;
-    svg.classList.toggle('art--photo', id === 'pooh');
-    svg.innerHTML = stampArt(id, this.n);
+    svg.classList.toggle('art--photo', PHOTO_STAMPS.has(id));
+    svg.innerHTML = stampArt(id);
     return this;
   }
 

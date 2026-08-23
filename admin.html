@@ -69,6 +69,13 @@
 .reads b{color:var(--ink);font-weight:600}
 .save-bar{display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
 
+/* Every picker button is one size whatever is inside it. A stroked symbol and
+   a printed detail have to be comparable at a glance, and the photographs were
+   filling their button while the symbols sat at 32px inside theirs. */
+.dies .die-btn > svg,
+.dies .die-btn > img{width:34px;height:34px;flex:none;display:block}
+.dies .die-btn > img{border-radius:7px;object-fit:cover}
+
 /* 4. Who else can see the replies */
 .chips{display:flex;flex-wrap:wrap;gap:var(--s3);margin-bottom:var(--s5)}
 .chips:empty{display:none}

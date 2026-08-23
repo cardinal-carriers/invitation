@@ -26,6 +26,9 @@ window.DIES = DIES;
    is a cropped detail of the host's own card, not a symbol. */
 const STAMPS = [
   ['pooh',        'Pooh'],
+  ['piglet',      'Piglet'],
+  ['eeyore',      'Eeyore'],
+  ['tigger',      'Tigger'],
   ['art-floral',  'Flower'],
   ['art-leaf',    'Maple leaf'],
   ['art-cardinal','Cardinal'],
@@ -34,10 +37,8 @@ const STAMPS = [
   ['art-balloon', 'Balloon'],
   ['m-sprig',     'Sprig'],
   ['m-heart',     'Heart'],
-  ['m-pram',      'Pram'],
   ['m-hunny',     'Honey pot'],
-  ['m-pooh',      'Pooh, engraved'],
-  ['m-rings',     'Rings']
+  ['m-pooh',      'Pooh, drawn']
 ];
 window.STAMPS = STAMPS;
 

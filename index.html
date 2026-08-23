@@ -79,11 +79,14 @@ body:not(.opened) .letter{padding-bottom:0}
   font-size:clamp(36px,8vw,52px);line-height:.98;color:var(--card-ink-hd);
   text-align:center;margin-top:0}
 
-/* Every remaining fact, one centred line each. */
+/* Every remaining fact, one centred line each. The card reads as three
+   blocks — who and what, then when and where, then the note — so the space
+   between the blocks is larger than the space inside them. */
 .line{font-family:var(--disp);font-weight:400;text-align:center;
   font-size:clamp(15px,3.5vw,17.5px);line-height:1.55;color:var(--card-ink);
   margin-top:var(--s5)}
-.line--reply{font-size:clamp(13.5px,3vw,15px);color:var(--card-ink-2);margin-top:var(--s4)}
+.line--when{margin-top:var(--s8)}
+.line--reply{font-size:clamp(13.5px,3vw,15px);color:var(--card-ink-2);margin-top:var(--s6)}
 .line a{color:inherit;font-size:inherit;text-decoration-color:color-mix(in srgb,var(--card-ink) 40%,transparent)}
 .line .sub{display:block;font-size:.94em;color:var(--card-ink-2);margin-top:2px}
 
@@ -99,7 +102,7 @@ body:not(.opened) .letter{padding-bottom:0}
 .sheet-inner{display:var(--card-art-rule,block)}
 .host-note{font-family:var(--disp);font-weight:400;text-align:center;
   font-size:clamp(15px,3.5vw,17.5px);line-height:1.55;color:var(--card-ink);
-  margin-top:var(--s6)}
+  margin-top:var(--s8)}
 
 .sheet-actions{display:flex;justify-content:center;margin-top:var(--s6)}
 body:not(.opened) .sheet-actions{display:none}

@@ -200,21 +200,30 @@
   background-size:170px 170px,auto;background-repeat:repeat,no-repeat;
   border:1px solid color-mix(in srgb,var(--card) 88%,#C9B79A);border-radius:.5em;
   display:flex;flex-direction:column;
-  padding:1.9em 1.4em 0;text-align:center;color:var(--card-ink);
+  padding:3.425em 2.664em 0;text-align:center;color:var(--card-ink);
   transition:box-shadow var(--dCard) ease var(--tCard)}
 .env-card .ci{position:absolute;inset:.6em;border:1.4px dashed color-mix(in srgb,var(--ink) 20%,transparent);
   border-radius:.4em;pointer-events:none}
-.env-card .ck{font-family:var(--disp);font-size:.92em;font-weight:400;letter-spacing:.01em;
-  text-transform:none;color:var(--card-ink);line-height:1.35;position:relative}
-.env-card .cn{font-family:var(--hand);font-size:2.5em;font-weight:600;line-height:.98;
-  color:var(--card-ink-hd);margin-top:.22em;position:relative}
-.env-card .ch{font-family:var(--hand);font-size:2.2em;font-weight:600;line-height:.98;
-  color:var(--card-ink-hd);position:relative}
-.env-card .cm{font-family:var(--disp);font-size:.96em;line-height:1.5;
-  color:var(--card-ink);margin-top:.9em;position:relative}
-/* The host's note, under the details, exactly where the letter puts it. */
-.env-card .cnote{font-family:var(--disp);font-size:.92em;line-height:1.45;
-  color:var(--card-ink-2);margin-top:.55em;position:relative}
+/* Every size and space here is the letter's own figure, converted once.
+
+   The letter is set in px against a 560px card; this one is set in em against
+   a card 26.64em wide, because the envelope's font-size is 2.5cqw and the card
+   is 66.6% of the envelope. So a letter value of Npx becomes N/560*26.64 em
+   and the two cards are the same card at two sizes. Set by eye instead, they
+   drift — which is exactly what they were doing.
+
+   The margins are the letter's after opening it up: 40px between the three
+   blocks, 16px inside the title, 24px above the band. */
+.env-card .ck{font-family:var(--disp);font-size:.809em;font-weight:400;letter-spacing:.01em;
+  text-transform:none;color:var(--card-ink);line-height:1.4}
+.env-card .cn{font-family:var(--hand);font-size:2.759em;font-weight:600;line-height:.98;
+  color:var(--card-ink-hd);margin-top:.276em}          /* 16px/560 of the card */
+.env-card .ch{font-family:var(--hand);font-size:2.474em;font-weight:600;line-height:.98;
+  color:var(--card-ink-hd)}
+.env-card .cm{font-family:var(--disp);font-size:.833em;line-height:1.55;
+  color:var(--card-ink);margin-top:2.285em}            /* 40px/560 of the card */
+.env-card .cnote{font-family:var(--disp);font-size:.833em;line-height:1.55;
+  color:var(--card-ink);margin-top:2.285em}
 .env-card .cnote:empty{display:none}
 /* The same band the letter carries, so the envelope previews the card
    instead of showing a different design.
@@ -228,7 +237,7 @@
    background behind it — percentage padding here would resolve against the
    ENVELOPE's width, not this card's, and the two are different boxes.
    margin-top:auto pins it to the bottom however short the text runs. */
-.env-card .cband{margin:.8em -1.4em 0 -1.4em;margin-top:auto;aspect-ratio:1080/775;
+.env-card .cband{margin:0 -2.664em;margin-top:auto;aspect-ratio:1080/775;
   background-image:var(--card-art,none);background-size:100% auto;
   background-position:center top;background-repeat:no-repeat}
 .env-card .ci{display:var(--card-art-rule,block)}

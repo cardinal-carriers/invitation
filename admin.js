@@ -266,7 +266,7 @@ const TEXT = ['inviteLine','occasionLine','honouree','hosts','locationName','add
               'hostNote','postmarkCity','postmarkRegion','returnLine1','returnLine2'];
 const DEFAULT_INVITE_LINE = 'You\u2019re invited to join us for';
 let wax = '#B4736C', die = 'm-pram';
-let stampCol = '#71889D', stampArtId = 'art-floral';
+let stampCol = '#B93A2E', stampArtId = 'pooh';
 
 /* A datetime-local reads in the browser's timezone. The host is in Ottawa
    and so is the party, so that is right — but the card always prints the
@@ -336,11 +336,18 @@ $('editor').addEventListener('submit', async e => {
   btn.disabled = false;
 });
 
-/* --- wax and seal: pick the physical thing, at the size it is used ------- */
+/* --- wax and seal: pick the physical thing, at the size it is used -------
+   Two short palettes rather than one long one shared by both controls. Wax
+   and ink are different materials and do not come in the same colours: wax is
+   earths and deep tones, postal ink is brighter. Six each — enough to choose
+   from, few enough to choose. */
 const WAXES = [
-  ['Terracotta','#B4736C'], ['Rose gold','#D8A199'], ['Burgundy','#7E2A3C'],
-  ['Antique gold','#C0913F'], ['Post red','#B93A2E'], ['Sage','#7E9070'],
-  ['Dusty blue','#71889D'], ['Ivory','#DFD3BC'], ['Ink','#33302C'], ['Navy','#2F4258']
+  ['Terracotta','#B4736C'], ['Sage','#7E9070'],     ['Burgundy','#7E2A3C'],
+  ['Antique gold','#C0913F'], ['Dusty blue','#71889D'], ['Ink','#33302C']
+];
+const STAMP_INKS = [
+  ['Post red','#B93A2E'], ['Dusty blue','#71889D'], ['Sage','#7E9070'],
+  ['Marigold','#D08A2C'], ['Rose','#C4767E'],      ['Navy','#2F4258']
 ];
 function paintWaxes(){
   $('waxes').innerHTML = WAXES.map(([n, c]) =>
@@ -357,7 +364,7 @@ $('waxes').addEventListener('click', e => {
 /* The stamp: its ink, then its picture. Same two controls as the seal,
    because it is the same kind of decision. */
 function paintStampCols(){
-  $('stampCols').innerHTML = WAXES.map(([n, c]) =>
+  $('stampCols').innerHTML = STAMP_INKS.map(([n, c]) =>
     `<button type="button" class="sw" style="background:${c}" data-c="${c}"
        aria-pressed="${c.toLowerCase() === stampCol.toLowerCase()}" aria-label="${n}" title="${n}"></button>`).join('');
 }
@@ -368,10 +375,14 @@ $('stampCols').addEventListener('click', e => {
   paintStampCols();
 });
 
+/* Which stamps are a printed detail of the card rather than a drawn symbol.
+   Kept in step with PHOTO_STAMPS in envelope.js. */
+const PHOTO_STAMP_IDS = ['pooh','piglet','eeyore','tigger'];
+
 function paintStamps(){
   $('stampList').innerHTML = STAMPS.map(([id, name]) => {
-    const art = id === 'pooh'
-      ? `<img src="assets/stamp-pooh.webp" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`
+    const art = PHOTO_STAMP_IDS.includes(id)
+      ? `<img src="assets/stamp-${id}.webp" alt="">`
       : `<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#${id}" width="100" height="100"/></svg>`;
     return `<button type="button" class="die-btn" data-stamp="${id}" aria-pressed="${id === stampArtId}">
        ${art}<span>${name}</span></button>`;
