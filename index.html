@@ -100,8 +100,7 @@ body:not(.opened) .letter{padding-bottom:0}
 .host-note{font-family:var(--disp);font-weight:400;text-align:center;
   font-size:clamp(15px,3.5vw,17.5px);line-height:1.55;color:var(--card-ink);
   margin-top:var(--s6)}
-.host-note .sig{display:block;font-family:var(--hand);font-weight:600;font-size:26px;
-  color:var(--card-ink-hd);margin-top:var(--s3);line-height:1}
+
 .sheet-actions{display:flex;justify-content:center;margin-top:var(--s6)}
 body:not(.opened) .sheet-actions{display:none}
 
@@ -213,7 +212,7 @@ body:not(.opened) .sheet-actions{display:none}
          the names and the occasion together in script, then the details as
          plain centred lines. No labels, no rules, no ornament — the printed
          card has none, and the artwork is the ornament. -->
-    <p class="eyebrow">You&rsquo;re invited to join us for</p>
+    <p class="eyebrow" id="eyebrow"></p>
     <h1 class="honouree" id="honouree"></h1>
     <p class="occasion" id="occasion"></p>
 

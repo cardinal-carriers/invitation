@@ -22,7 +22,7 @@ const DEFAULTS = {
      addressed to whoever is holding it. */
   to:   { name:"You're invited" },
   mark: { city:'OTTAWA', region:'ON · CANADA', date:'09 · V · 26' },
-  stamp:{ country:'CANADA', value:'P' },
+  stamp:{ country:'CANADA', value:'P', art:'art-floral' },
   die:  'm-pram',
   card: { kicker:"You're invited to join us for", occasion:'a baby shower',
           name:'Amara &amp; Theo',
@@ -71,6 +71,18 @@ function sealSVG(die, n){
   </div>`;
 }
 
+/* The picture on the stamp. Everything but the photographic one is a symbol
+   from dies.js drawn in stroke, so it takes the stamp's ink; the photographic
+   one is clipped to a circle because a square photo inside a square stamp
+   inside a square perforation reads as three frames. */
+function stampArt(id, n){
+  if (id === 'pooh') return `
+    <defs><clipPath id="stampClip${n}"><circle cx="24" cy="24" r="23"/></clipPath></defs>
+    <image href="assets/stamp-pooh.webp" x="1" y="1" width="46" height="46"
+           preserveAspectRatio="xMidYMid slice" clip-path="url(#stampClip${n})"/>`;
+  return `<use href="#${id}" width="48" height="48"/>`;
+}
+
 function markup(o, n){
   return `
   <div class="env-shadow"></div>
@@ -82,7 +94,7 @@ function markup(o, n){
           <span data-f="ret.l1">${o.ret.l1}</span><br><span data-f="ret.l2">${o.ret.l2}</span></div>
         <div class="stamp"><div class="in">
           <span class="cty" data-f="stamp.country">${o.stamp.country}</span>
-          <svg viewBox="0 0 48 48"><use href="#art-floral"></use></svg>
+          <svg class="art" viewBox="0 0 48 48">${stampArt(o.stamp.art, n)}</svg>
           <span class="val" data-f="stamp.value">${o.stamp.value}</span>
         </div></div>
         <div class="postmark">
@@ -147,6 +159,13 @@ class EnvelopeInstance {
   /** Live-update one field, e.g. set('card.occasion', 'a baby shower'). */
   set(path, value){
     this.el.querySelectorAll(`[data-f="${path}"]`).forEach(n => n.innerHTML = value);
+    return this;
+  }
+
+  /** Swap the picture on the stamp, e.g. setStamp('m-pram'). */
+  setStamp(id){
+    const svg = this.el.querySelector('.stamp .art');
+    if (svg) svg.innerHTML = stampArt(id, this.n);
     return this;
   }
 

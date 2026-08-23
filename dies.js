@@ -19,6 +19,21 @@ const DIES = [
 ];
 window.DIES = DIES;
 
+/* What can go on the stamp. The first is the engraved flower the stamp shipped
+   with; the rest are the seal dies, which are drawn in stroke and so take the
+   stamp's ink without any extra art. 'pooh' is the one photographic option and
+   is a cropped detail of the host's own card, not a symbol. */
+const STAMPS = [
+  ['art-floral', 'Flower'],
+  ['m-sprig',    'Sprig'],
+  ['m-heart',    'Heart'],
+  ['m-pram',     'Pram'],
+  ['m-hunny',    'Honey pot'],
+  ['m-rings',    'Rings'],
+  ['pooh',       'Pooh']
+];
+window.STAMPS = STAMPS;
+
 document.addEventListener('DOMContentLoaded', () => {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('width', '0');

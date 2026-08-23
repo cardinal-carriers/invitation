@@ -11,6 +11,7 @@ const KEY = FIREBASE.apiKey;
 const DOC = `${REST}/events/${EVENT_ID}`;
 const SAVED = `rsvp:${EVENT_ID}`;          /* localStorage: this device's reply */
 const TZ = EVENT_TZ;                       /* the party's clock, not the reader's */
+const DEFAULT_INVITE_LINE = 'You\u2019re invited to join us for';
 
 /* --- Firestore's typed-value JSON <-> plain objects --------------------- */
 
@@ -129,7 +130,8 @@ function render(doc){
   const place = [EV.locationName, EV.address].filter(Boolean).join(', ');
 
   document.title = `${EV.occasionLine || 'You’re invited'}${hosts ? ' · ' + hosts : ''}`;
-  if (EV.waxColor) document.documentElement.style.setProperty('--wax', EV.waxColor);
+  if (EV.waxColor)   document.documentElement.style.setProperty('--wax', EV.waxColor);
+  if (EV.stampColor) document.documentElement.style.setProperty('--stamp', EV.stampColor);
 
   /* --- the envelope --- */
   const posted = new Date(EV.updatedAt || doc.updateTime || Date.now());
@@ -143,9 +145,10 @@ function render(doc){
     mark: { city:   esc((EV.postmarkCity || '').toUpperCase()),
             region: esc((EV.postmarkRegion || '').toUpperCase()),
             date:   postmarkDate(posted) },
-    die:  EV.sealDie || 'm-pram',
+    die:   EV.sealDie || 'm-pram',
+    stamp: { country:'CANADA', value:'P', art: EV.stampArt || 'art-floral' },
     card: {
-      kicker:  'You\u2019re invited to join us for',
+      kicker:  esc(EV.inviteLine || DEFAULT_INVITE_LINE),
       occasion: esc(EV.occasionLine || ''),
       name:     esc(EV.honouree || ''),
       meta:     `${esc(when)}<br>${esc(place)}`,
@@ -159,6 +162,7 @@ function render(doc){
   });
 
   /* --- the card --- */
+  $('eyebrow').textContent = EV.inviteLine || DEFAULT_INVITE_LINE;
   $('occasion').textContent = EV.occasionLine || '';
   $('honouree').textContent = EV.honouree || '';
   $('dWhen').textContent = when;
@@ -183,16 +187,12 @@ function render(doc){
   if (EV.replyBy) $('dReply').textContent = shortDate(EV.replyBy);
   else $('dReplyRow').hidden = true;
 
+  /* Note only. The hosts' names are on the envelope's return address and
+     nowhere else — the card in the envelope has no signature, and the two
+     have to be the same card. */
   if (EV.hostNote) {
-    const n = $('hostNote');
-    n.textContent = EV.hostNote;
-    if (hosts) {
-      const sig = document.createElement('span');
-      sig.className = 'sig';
-      sig.textContent = hosts;
-      n.append(sig);
-    }
-    n.hidden = false;
+    $('hostNote').textContent = EV.hostNote;
+    $('hostNote').hidden = false;
   }
 
   $('sheet').hidden = false;

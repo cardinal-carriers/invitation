@@ -40,7 +40,11 @@
   /* Where the card ends up: out of the pocket and forward, in front of the
      envelope. Named because three rules need it — the keyframe, and the two
      ways of reaching the rest state without running the sequence. */
-  --card-rest:translateZ(46px) translateY(-30%) rotate(0deg);
+  /* The card rests at the envelope's own width. It is 59% of that inside, so
+     it scales by 1/0.59 — less the 2.6% the 46px of translateZ already adds
+     under an 1800px perspective, which gives 1.652. Coming out the same size
+     as the letter below it is the point: they are one object seen twice. */
+  --card-rest:translateZ(46px) translateY(-62%) rotate(0deg) scale(1.652);
 }
 /* Height reserved for the SETTLED composition: the envelope (69.4% of width)
    plus the card resting in front of it, which now overlaps rather than
@@ -51,7 +55,14 @@
    reserving for the peak instead would leave the resting envelope floating
    in a third of a screen of dead space for the whole time anyone is looking
    at it. The transient overlap is the cheaper of the two. */
-.scene::before{content:'';display:block;padding-top:107%}
+/* Two heights. Sealed, the scene is the envelope and a little air; opened,
+   it has to hold a card twice the envelope's height standing in front of it.
+   Reserving the taller figure all the time would leave a sealed envelope
+   floating in a third of a screen of nothing, which is what anyone looking at
+   this page sees first and longest. */
+.scene::before{content:'';display:block;padding-top:107%;
+  transition:padding-top var(--dCard) var(--eCard) var(--tCard)}
+.scene.play::before{padding-top:162%}
 .scene--sm{max-width:300px}
 
 .env{position:absolute;left:0;right:0;bottom:3%;aspect-ratio:1.44/1;transform-style:preserve-3d;
@@ -108,9 +119,13 @@
 .to .nm{font-family:var(--hand);font-weight:600;font-size:3.4em;line-height:1;
   color:var(--card-ink-hd,var(--ink));margin-bottom:.24em}
 .to .ln{color:var(--card-ink-2,color-mix(in srgb,var(--ink) 64%,var(--env)))}
-.to .hr{width:3.4em;height:1px;margin:0 auto .8em;border:0;
-  background:color-mix(in srgb,var(--card-ink-hd,var(--ink)) 45%,transparent)}
+.to .hr{display:none}
 .front .stamp{position:absolute;right:1.3em;top:1.2em;width:6em;height:7em;transform:rotate(2.4deg);z-index:2}
+/* The stamp's own colour, so it can be an accent rather than always the
+   palette's blue. Falls back to it when the host has not chosen. */
+.front .stamp .in{background:linear-gradient(158deg,
+  color-mix(in srgb,var(--stamp,var(--sky)) 55%,#fff),var(--stamp,var(--sky)))}
+.front .stamp .art{display:block}
 .front .postmark{position:absolute;right:6.8em;top:1.6em;z-index:3}
 
 /* ---- back: flap, liner, folds, seal ---- */
@@ -131,8 +146,12 @@
    angle and it read as a crooked scribble. A liner this clean does not need
    one, and a wrong one costs more than a missing one. */
 /* pocket front: lighter than the interior, with a lit edge, so the V reads */
+/* The notch stops at 57.4%, not 58%, so it is a shade SMALLER than the flap
+   triangle that covers it. Cut to exactly the same line, the two shapes share
+   an edge and antialiasing lets the card behind them show as a hairline down
+   both diagonals on a sealed envelope. The overlap is hidden under the flap. */
 .lip{position:absolute;inset:-1px;transform:translateZ(3px);border-radius:.6em;
-  clip-path:polygon(0 0,50% 58%,100% 0,100% 100%,0 100%);
+  clip-path:polygon(0 0,50% 57.4%,100% 0,100% 100%,0 100%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(168deg,color-mix(in srgb,var(--env) 99%,#fff),color-mix(in srgb,var(--env) 83%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp);
@@ -241,7 +260,9 @@
 .scene.flipped .front{visibility:hidden}
 .scene.flipped .back{visibility:visible}
 
-.scene.noanim,.scene.noanim *{transition:none!important}
+/* ::before needs naming separately — `*` matches elements, not pseudo-
+   elements, so the scene's height kept easing while everything else jumped. */
+.scene.noanim,.scene.noanim *,.scene.noanim::before{transition:none!important}
 /* Open, with no sequence: a returning guest, and the host's preview. The
    card's rest position is stated outright rather than reached by running the
    animation at zero length — that depends on the animation clock ticking at
@@ -252,6 +273,6 @@
 /* Reduced motion: no sequence at all. The envelope is simply shown open,
    card out, on load. The guest still gets the reveal, just not the theatre. */
 @media (prefers-reduced-motion:reduce){
-  .scene *{transition-duration:.001s!important;transition-delay:0s!important}
+  .scene *,.scene::before{transition-duration:.001s!important;transition-delay:0s!important}
   .scene.play .env-card{animation:none;transform:var(--card-rest)}
 }

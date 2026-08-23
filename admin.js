@@ -262,9 +262,11 @@ function replyRow(r){
 /* ======================================================================== */
 /*  3. The editor. Fields map 1:1 to events/shower. One Save, no autosave.   */
 /* ======================================================================== */
-const TEXT = ['occasionLine','honouree','hosts','locationName','address','hostNote',
-              'postmarkCity','postmarkRegion','returnLine1','returnLine2'];
+const TEXT = ['inviteLine','occasionLine','honouree','hosts','locationName','address',
+              'hostNote','postmarkCity','postmarkRegion','returnLine1','returnLine2'];
+const DEFAULT_INVITE_LINE = 'You\u2019re invited to join us for';
 let wax = '#B4736C', die = 'm-pram';
+let stampCol = '#71889D', stampArtId = 'art-floral';
 
 /* A datetime-local reads in the browser's timezone. The host is in Ottawa
    and so is the party, so that is right — but the card always prints the
@@ -296,7 +298,11 @@ function fillEditor(ev){
   $('f-replyBy').value  = toDateInput(ev.replyBy);
   wax = ev.waxColor || wax;
   die = ev.sealDie  || die;
-  paintWaxes(); paintDies(); paintReads();
+  stampCol   = ev.stampColor || stampCol;
+  stampArtId = ev.stampArt   || stampArtId;
+  document.documentElement.style.setProperty('--wax', wax);
+  document.documentElement.style.setProperty('--stamp', stampCol);
+  paintWaxes(); paintDies(); paintStampCols(); paintStamps(); paintReads();
   paintPublish(ev.published === true);
 }
 
@@ -306,7 +312,8 @@ $('editor').addEventListener('submit', async e => {
   btn.disabled = true;
   $('saveState').textContent = '';
 
-  const patch = { waxColor: wax, sealDie: die, updatedAt: serverTimestamp() };
+  const patch = { waxColor: wax, sealDie: die, stampColor: stampCol,
+                  stampArt: stampArtId, updatedAt: serverTimestamp() };
   TEXT.forEach(k => patch[k] = $('f-' + k).value.trim());
 
   const s = $('f-startsAt').value;
@@ -345,6 +352,36 @@ $('waxes').addEventListener('click', e => {
   wax = b.dataset.c;
   document.documentElement.style.setProperty('--wax', wax);
   paintWaxes();
+});
+
+/* The stamp: its ink, then its picture. Same two controls as the seal,
+   because it is the same kind of decision. */
+function paintStampCols(){
+  $('stampCols').innerHTML = WAXES.map(([n, c]) =>
+    `<button type="button" class="sw" style="background:${c}" data-c="${c}"
+       aria-pressed="${c.toLowerCase() === stampCol.toLowerCase()}" aria-label="${n}" title="${n}"></button>`).join('');
+}
+$('stampCols').addEventListener('click', e => {
+  const b = e.target.closest('.sw'); if (!b) return;
+  stampCol = b.dataset.c;
+  document.documentElement.style.setProperty('--stamp', stampCol);
+  paintStampCols();
+});
+
+function paintStamps(){
+  $('stampList').innerHTML = STAMPS.map(([id, name]) => {
+    const art = id === 'pooh'
+      ? `<img src="assets/stamp-pooh.webp" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`
+      : `<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#${id}" width="100" height="100"/></svg>`;
+    return `<button type="button" class="die-btn" data-stamp="${id}" aria-pressed="${id === stampArtId}">
+       ${art}<span>${name}</span></button>`;
+  }).join('');
+}
+$('stampList').addEventListener('click', e => {
+  const b = e.target.closest('.die-btn'); if (!b) return;
+  stampArtId = b.dataset.stamp;
+  paintStamps();
+  env?.setStamp(stampArtId);
 });
 
 function paintDies(){
@@ -408,7 +445,7 @@ function setFace(which){
 
 function mountPreview(){
   if (env) return;
-  env = Envelope.mount('#prev', { die });
+  env = Envelope.mount('#prev', { die, stamp:{ country:'CANADA', value:'P', art: stampArtId } });
   paintPreview();
   /* Opened by default. Sealed, the scene stands empty above the envelope —
      it is reserving the height the card rises into — and the host is mostly
@@ -433,6 +470,7 @@ function paintPreview(){
      .set('ret.l1',   esc(val('returnLine1') || val('locationName')))
      .set('ret.l2',   esc(val('returnLine2') || val('address')))
      .set('card.note', esc(val('hostNote')))
+     .set('card.kicker', esc(val('inviteLine') || DEFAULT_INVITE_LINE))
      .set('mark.city',   esc(val('postmarkCity').toUpperCase()))
      .set('mark.region', esc(val('postmarkRegion').toUpperCase()))
      /* The guest page postmarks with the date the invitation was last
