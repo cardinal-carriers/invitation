@@ -136,12 +136,15 @@ function render(doc){
   /* --- the envelope --- */
   const posted = new Date(EV.updatedAt || doc.updateTime || Date.now());
   env = Envelope.mount('#sc', {
-    /* The return address is where the post would come back to, which is
-       not necessarily where the party is — a hall booked for the afternoon
-       is nobody's address. Falls back to the venue when it is left blank. */
+    /* The return address is where the post would come back to, which is not
+       necessarily where the party is — a hall booked for the afternoon is
+       nobody's address. Left blank it does not borrow the venue's: the
+       envelope simply reads the hosts and the town it was franked in, which
+       is what a return address is for. */
     ret:  { name: esc(hosts),
-            l1:   esc(EV.returnLine1 || EV.locationName || ''),
-            l2:   esc(EV.returnLine2 || EV.address || '') },
+            l1:   esc(EV.returnLine1 || ''),
+            l2:   esc(EV.returnLine2 ||
+                      (EV.returnLine1 ? '' : (EV.postmarkCity || ''))) },
     mark: { city:   esc((EV.postmarkCity || '').toUpperCase()),
             region: esc((EV.postmarkRegion || '').toUpperCase()),
             date:   postmarkDate(posted) },

@@ -93,8 +93,8 @@ function markup(o, n){
     <div class="flip">
 
       <div class="face front">
-        <div class="ret"><b data-f="ret.name">${o.ret.name}</b>
-          <span data-f="ret.l1">${o.ret.l1}</span><br><span data-f="ret.l2">${o.ret.l2}</span></div>
+        <div class="ret"><b data-f="ret.name">${o.ret.name}</b><span
+          data-f="ret.l1">${o.ret.l1}</span><span data-f="ret.l2">${o.ret.l2}</span></div>
         <div class="stamp"><div class="in">
           <span class="cty" data-f="stamp.country">${o.stamp.country}</span>
           <svg class="art${isPicture(o.stamp.art) ? ' art--photo' : ''}" viewBox="0 0 48 48"

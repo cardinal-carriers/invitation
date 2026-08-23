@@ -477,8 +477,9 @@ function mountPreview(){
 function paintPreview(){
   if (!env) return;
   env.set('ret.name', esc(val('hosts')))
-     .set('ret.l1',   esc(val('returnLine1') || val('locationName')))
-     .set('ret.l2',   esc(val('returnLine2') || val('address')))
+     .set('ret.l1',   esc(val('returnLine1')))
+     .set('ret.l2',   esc(val('returnLine2') ||
+                          (val('returnLine1') ? '' : val('postmarkCity'))))
      .set('card.note', esc(val('hostNote')))
      .set('card.kicker', esc(val('inviteLine') || DEFAULT_INVITE_LINE))
      .set('mark.city',   esc(val('postmarkCity').toUpperCase()))

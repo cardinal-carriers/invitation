@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1536 1024"
+     role="img" aria-label="Minimal textured flying cardinal logo">
+  <defs>
+    <filter id="paperTexture" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise"
+                    baseFrequency="0.028 0.11"
+                    numOctaves="4"
+                    seed="17"
+                    result="noise"/>
+      <feColorMatrix in="noise" type="matrix"
+        values="0.58 0 0 0 0.20
+                0 0.52 0 0 0.13
+                0 0 0.44 0 0.10
+                0 0 0 0.28 0"
+        result="paper"/>
+      <feBlend in="SourceGraphic" in2="paper" mode="multiply" result="blended"/>
+    <!-- Clip the texture back to the bird. feTurbulence fills the whole filter
+         region, so without this the noise paints a pale box wherever the
+         artwork is transparent — which is most of it. -->
+    <feComposite in="blended" in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+
+  <!-- Transparent background: intentionally no background rectangle. -->
+
+  <path d="M 280 903 L 321 908 L 381 908 L 460 894 L 544 864 L 712 791 L 603 850 L 423 939 L 356 979 L 413 980 L 475 970 L 519 954 L 566 929 L 729 811 L 779 784 L 800 779 L 832 779 L 907 792 L 967 795 L 1016 789 L 1064 774 L 1091 760 L 1134 730 L 1165 701 L 1188 669 L 1213 624 L 1230 605 L 1265 586 L 1307 579 L 1262 541 L 1244 514 L 1212 483 L 1179 461 L 1103 422 L 1075 400 L 1089 438 L 1110 464 L 1098 461 L 1081 450 L 1086 467 L 1101 493 L 1115 509 L 1052 564 L 1010 586 L 1057 613 L 1027 606 L 999 591 L 964 561 L 940 532 L 912 487 L 876 416 L 851 384 L 824 358 L 687 252 L 568 133 L 517 61 L 497 11 L 487 45 L 485 88 L 496 135 L 511 165 L 536 198 L 575 233 L 664 289 L 629 276 L 584 253 L 519 211 L 469 165 L 439 122 L 439 169 L 457 219 L 488 259 L 535 297 L 597 330 L 693 365 L 624 350 L 540 322 L 477 294 L 434 267 L 447 304 L 465 335 L 489 361 L 540 392 L 613 416 L 701 428 L 663 430 L 607 426 L 545 415 L 485 398 L 505 429 L 527 452 L 554 471 L 579 482 L 642 495 L 718 494 L 644 507 L 566 507 L 601 535 L 646 553 L 700 556 L 757 546 L 744 554 L 710 565 L 637 577 L 673 600 L 713 611 L 751 610 L 796 598 L 779 610 L 748 623 L 703 633 L 746 653 L 800 658 L 755 676 L 772 685 L 809 694 L 839 693 L 880 684 L 805 725 L 720 760 L 605 799 L 360 868 L 319 883 Z"
+        fill="#B43A2F"
+        filter="url(#paperTexture)"/>
+
+  <path d="M 1254 528 L 1248 534 L 1239 538 L 1229 538 L 1208 530 L 1187 530 L 1172 534 L 1157 542 L 1177 544 L 1189 557 L 1191 572 L 1185 612 L 1173 659 L 1157 694 L 1141 718 L 1121 739 L 1146 720 L 1165 701 L 1188 669 L 1216 620 L 1230 605 L 1245 595 L 1225 592 L 1224 590 L 1235 574 L 1257 553 L 1263 543 Z"
+        fill="#1F201F"/>
+
+  <path d="M 1308 579 L 1286 558 L 1264 543 L 1256 556 L 1231 581 L 1226 591 L 1249 593 L 1272 584 Z"
+        fill="#C78B4B"
+        filter="url(#paperTexture)"/>
+</svg>
