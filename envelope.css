@@ -22,11 +22,21 @@
   --tSeal:calc(var(--u)*1.45); --dSeal:calc(var(--u)*.45);  --eSeal:ease-in;
   --tFlap:calc(var(--u)*1.7);  --dFlap:calc(var(--u)*.9);   --eFlap:cubic-bezier(.55,.05,.25,1);
   --tCard:calc(var(--u)*2.36); --dCard:calc(var(--u)*1.15); --eCard:cubic-bezier(.26,.9,.3,1);
+  /* Where the card ends up: out of the pocket and forward, in front of the
+     envelope. Named because three rules need it — the keyframe, and the two
+     ways of reaching the rest state without running the sequence. */
+  --card-rest:translateZ(46px) translateY(-42%);
 }
-/* Height reserved for the whole opened composition: the envelope (69.4% of
-   width) plus the card once it has risen clear of it. Measured, not guessed —
-   any more than this and the resting envelope floats in dead space. */
-.scene::before{content:'';display:block;padding-top:126%}
+/* Height reserved for the SETTLED composition: the envelope (69.4% of width)
+   plus the card resting in front of it, which now overlaps rather than
+   standing clear above. Measured, not guessed.
+
+   Mid-sequence the card travels higher than this, briefly, as it is drawn
+   right out of the pocket. Nothing clips it — .scene sets no overflow — and
+   reserving for the peak instead would leave the resting envelope floating
+   in a third of a screen of dead space for the whole time anyone is looking
+   at it. The transient overlap is the cheaper of the two. */
+.scene::before{content:'';display:block;padding-top:104%}
 .scene--sm{max-width:300px}
 
 .env{position:absolute;left:0;right:0;bottom:3%;aspect-ratio:1.44/1;transform-style:preserve-3d;
@@ -145,6 +155,19 @@
 .env-card .cd{display:flex;gap:.55em;justify-content:center;margin:.8em 0;position:relative}
 .env-card .cd i{width:.55em;height:.55em;border-radius:50%;display:block}
 .env-card .cm{font-size:1.02em;line-height:1.7;color:color-mix(in srgb,var(--ink) 72%,var(--card));position:relative}
+/* The same band the letter carries, so the envelope previews the card
+   instead of showing a different design.
+
+   The band is 69% as tall as it is wide, and this card is wider than it is
+   tall, so drawn at full width it would swallow the whole face. It is drawn
+   at full width inside a short box anchored to the bottom instead, which
+   crops the top of the band away and leaves the row of characters standing
+   along the bottom edge — the part that reads at this size. */
+.env-card::after{content:'';position:absolute;left:0;right:0;bottom:0;height:42%;
+  overflow:hidden;border-radius:0 0 .55em .55em;pointer-events:none;
+  background-image:var(--card-art,none);background-size:100% auto;
+  background-position:center bottom;background-repeat:no-repeat}
+.env-card .ci{display:var(--card-art-rule,block)}
 
 /* ---- playback ---- */
 .scene.play .flip{transform:rotateY(180deg)}
@@ -154,11 +177,41 @@
 .scene.play .env-shadow{transform:scale(.9);opacity:.7}
 .scene.play .flap{transform:translateZ(-2px) rotateX(-172deg)}
 .scene.play .seal{opacity:0;transform:translateZ(5px) rotate(-24deg) scale(.34)}
-.scene.play .env-card{transform:translateZ(2px) translateY(-90%);box-shadow:0 1.4em 2.6em -1.2em rgba(90,60,40,.7)}
+
+/* The card is drawn right out of the pocket and then settles forward, in
+   front of the envelope, the way it ends up in your hand.
+
+   Two stages rather than one, because the pocket lip sits at translateZ(3px)
+   and the card starts behind it at 2px. Coming forward and rising at the
+   same time would have the card cross the lip while still inside it, which
+   reads as paper passing through paper. So it clears first, at its original
+   depth, and only then comes toward the viewer. */
+@keyframes card-out{
+  0%   {transform:translateZ(2px)  translateY(0)}
+  56%  {transform:translateZ(2px)  translateY(-112%)}   /* clear of the pocket */
+  100% {transform:var(--card-rest)}                     /* resting in front */
+}
+.scene.play .env-card{
+  animation:card-out calc(var(--dCard)*2.05) var(--eCard) var(--tCard) both;
+  box-shadow:0 1.4em 2.6em -1.2em rgba(90,60,40,.7)}
+
+/* Turned over but still sealed. The host wants to check the back of the
+   envelope without sitting through the opening; a guest never sees this. */
+.scene.flipped .flip{transform:rotateY(180deg)}
+.scene.flipped .front{visibility:hidden}
+.scene.flipped .back{visibility:visible}
+
 .scene.noanim,.scene.noanim *{transition:none!important}
+/* Open, with no sequence: a returning guest, and the host's preview. The
+   card's rest position is stated outright rather than reached by running the
+   animation at zero length — that depends on the animation clock ticking at
+   all, which is one dependency too many for a state that just needs to be
+   true on the first frame. */
+.scene.noanim.play .env-card{animation:none!important;transform:var(--card-rest)!important}
 
 /* Reduced motion: no sequence at all. The envelope is simply shown open,
    card out, on load. The guest still gets the reveal, just not the theatre. */
 @media (prefers-reduced-motion:reduce){
-  .scene *{transition-duration:.001s!important}
+  .scene *{transition-duration:.001s!important;transition-delay:0s!important}
+  .scene.play .env-card{animation:none;transform:var(--card-rest)}
 }

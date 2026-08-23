@@ -157,10 +157,12 @@ class EnvelopeInstance {
     return this;
   }
 
-  /** Run time of the whole sequence, read off the CSS beats. */
+  /** Run time of the whole sequence, read off the CSS beats. The card is the
+      last thing to move and now runs 2.05 of its beat: out of the pocket,
+      then forward to rest. */
   duration(){
     const u = parseFloat(getComputedStyle(this.el).getPropertyValue('--u')) || 1;
-    return (2.36 + 1.15) * u * 1000;
+    return (2.36 + 1.15 * 2.05) * u * 1000;
   }
 
   play(){
@@ -178,20 +180,34 @@ class EnvelopeInstance {
   }
 
   /** Already open, no sequence — for a guest returning to a letter they have
-      read before, and for static previews in the host app. */
+      read before, and for static previews in the host app.
+
+      `noanim` stays on deliberately. The card's rest position is the end of a
+      keyframe animation, and taking `noanim` off here would hand that
+      animation a real duration a frame after it was told to finish, which
+      plays the whole thing. reset() clears the class, so a later click still
+      animates. */
   showOpen(){
     this.opened = true;
+    this.el.classList.remove('flipped');
     this.el.classList.add('noanim', 'play');
     void this.el.offsetWidth;
-    this.el.classList.remove('noanim');
     this.el.setAttribute('aria-expanded', 'true');
+    return this;
+  }
+
+  /** Turned over, still sealed. The host wants to see the back of the
+      envelope without sitting through the opening; a guest never does. */
+  showBack(on = true){
+    if (this.opened) this.reset();
+    this.el.classList.toggle('flipped', on);
     return this;
   }
 
   reset(){
     this.opened = false;
     this.el.classList.add('noanim');
-    this.el.classList.remove('play');
+    this.el.classList.remove('play', 'flipped');
     void this.el.offsetWidth;
     this.el.classList.remove('noanim');
     this.el.setAttribute('aria-expanded', 'false');

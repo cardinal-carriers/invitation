@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#FCF7EE">
 <link rel="stylesheet" href="vellum.css">
 <link rel="stylesheet" href="envelope.css">
+<link rel="stylesheet" href="card-art.css">
 <style>
 /* ------------------------------------------------------------------
    THE HOST'S PAGE — one person, on wifi, a few times a week.
@@ -168,8 +169,9 @@
         <div class="preview-hd">
           <span class="label">As a guest sees it</span>
           <div class="seg" role="group" aria-label="Which side">
-            <button type="button" id="faceFront" aria-pressed="false">Sealed</button>
-            <button type="button" id="faceOpen" aria-pressed="true">Opened</button>
+            <button type="button" id="faceFront" aria-pressed="false">Front</button>
+            <button type="button" id="faceBack"  aria-pressed="false">Back</button>
+            <button type="button" id="faceOpen"  aria-pressed="true">Opened</button>
           </div>
         </div>
         <div class="scene scene--sm" id="prev" role="button" tabindex="0"
@@ -208,6 +210,16 @@
         <div class="field">
           <label class="label" for="f-address">Address</label>
           <input class="input" id="f-address" placeholder="Ottawa, ON  K1N 6N5">
+        </div>
+        <div class="field">
+          <label class="label" for="f-postmarkCity">Postmark</label>
+          <input class="input" id="f-postmarkCity" placeholder="Calgary">
+          <p class="help">The town the envelope was franked in. Set in caps on the stamp.</p>
+        </div>
+        <div class="field">
+          <label class="label" for="f-postmarkRegion">Postmark region</label>
+          <input class="input" id="f-postmarkRegion" placeholder="AB &middot; Canada">
+          <p class="help">The line under it.</p>
         </div>
         <div class="field span-2">
           <label class="label" for="f-hostNote">Note</label>

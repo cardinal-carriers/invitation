@@ -262,7 +262,8 @@ function replyRow(r){
 /* ======================================================================== */
 /*  3. The editor. Fields map 1:1 to events/shower. One Save, no autosave.   */
 /* ======================================================================== */
-const TEXT = ['occasionLine','honouree','hosts','locationName','address','hostNote'];
+const TEXT = ['occasionLine','honouree','hosts','locationName','address','hostNote',
+              'postmarkCity','postmarkRegion'];
 let wax = '#B4736C', die = 'm-pram';
 
 /* A datetime-local reads in the browser's timezone. The host is in Ottawa
@@ -385,9 +386,13 @@ function longDateTime(v){
 
 const val = id => $('f-' + id).value.trim();
 
-function setFace(open){
-  $('faceOpen').setAttribute('aria-pressed', String(open));
-  $('faceFront').setAttribute('aria-pressed', String(!open));
+/* Three states, not two: the back of a sealed envelope is where the seal
+   and the wax colour actually live, and checking it should not cost the
+   whole opening. */
+function setFace(which){
+  $('faceFront').setAttribute('aria-pressed', String(which === 'front'));
+  $('faceBack') .setAttribute('aria-pressed', String(which === 'back'));
+  $('faceOpen') .setAttribute('aria-pressed', String(which === 'open'));
 }
 
 function mountPreview(){
@@ -399,13 +404,15 @@ function mountPreview(){
      editing what is printed on the card, which only this face shows. The
      sequence is still one tap away. */
   env.showOpen();
+  setFace('open');
 
   /* envelope.js already plays on click and on Enter/Space. Nothing here
      re-implements that — this only keeps the toggle honest about which side
      is showing. */
-  $('prev').addEventListener('click', () => setFace(true));
-  $('faceFront').onclick = () => { env.reset();    setFace(false); };
-  $('faceOpen').onclick  = () => { env.showOpen(); setFace(true);  };
+  $('prev').addEventListener('click', () => setFace('open'));
+  $('faceFront').onclick = () => { env.reset();      setFace('front'); };
+  $('faceBack').onclick  = () => { env.showBack();   setFace('back');  };
+  $('faceOpen').onclick  = () => { env.showOpen();   setFace('open');  };
 }
 
 function paintPreview(){
@@ -414,6 +421,8 @@ function paintPreview(){
   env.set('ret.name', esc(val('hosts')))
      .set('ret.l1',   esc(val('locationName')))
      .set('ret.l2',   esc(val('address')))
+     .set('mark.city',   esc(val('postmarkCity').toUpperCase()))
+     .set('mark.region', esc(val('postmarkRegion').toUpperCase()))
      /* The guest page postmarks with the date the invitation was last
         touched. Editing it now is that date. */
      .set('mark.date', postmarkDate(new Date()))

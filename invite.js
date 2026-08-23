@@ -115,11 +115,12 @@ function render(doc){
   if (EV.waxColor) document.documentElement.style.setProperty('--wax', EV.waxColor);
 
   /* --- the envelope --- */
-  $('from').textContent = hosts ? `From ${hosts}` : '';
   const posted = new Date(EV.updatedAt || doc.updateTime || Date.now());
   env = Envelope.mount('#sc', {
     ret:  { name: esc(hosts), l1: esc(EV.locationName || ''), l2: esc(EV.address || '') },
-    mark: { city:'OTTAWA', region:'ON · CANADA', date: postmarkDate(posted) },
+    mark: { city:   esc((EV.postmarkCity || '').toUpperCase()),
+            region: esc((EV.postmarkRegion || '').toUpperCase()),
+            date:   postmarkDate(posted) },
     die:  EV.sealDie || 'm-pram',
     card: {
       kicker:  'Please join us for',
@@ -176,10 +177,24 @@ function render(doc){
   hydrateIcons();
 
   /* A guest who already replied on this device sees their answer, not a
-     blank form (mvp-plan §7E). */
+     blank form (mvp-plan §7E). The envelope is opened for them too — asking
+     someone to re-open an envelope they opened last week to find out what
+     they already said is a small insult. */
   const saved = JSON.parse(localStorage.getItem(SAVED) || 'null');
-  if (saved) showPosted(saved, true);
+  if (saved) {
+    showPosted(saved, true);
+    env.showOpen();
+    document.body.classList.add('opened');
+  }
 }
+
+/* The skip link points at a letter that is not on the page yet. Open the
+   envelope on the way, or the link lands a keyboard user on nothing. */
+$('skip').addEventListener('click', e => {
+  if (document.body.classList.contains('opened')) return;
+  e.preventDefault();
+  env?.play();
+});
 
 /* ======================================================================== */
 /*  B. anyone with you                                                      */

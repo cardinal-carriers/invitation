@@ -10,6 +10,7 @@
 <link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="vellum.css">
 <link rel="stylesheet" href="envelope.css">
+<link rel="stylesheet" href="card-art.css">
 <script>document.documentElement.dataset.js='1'</script>
 <style>
 /* ------------------------------------------------------------------
@@ -30,15 +31,14 @@ body{background-image:
 
 .stage{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:var(--s8) var(--s5) var(--s9);text-align:center}
-.from{font-size:var(--t-label);font-weight:600;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--ink-2);margin-bottom:var(--s6)}
 .scene{cursor:pointer}
 .scene:focus-visible{outline:2px solid var(--wax);outline-offset:14px;border-radius:12px}
-.open-hint{display:flex;align-items:center;gap:10px;margin-top:var(--s5);
-  font-family:var(--hand);font-weight:600;font-size:25px;color:var(--wax);
-  animation:nudge 2.4s ease-in-out infinite}
-.open-hint svg{width:34px;height:24px;overflow:visible}
-.open-hint path{stroke:var(--wax);stroke-width:1.7;fill:none;stroke-linecap:round}
+.open-hint{display:flex;align-items:center;gap:12px;margin-top:var(--s5);
+  font-family:var(--hand);font-weight:600;font-size:clamp(30px,8vw,40px);
+  color:var(--wax);animation:nudge 2.4s ease-in-out infinite}
+.open-hint svg{width:46px;height:33px;overflow:visible;flex:none}
+.open-hint path{stroke:var(--wax);stroke-width:2;fill:none;stroke-linecap:round;
+  stroke-linejoin:round}
 @keyframes nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 body.opened .open-hint{visibility:hidden}
 /* The scene reserves the height the card needs to rise into, so a sealed
@@ -48,6 +48,16 @@ body.opened .open-hint{visibility:hidden}
 @media (min-height:880px){ .stage .scene{margin-top:-9vh} }
 
 .letter{padding:0 var(--s5) var(--s11)}
+/* Nothing below the envelope until it has been opened. This reverses the
+   earlier rule that everything stayed reachable by scrolling: the reveal is
+   the point of the page, and a card sitting in plain sight underneath spends
+   it before the envelope is touched.
+
+   #notice is deliberately not gated — "Not quite ready" and "This didn't
+   load" have to reach a guest who has no envelope worth opening. */
+body:not(.opened) #sheet,
+body:not(.opened) #replyWrap{display:none}
+body:not(.opened) .letter{padding-bottom:0}
 .sheet{padding:var(--s10) clamp(24px,6vw,56px) var(--s9)}
 
 /* --- the card artwork -------------------------------------------------
@@ -134,28 +144,17 @@ body.opened .open-hint{visibility:hidden}
   .detail{grid-template-columns:1fr;gap:4px}
 }
 
-/* --- the card artwork, switched on ------------------------------------
-   Cropped from the host's own template. The band is the botanical footer
-   only: the template's baked-in address lines were cropped away rather
-   than faded, because the page prints the real address from Firestore and
-   two addresses on one card is worse than none.
+/* --- the card artwork -------------------------------------------------
+   The variables live in card-art.css, shared with the envelope's inner
+   card. Only the clearance is here, because only this card has text to
+   clear.
 
-   Last in the file so the padding below beats the mobile override above. */
-:root{
-  --card-art:url('assets/card-band.webp');
-  --card-art-size:100% auto;
-  --card-art-pos:bottom center;
-  /* The watercolour brings its own edge. A dashed rule ruled across the
-     flowers reads as two frames arguing. */
-  --card-art-rule:none;
-}
-/* The band is 69% as tall as the card is wide, and background-size:100% auto
-   scales it with the width. Percentage padding also resolves against width,
-   so this one number clears the artwork at every size with no media query.
-   It is short of the full 69% on purpose: the top fifth of the band is faded
-   out, and letting the last line settle into it stops the card feeling like
-   two stacked panels. */
-.sheet{padding-bottom:58%}
+   Percentage padding resolves against width, exactly as the band's
+   background-size:100% auto does, so this one number works at every screen
+   size with no media query. It is short of the band's full height on
+   purpose: the top of the band is faded out, and letting the last line
+   settle into it stops the card reading as two stacked panels. */
+.sheet{padding-bottom:calc(var(--card-art-ratio) - 13%)}
 
 /* Attribution, as real text. The template carries this line baked into the
    artwork at a size that is illegible on a phone; cropping it out and
@@ -165,17 +164,18 @@ body.opened .open-hint{visibility:hidden}
 </style>
 </head>
 <body>
-<a class="skip" href="#letter">Skip to the invitation</a>
+<a class="skip" href="#letter" id="skip">Skip to the invitation</a>
 
 <!-- ============ the envelope. no addressee: one link, everyone ============ -->
 <div class="stage">
-  <p class="from" id="from"></p>
-
   <div class="scene" id="sc" role="button" tabindex="0" aria-expanded="false"
        aria-label="Open the envelope"></div>
 
+  <!-- The hint sits below the envelope, so the arrow curves up and back to
+       it. Pointing away from the thing you are being asked to tap is worse
+       than no arrow. -->
   <p class="open-hint">
-    <svg viewBox="0 0 34 24" aria-hidden="true"><path d="M2 2c6 9 14 14 27 15"/><path d="M23 13l6 4-2 6"/></svg>
+    <svg viewBox="0 0 34 24" aria-hidden="true"><path d="M2 22c6-9 14-14 27-15"/><path d="M23 11l6-4-2-6"/></svg>
     Tap to open
   </p>
 </div>

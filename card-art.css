@@ -1,0 +1,24 @@
+/* ==========================================================================
+   THE EVENT'S ARTWORK.
+
+   One file because two pages need it: the guest card paints it as a footer,
+   and the card inside the envelope paints the same band so the envelope is
+   a preview of the letter rather than a different design.
+
+   Cropped from the host's template — see assets/README.md for the recipe
+   and for what to change when the artwork changes.
+   ========================================================================== */
+:root{
+  --card-art:url('assets/card-band.webp');
+  --card-art-size:100% auto;
+  /* Lifted off the bottom edge. Flush, the characters read as standing on
+     the card's cut edge rather than in the grass. */
+  --card-art-pos:center bottom 2.5%;
+  /* The watercolour brings its own edge. A dashed rule ruled across the
+     flowers reads as two frames arguing. */
+  --card-art-rule:none;
+  /* How tall the band is, as a share of the card's width. The image is
+     1080x747. Both background-size:100% auto and percentage padding resolve
+     against width, so this one number drives every clearance below. */
+  --card-art-ratio:69.2%;
+}
