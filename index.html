@@ -49,6 +49,26 @@ body.opened .open-hint{visibility:hidden}
 
 .letter{padding:0 var(--s5) var(--s11)}
 .sheet{padding:var(--s10) clamp(24px,6vw,56px) var(--s9)}
+
+/* --- the card artwork -------------------------------------------------
+   A host-supplied template paints behind the text. It is its own layer
+   rather than a fifth entry in .paper's background stack: that stack is
+   four images deep with matched background-size and background-repeat
+   lists, and threading another through it breaks the grain.
+
+   Nothing is requested until --card-art is set, so with no file in
+   assets/ there is no 404 and nothing to download. See assets/README.md
+   for how to switch it on. */
+.sheet::before{content:"";position:absolute;inset:0;border-radius:inherit;
+  background-image:var(--card-art,none);
+  background-size:var(--card-art-size,cover);
+  background-position:var(--card-art-pos,center);
+  background-repeat:no-repeat;pointer-events:none}
+/* The text sits above the artwork. .sheet-inner is left out deliberately:
+   it is the dashed rule, and a template with its own frame wants it gone
+   rather than doubled. */
+.sheet > :not(.sheet-inner){position:relative}
+.sheet-inner{display:var(--card-art-rule,block)}
 .host-note{margin-top:var(--s6);padding-top:var(--s6);border-top:var(--perf-fine);
   font-size:16.5px;line-height:1.7;text-align:center}
 .host-note .sig{display:block;font-family:var(--hand);font-weight:600;font-size:27px;

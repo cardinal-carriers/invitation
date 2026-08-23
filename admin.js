@@ -14,7 +14,7 @@ import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailL
          onAuthStateChanged, signOut }
   from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, updateDoc, deleteDoc, collection, query,
-         orderBy, onSnapshot, serverTimestamp, Timestamp }
+         orderBy, onSnapshot, serverTimestamp, Timestamp, arrayUnion, arrayRemove }
   from 'https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js';
 
 /* config.js ships with placeholders. Without this the SDK initialises against
@@ -85,6 +85,7 @@ $('signOut').onclick = $('strangerOut').onclick = () => signOut(auth);
 /*  callback is miserable to debug.                                          */
 /* ======================================================================== */
 let stopReplies = null;
+let isOwner = false;
 
 await completeSignIn();
 
@@ -102,17 +103,37 @@ onAuthStateChanged(auth, async user => {
        at a published event. That is a stranger, not an outage. */
     snap = null;
   }
-  if (!snap?.exists() || snap.data().hostUid !== user.uid) {
+  const ev = snap?.exists() ? snap.data() : null;
+  const owner = !!ev && ev.hostUid === user.uid;
+  /* Matched on email, lowercased at both ends, exactly as the rules do it.
+     This is only what the page chooses to draw — the rules are what actually
+     decide, and they will refuse the reads if this is wrong. */
+  const watcher = !!ev && !owner && !!user.email &&
+    (ev.hostEmails || []).includes(user.email.toLowerCase());
+
+  if (!owner && !watcher) {
     $('strangerEmail').textContent = user.email || '';
     show('stranger', true);
     return;
   }
 
+  isOwner = owner;
+  applyRole();
   show('signOut', true);
   show('host', true);
-  fillEditor(snap.data());
+  if (owner) { fillEditor(ev); mountPreview(); paintWatchers(ev.hostEmails || []); }
   watchReplies();
 });
+
+/* Everything an owner can do and a watcher cannot, hidden in one place.
+   Hiding is a courtesy, not the boundary: firestore.rules refuses each of
+   these writes on the server whatever the page renders. */
+function applyRole(){
+  show('roleNote',  !isOwner);
+  show('publishRow', isOwner);
+  show('inviteSec',  isOwner);
+  show('peopleSec',  isOwner);
+}
 
 /* ======================================================================== */
 /*  1. The link                                                             */
@@ -219,6 +240,10 @@ function replyRow(r){
       at.toLocaleTimeString('en-GB', {hour:'numeric', minute:'2-digit', hour12:true, timeZone:TZ})
     : '';
   side.append(when);
+
+  /* A watcher has no delete: the rules refuse it, so offering the button
+     would only produce a failure they cannot act on. */
+  if (!isOwner) { el.append(who, side); return el; }
 
   const del = document.createElement('button');
   del.className = 'btn btn--quiet btn--sm';
@@ -330,4 +355,123 @@ $('dieList').addEventListener('click', e => {
   const b = e.target.closest('.die-btn'); if (!b) return;
   die = b.dataset.die;
   paintDies();
+  env?.setDie(die);
+});
+
+/* ======================================================================== */
+/*  The preview. The same Envelope component the guest page mounts, fed      */
+/*  from the form instead of from Firestore — so a change shows before it    */
+/*  is saved, and a bad line gets caught while it is still cheap to fix.     */
+/* ======================================================================== */
+let env = null;
+
+const esc = s => String(s ?? '').replace(/[&<>"]/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function postmarkDate(d){
+  const M = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+  return `${String(d.getDate()).padStart(2,'0')} · ${M[d.getMonth()]} · ${String(d.getFullYear()).slice(2)}`;
+}
+
+/* Formatted exactly as invite.js formats it. The preview is worth nothing if
+   it renders the date differently from the page it is previewing. */
+function longDateTime(v){
+  const d = v ? new Date(v) : null;
+  if (!d || isNaN(d)) return '';
+  const day  = d.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long', year:'numeric', timeZone:TZ});
+  const time = d.toLocaleTimeString('en-GB', {hour:'numeric', minute:'2-digit', hour12:true, timeZone:TZ})
+                .replace(/\s?([ap])m/i, (_, p) => ` ${p.toLowerCase()}m`);
+  return `${day}, ${time}`;
+}
+
+const val = id => $('f-' + id).value.trim();
+
+function setFace(open){
+  $('faceOpen').setAttribute('aria-pressed', String(open));
+  $('faceFront').setAttribute('aria-pressed', String(!open));
+}
+
+function mountPreview(){
+  if (env) return;
+  env = Envelope.mount('#prev', { die });
+  paintPreview();
+  /* Opened by default. Sealed, the scene stands empty above the envelope —
+     it is reserving the height the card rises into — and the host is mostly
+     editing what is printed on the card, which only this face shows. The
+     sequence is still one tap away. */
+  env.showOpen();
+
+  /* envelope.js already plays on click and on Enter/Space. Nothing here
+     re-implements that — this only keeps the toggle honest about which side
+     is showing. */
+  $('prev').addEventListener('click', () => setFace(true));
+  $('faceFront').onclick = () => { env.reset();    setFace(false); };
+  $('faceOpen').onclick  = () => { env.showOpen(); setFace(true);  };
+}
+
+function paintPreview(){
+  if (!env) return;
+  const place = [val('locationName'), val('address')].filter(Boolean).join(', ');
+  env.set('ret.name', esc(val('hosts')))
+     .set('ret.l1',   esc(val('locationName')))
+     .set('ret.l2',   esc(val('address')))
+     /* The guest page postmarks with the date the invitation was last
+        touched. Editing it now is that date. */
+     .set('mark.date', postmarkDate(new Date()))
+     .set('card.occasion', esc(val('occasionLine')))
+     .set('card.name',     esc(val('honouree')))
+     .set('card.meta', `${esc(longDateTime($('f-startsAt').value))}<br>${esc(place)}`)
+     .setDie(die);
+}
+$('editor').addEventListener('input', paintPreview);
+
+/* ======================================================================== */
+/*  4. Who else can see the replies                                         */
+/* ======================================================================== */
+let watchers = [];
+
+function paintWatchers(list){
+  watchers = [...list];
+  const box = $('watchers');
+  box.textContent = '';
+  watchers.forEach(addr => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.append(document.createTextNode(addr));
+
+    const x = document.createElement('button');
+    x.type = 'button';
+    x.innerHTML = icon('x');
+    x.setAttribute('aria-label', `Remove ${addr}`);
+    x.onclick = async () => {
+      try {
+        await updateDoc(eventRef, { hostEmails: arrayRemove(addr), updatedAt: serverTimestamp() });
+        paintWatchers(watchers.filter(a => a !== addr));
+        toast('Removed');
+      } catch { toast('That didn’t save'); }
+    };
+
+    chip.append(x);
+    box.append(chip);
+  });
+}
+
+$('watcherForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  /* Lowercased on the way in, because the rules compare against a lowercased
+     token. Stored as "Sam@…" it would never match and the failure would look
+     like a bug in the sign-in rather than a capital letter. */
+  const addr = $('watcherEmail').value.trim().toLowerCase();
+  if (!addr) return;
+  if (watchers.includes(addr)) { $('watcherEmail').value = ''; toast('Already added'); return; }
+
+  const btn = $('addWatcher');
+  btn.disabled = true;
+  try {
+    await updateDoc(eventRef, { hostEmails: arrayUnion(addr), updatedAt: serverTimestamp() });
+    paintWatchers([...watchers, addr]);
+    $('watcherEmail').value = '';
+    toast('Added');
+  } catch { toast('That didn’t save'); }
+  btn.disabled = false;
 });

@@ -9,6 +9,19 @@ rules_version = '2';
 
    Create the database in PRODUCTION mode. Test mode opens every document to
    the world for 30 days.
+
+   Two kinds of signed-in person:
+
+     the owner    events/shower.hostUid — one uid. Edits the invitation,
+                  publishes it, deletes replies.
+     a watcher    events/shower.hostEmails — a list of addresses. Reads the
+                  replies as they arrive and nothing else.
+
+   A watcher is matched on email rather than uid on purpose: it means the
+   owner can add someone before that person has ever signed in, and they get
+   access by signing in normally. Matching on uid would need the owner to
+   chase down a uid from the console, which is exactly the errand this is
+   meant to avoid.
    ========================================================================== */
 
 service cloud.firestore {
@@ -17,15 +30,34 @@ service cloud.firestore {
     function event() {
       return get(/databases/$(database)/documents/events/shower).data;
     }
-    function isHost() {
+
+    function isOwner() {
       return request.auth != null && request.auth.uid == event().hostUid;
     }
 
+    /* Email-link sign-in verifies the address by construction, so
+       email_verified is already true for every account this app makes. The
+       check is written out anyway: if a password provider is ever switched
+       on, an unverified address must not inherit access by claiming someone
+       else's email. Presence of hostEmails is tested before it is read,
+       because reading a field that isn't there aborts the whole rule. */
+    function isWatcher() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email != null
+        && 'hostEmails' in event()
+        && event().hostEmails is list
+        && request.auth.token.email.lower() in event().hostEmails;
+    }
+
+    function canSeeReplies() { return isOwner() || isWatcher(); }
+
     match /events/{eventId} {
       // Anyone may read a published invitation. That is the invitation itself.
-      allow read: if resource.data.published == true || isHost();
+      allow read: if resource.data.published == true || canSeeReplies();
 
-      // Only the host may edit, and may not hand the event to someone else.
+      // Only the owner may edit, and may not hand the event to someone else.
+      // A watcher is deliberately not included: they watch, they do not edit.
       allow update: if request.auth != null
                     && request.auth.uid == resource.data.hostUid
                     && request.resource.data.hostUid == resource.data.hostUid;
@@ -51,8 +83,11 @@ service cloud.firestore {
              request.resource.data.note.size() <= 500))
         && request.resource.data.createdAt is timestamp;
 
-      // Only the host reads replies. Guests never see each other.
-      allow read, delete: if isHost();
+      // The owner and anyone on hostEmails. Guests never see each other.
+      allow read: if canSeeReplies();
+
+      // Deleting someone's reply is the owner's call alone.
+      allow delete: if isOwner();
 
       // Nobody edits a reply, including its author.
       allow update: if false;
