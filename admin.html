@@ -97,11 +97,13 @@
     <!-- A northern cardinal in flight: wings up on the downstroke, crest
          raised, tail streaming. Drawn rather than traced, so it holds at
          26px where a photograph would turn to mud. -->
-    <!-- The host's own cardinal. Cut out of its background by hue rather
-         than luminance: the glow behind it is saturated amber sitting around
-         24 degrees, the bird's reds under 16, and a plain brightness key
-         either ate the shadowed feathers or kept the halo. -->
-    <img class="cardinal" src="assets/logo-cardinal.webp" alt="" width="240" height="160">
+    <!-- The host's own cardinal, cut out of a black ground. The face mask is
+         the whole difficulty: it is black, so it is indistinguishable from the
+         background by colour, and it is an open bay in the silhouette rather
+         than an enclosed hole, so filling holes never reaches it. It is filled
+         directly instead — dark pixels beside the body, in the one place the
+         face is. See the commit for the rest. -->
+    <img class="cardinal" src="assets/logo-cardinal.webp" alt="" width="260" height="247">
     Cardinal Carriers
   </span>
   <button class="btn btn--quiet" id="signOut" hidden>Sign out</button>
