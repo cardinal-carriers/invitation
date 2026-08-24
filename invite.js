@@ -229,9 +229,12 @@ function render(doc){
      take a URL scheme on trust. */
   const reg = String(EV.registryUrl || '').trim();
   if (/^https?:\/\//i.test(reg)) {
-    const r = $('registry');
-    r.href = reg;
-    r.hidden = false;
+    $('registry').href = reg;
+    /* The bare host, so a guest can see it is the shop they expect before
+       they leave the invitation for it. */
+    try { $('registryHost').textContent = new URL(reg).hostname.replace(/^www\./, ''); }
+    catch { $('registryHost').textContent = ''; }
+    $('registryBox').hidden = false;
   }
 
   if (EV.replyBy) $('dReply').textContent = shortDate(EV.replyBy);

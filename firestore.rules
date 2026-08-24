@@ -12,10 +12,13 @@ rules_version = '2';
 
    Two kinds of signed-in person:
 
-     the owner    events/shower.hostUid — one uid. Edits the invitation,
-                  publishes it, deletes replies.
+     the owner    events/shower.hostUid — one uid. Edits the invitation and
+                  publishes it.
      a watcher    access/shower.hostEmails — a list of addresses. Reads the
-                  replies as they arrive and nothing else.
+                  replies as they arrive.
+
+   Both may change a reply's answer and delete a reply. Neither of those
+   touches the invitation itself, which stays the owner's alone.
 
    The list lives in access/shower and NOT on the event. events/shower is
    world-readable the moment it is published — that is what makes it an
@@ -123,8 +126,12 @@ service cloud.firestore {
       // The owner and anyone on hostEmails. Guests never see each other.
       allow read: if canSeeReplies();
 
-      // Deleting someone's reply is the owner's call alone.
-      allow delete: if isOwner();
+      /* Whoever can read the replies can also tidy them: the owner and the
+         watchers. They are the two or three people running the party, and a
+         duplicate or a test reply is theirs to clear without going to find
+         whoever owns the event. Nobody else — a guest cannot delete their
+         own reply, only rewrite it. */
+      allow delete: if canSeeReplies();
     }
   }
 }

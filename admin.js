@@ -226,34 +226,36 @@ function replyRow(r){
   }
 
   /* The pill is also the control. A guest who telephones to say they can no
-     longer come has told the host, not the invitation, and the host should
-     not have to ask them to go and edit it — so the answer is editable here,
-     in the place it is read. Owner only: a watcher watches.
+     longer come has told a person, not the invitation, and that person
+     should not have to ask them to go and edit it — so the answer is
+     editable here, in the place it is read.
+
+     Anyone who reaches this list may do it: the owner and the watchers are
+     the people running the party between them, and which of them happened
+     to create the event is not a reason one of them has to go and find
+     another. Only the invitation itself stays the owner's.
 
      No confirmation. It is one click to change and one click to change back,
      and the list repaints from the snapshot either way. */
   const side = document.createElement('div');
-  const pill = document.createElement(isOwner ? 'button' : 'span');
-  pill.className = `pill pill--${r.attending ? 'yes' : 'no'}`
-    + (isOwner ? ' pill--set' : '');
+  const pill = document.createElement('button');
+  pill.className = `pill pill--set pill--${r.attending ? 'yes' : 'no'}`;
   pill.textContent = r.attending ? `${1 + (r.others?.length || 0)} coming` : 'Can’t make it';
-  if (isOwner) {
-    pill.type = 'button';
-    pill.title = r.attending ? 'Mark as can’t make it' : 'Mark as coming';
-    pill.setAttribute('aria-label',
-      `${r.name}: ${r.attending ? 'coming' : 'can’t make it'}. Change this.`);
-    pill.onclick = async () => {
-      pill.disabled = true;
-      try {
-        await updateDoc(doc(db, 'rsvps', r.id),
-          { attending: !r.attending, updatedAt: serverTimestamp() });
-        toast(r.attending ? `${r.name} can’t make it` : `${r.name} is coming`);
-      } catch {
-        toast('That didn’t change', false);
-        pill.disabled = false;
-      }
-    };
-  }
+  pill.type = 'button';
+  pill.title = r.attending ? 'Mark as can’t make it' : 'Mark as coming';
+  pill.setAttribute('aria-label',
+    `${r.name}: ${r.attending ? 'coming' : 'can’t make it'}. Change this.`);
+  pill.onclick = async () => {
+    pill.disabled = true;
+    try {
+      await updateDoc(doc(db, 'rsvps', r.id),
+        { attending: !r.attending, updatedAt: serverTimestamp() });
+      toast(r.attending ? `${r.name} can’t make it` : `${r.name} is coming`);
+    } catch {
+      toast('That didn’t change', false);
+      pill.disabled = false;
+    }
+  };
   side.append(pill);
 
   /* A guest who changes their mind writes over their own reply, so the row
@@ -270,10 +272,6 @@ function replyRow(r){
   const ed = r.updatedAt?.toDate?.();
   when.textContent = ed ? `${stamp(ed)} · edited` : (at ? stamp(at) : '');
   side.append(when);
-
-  /* A watcher has no delete: the rules refuse it, so offering the button
-     would only produce a failure they cannot act on. */
-  if (!isOwner) { el.append(who, side); return el; }
 
   const del = document.createElement('button');
   del.className = 'btn btn--quiet btn--sm';

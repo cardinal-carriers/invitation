@@ -144,6 +144,20 @@ body:not(.opened) .sheet-actions{display:none}
    tear line takes it back when it isn't. */
 .reply-hint + .reply-perf{margin-top:0}
 body.replied .reply-perf{margin-top:var(--s9)}
+/* The registry. Kraft, like the envelope, so it reads as part of the same
+   stationery rather than as a banner someone stuck on the page. */
+.registry{max-width:560px;margin:var(--s9) auto 0;padding:var(--s7) var(--s6);
+  text-align:center;border-radius:var(--r-card);
+  background:color-mix(in srgb,var(--kraft) 22%,transparent);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--kraft) 52%,transparent)}
+body:not(.opened) .registry{display:none}
+.registry-hd{font-family:var(--disp);font-weight:600;color:var(--ink);
+  font-size:clamp(19px,4.6vw,23px);line-height:1.2}
+.registry-say{font-size:var(--t-sm);color:var(--ink-2);margin-top:7px}
+.registry .btn{margin-top:var(--s5);text-decoration:none}
+.registry-host{font-size:var(--t-xs);color:var(--ink-3);margin-top:var(--s3);
+  word-break:break-all}
+
 /* A blank filled in wrong. The rule turns the same red the card uses for a
    declined reply, and goes back the moment they start typing. */
 .ruled.bad{border-bottom-color:var(--no)}
@@ -283,12 +297,24 @@ body.replied .reply-hint{display:none}
        the flowers. -->
   <div class="sheet-actions">
     <button class="btn btn--ghost" data-icon="cal" id="cal">Add to calendar</button>
-    <!-- Shown only when the hosts have set one. A registry is an offer, not
-         an instruction, so it sits beside the calendar as one more thing a
-         guest may want, not on the card as a demand. -->
-    <a class="btn btn--ghost" data-icon="gift" id="registry"
-       target="_blank" rel="noopener noreferrer" hidden>Gift registry</a>
   </div>
+
+  <!-- ============ the registry ============
+       Shown only when the hosts have set one. It sits under the card rather
+       than on it — the printed invitation says nothing about gifts — but it
+       is a block of its own, because as one more ghost button beside Add to
+       calendar nobody found it.
+
+       The address is printed under the button. A link on a page thirty
+       people are about to open should say where it goes before it is
+       tapped. -->
+  <aside class="registry" id="registryBox" hidden>
+    <p class="registry-hd">Gift registry</p>
+    <p class="registry-say">If you’d like to bring something, there’s a list.</p>
+    <a class="btn btn--wax btn--lg" data-icon="gift" id="registry"
+       target="_blank" rel="noopener noreferrer">Open the registry</a>
+    <p class="registry-host" id="registryHost"></p>
+  </aside>
 
   <!-- ============ the reply card ============ -->
   <div id="replyWrap" hidden>
