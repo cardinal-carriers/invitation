@@ -86,31 +86,15 @@
   border:1px solid color-mix(in srgb,var(--env) 72%,var(--env-dk));
   box-shadow:0 2em 3.4em -1.6em rgba(120,95,65,.55)}
 
-/* The throat: the lined interior you see once the card is out. Lined the same
-   way the flap is — the envelope's own paper with a sheet of gingham laid on
-   it, held in from every edge — because this is the triangle that is actually
-   on screen when the envelope is open, and a liner that runs to the fold
-   looks printed rather than laid in. */
+/* The throat: the lined interior you see once the card is out. Gingham to
+   its edges — this is the pocket, not the flap. Only the flap carries a
+   margin of kraft, because only the flap has a liner laid into it. */
 .throat{position:absolute;inset:0;transform:translateZ(1px);border-radius:.6em .6em 0 0;
   clip-path:polygon(0 0,100% 0,50% 58%);
-  background-image:var(--fibre),var(--grain),var(--fleck),
-    linear-gradient(180deg,color-mix(in srgb,var(--env) 86%,var(--env-dk)),
-                           color-mix(in srgb,var(--env) 94%,#fff));
-  background-size:var(--pap-sz);background-repeat:var(--pap-rp);
-  /* Deeper than the flap: this is the inside of the pocket, in shadow. */
-  filter:brightness(.94)}
-/* The inner triangle is worked out, not eyeballed. Insetting the box and
-   re-clipping does not do it: the two diagonals move inward by far less than
-   the box does, so the margin all but vanishes along the sides. This is the
-   triangle offset a true 2.5% of the envelope's width from each of its three
-   edges — scaled about its incentre — for a 1.44:1 envelope with the notch
-   at 58%. Change either of those and these numbers have to be redone. */
-.throat::before{content:'';position:absolute;inset:0;
-  clip-path:polygon(7.1% 3.6%,92.9% 3.6%,50% 53.4%);
   background-image:var(--gingham);background-size:var(--gingham-sz);
   background-repeat:repeat,repeat,no-repeat;
-  filter:brightness(.9);
-  box-shadow:0 .06em .16em rgba(48,36,20,.2)}
+  /* Deeper than the flap: this is the inside of the pocket, in shadow. */
+  filter:brightness(.86)}
 
 /* ---- front: addressed, stamped, cancelled ---- */
 /* The front is set from the card's palette, not from generic ink. The two
@@ -156,7 +140,10 @@
 .front .postmark{position:absolute;right:6.8em;top:1.6em;z-index:3}
 
 /* ---- back: flap, liner, folds, seal ---- */
-.flap{position:absolute;left:-1px;right:-1px;top:-1px;height:58%;transform-style:preserve-3d;
+/* 62%, against a pocket notch that stops at 57.4%: the flap reaches past the
+   V and lies over the pocket front, which is where the gum is on a real
+   envelope and why a sealed one has a tongue showing below the seam. */
+.flap{position:absolute;left:-1px;right:-1px;top:-1px;height:62%;transform-style:preserve-3d;
   transform-origin:top center;transform:translateZ(3px) rotateX(0deg);
   transition:transform var(--dFlap) var(--eFlap) var(--tFlap)}
 .fside{position:absolute;inset:0;backface-visibility:hidden}
@@ -166,10 +153,26 @@
    A real flap has paper thickness there. This is that: the flap's own kraft,
    in its own plane, behind both faces, so the hairline is the envelope's
    colour and disappears into it. */
+/* The point is filleted, not cut. A tongue that has been through a die is
+   round at the tip, and a sharp one reads as a paper aeroplane.
+
+   The five points are a 0.025-of-envelope-height arc struck tangent to both
+   edges of a 1.44:1 envelope with a 62% flap. Both faces and the backing use
+   the same curve, the liner face mirrored, because they are one piece of
+   paper. Change the aspect or the flap's height and they all have to be
+   worked out again. */
 .flap::before{content:'';position:absolute;inset:0;
-  clip-path:polygon(0 0,100% 0,50% 100%);
-  background:color-mix(in srgb,var(--env) 92%,var(--env-dk))}
-.fside.outer{clip-path:polygon(0 0,100% 0,50% 100%);border-radius:.6em .6em 0 0;
+  clip-path:polygon(0 0,100% 0,51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%);
+  background:color-mix(in srgb,var(--env) 70%,var(--env-dk));
+  /* Held a hair proud of the faces at the sides and the point, so a line of
+     darker paper shows round the flap's edge. That line is the shadow: a
+     real drop-shadow cannot do this job, because clip-path clips the
+     filtered result and the shadow lies outside the clip, so it is thrown
+     away before it is ever drawn. Not proud at the top — that edge is the
+     fold, and there is nothing there to cast onto. */
+  inset:0 -.13em -.13em}
+.fside.outer{clip-path:polygon(0 0,100% 0,51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%);
+  border-radius:.6em .6em 0 0;
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(180deg,color-mix(in srgb,var(--env) 96%,#fff),color-mix(in srgb,var(--env) 88%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
@@ -178,14 +181,19 @@
    sheet laid on top of it — which is how a lined envelope is actually made,
    and why there is a margin of kraft showing all round the gingham rather
    than gingham running to the folded edge. */
-.fside.inner{transform:rotateX(180deg);clip-path:polygon(0 100%,100% 100%,50% 0);border-radius:0 0 .6em .6em;
+.fside.inner{transform:rotateX(180deg);border-radius:0 0 .6em .6em;
+  clip-path:polygon(0 100%,100% 100%,51.13% 2.27%,50.6% 1.54%,50% 1.29%,49.4% 1.54%,48.87% 2.27%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(0deg,color-mix(in srgb,var(--env) 88%,var(--env-dk)),
                          color-mix(in srgb,var(--env) 97%,#fff));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
-/* The liner itself: the same triangle, held a true 2.5% of the envelope's
-   width in from each of its three edges. See the note on .throat::before for
-   why the numbers are what they are.
+/* The liner: held 2.5% of the envelope's width in from the two cut edges and
+   run flush to the fold, because that is the edge that is folded rather than
+   cut — a liner stops short of what you can see the edge of, and nobody can
+   see the edge of a fold. The vertices are the two sloping edges offset
+   inward and re-intersected, not the box inset: insetting the box moves the
+   diagonals by a fraction of the value and the margin all but vanishes along
+   the sides, which is what it did the first time.
 
    The liner is darkest at the fold, as a real one is: it is the part that
    never sees the light. That also settles the old green line — passing
@@ -193,7 +201,7 @@
    a shadowed edge reads as paper thickness where bright gingham read as a
    glitch. */
 .fside.inner::before{content:'';position:absolute;inset:0;
-  clip-path:polygon(7.1% 93.8%,92.9% 93.8%,50% 8%);
+  clip-path:polygon(3.87% 100%,96.13% 100%,50% 7.66%);
   background-image:
     linear-gradient(0deg,rgba(48,36,20,.55) 0,rgba(48,36,20,.16) 9%,rgba(48,36,20,0) 22%),
     var(--gingham);
