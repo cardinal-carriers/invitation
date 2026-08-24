@@ -80,17 +80,32 @@ function longDate(iso, withYear = true){
   return `${p.weekday}, ${p.month} ${ordinal(Number(p.day))}` + (withYear ? ` ${p.year}` : '');
 }
 
-/** The line that says when. A range shares its meridiem where it can —
-    "1:30 – 4:00 pm", not "1:30 pm – 4:00 pm", which is how it is said. */
-function whenLine(startIso, endIso){
+/** The date and the time of day, kept apart. A range shares its meridiem
+    where it can — "1:30 – 4:00 pm", not "1:30 pm – 4:00 pm", which is how it
+    is said. */
+function whenParts(startIso, endIso){
   const day = longDate(startIso);
-  if (!day) return '';
+  if (!day) return { day:'', time:'' };
   const from = clock(startIso);
   const to   = endIso ? clock(endIso) : '';
-  if (!to) return `${day}, ${from}`;
+  if (!to) return { day, time: from };
   const mer = t => (t.match(/([ap])m$/) || [])[1];
   const lead = mer(from) === mer(to) ? from.replace(/\s[ap]m$/, '') : from;
-  return `${day}, ${lead} \u2013 ${to}`;
+  return { day, time: `${lead} \u2013 ${to}` };
+}
+
+/** The when line, set on two lines: the date, then the time under it.
+
+    It used to be one line that wrapped when it had to, and where it wrapped
+    depended on the phone — one line on a 414px screen, two on a 390px one,
+    and the break landing wherever it landed. Worse, the letter wrapped while
+    the card inside the envelope did not, so the same line was set two
+    different ways four seconds apart. Both cards now break in the same
+    place, on every screen, and it is the place an invitation breaks. */
+function whenHTML(startIso, endIso){
+  const { day, time } = whenParts(startIso, endIso);
+  if (!day) return '';
+  return esc(day) + (time ? `<span class="at">${esc(time)}</span>` : '');
 }
 
 /** "Saturday, April 25th" — a reply-by date needs no year or clock. */
@@ -146,7 +161,7 @@ async function load(){
 
 function render(doc){
   const hosts = EV.hosts || '';
-  const when  = whenLine(EV.startsAt, EV.endsAt);
+  const when  = whenHTML(EV.startsAt, EV.endsAt);
   const place = [EV.locationName, EV.address].filter(Boolean).join(', ');
 
   document.title = `${EV.occasionLine || 'You’re invited'}${hosts ? ' · ' + hosts : ''}`;
@@ -174,7 +189,7 @@ function render(doc){
       kicker:  esc(EV.inviteLine || DEFAULT_INVITE_LINE),
       occasion: esc(EV.occasionLine || ''),
       name:     esc(EV.honouree || ''),
-      when:     esc(when),
+      when,
       where:    esc(EV.locationName || EV.address || '') +
                 (EV.locationName && EV.address ? `<span class="sub">${esc(EV.address)}</span>` : ''),
       note:     esc(EV.hostNote || '')
@@ -190,7 +205,7 @@ function render(doc){
   $('eyebrow').textContent = EV.inviteLine || DEFAULT_INVITE_LINE;
   $('occasion').textContent = EV.occasionLine || '';
   $('honouree').textContent = EV.honouree || '';
-  $('dWhen').textContent = when;
+  $('dWhen').innerHTML = when;
 
   /* The address is the map link. A separate "Open in maps" button would be
      a second action competing with Add to calendar. */
@@ -207,6 +222,16 @@ function render(doc){
     sub.className = 'sub';
     sub.textContent = EV.address;
     where.append(sub);
+  }
+
+  /* Only http(s). The hosts are the only people who can write this field,
+     but a link on a page thirty people are about to open is not the place to
+     take a URL scheme on trust. */
+  const reg = String(EV.registryUrl || '').trim();
+  if (/^https?:\/\//i.test(reg)) {
+    const r = $('registry');
+    r.href = reg;
+    r.hidden = false;
   }
 
   if (EV.replyBy) $('dReply').textContent = shortDate(EV.replyBy);
@@ -373,6 +398,7 @@ function showPosted(saved, returning){
   $('note').value = saved.note || '';
   if (saved.note) $('note').closest('details').open = true;
 
+  document.body.classList.add('replied');
   $('stampDate').textContent = postmarkDate(new Date(saved.at));
   if (returning) form.classList.add('settled');
   form.classList.add('posted');
@@ -394,6 +420,7 @@ function showPosted(saved, returning){
      card, and the point of coming back is usually to change one line of it. */
   link.onclick = () => {
     try { localStorage.removeItem(SAVED); } catch {}
+    document.body.classList.remove('replied');
     form.classList.remove('posted', 'settled');
     form.querySelectorAll('input,textarea,button').forEach(el => el.disabled = false);
     syncAdd();

@@ -234,9 +234,18 @@
    envelope units that is 69.4% wide and 144% tall.
 
    Nothing scales it on the way out. Scaling a card that is made of live text
-   resamples the text, and it goes soft exactly where someone is reading it. */
+   resamples the text, and it goes soft exactly where someone is reading it.
+
+   In the pocket it sits in the pocket's own plane — the same translateZ(3px)
+   as the lip, the flap and the creases — and is covered by the lip because
+   it is painted before it. It used to sit a pixel behind, and a pixel is
+   enough: turning the envelope past edge-on, a depth difference projects
+   sideways at full strength while a size difference projects at almost none,
+   so from 91 to about 105 degrees the card's cream edge cleared the pocket
+   front and drew a bright hairline down one side. That was the flash of
+   white during the turn. Coplanar, there is no gap to project. */
 .env-card{position:absolute;left:15.3%;top:-22%;width:69.4%;height:144%;overflow:hidden;
-  transform:translateZ(2px) translateY(0) rotate(90deg);
+  transform:translateZ(3px) translateY(0) rotate(90deg);
   background-image:var(--grain),linear-gradient(168deg,var(--card),color-mix(in srgb,var(--card) 96%,#C9B79A));
   background-size:170px 170px,auto;background-repeat:repeat,no-repeat;
   border:1px solid color-mix(in srgb,var(--card) 88%,#C9B79A);border-radius:.5em;
@@ -266,6 +275,7 @@
    em. Set as a single block with a <br> they drifted apart from the letter. */
 .env-card .cwhen{font-family:var(--disp);font-size:.833em;line-height:1.55;
   color:var(--card-ink);margin-top:1.903em}            /* 40px/560 of the card */
+.env-card .cwhen .at{display:block}
 .env-card .cwhere{font-family:var(--disp);font-size:.833em;line-height:1.55;
   color:var(--card-ink);margin-top:.951em}             /* 20px/560 */
 .env-card .cwhere .sub{display:block;font-size:.94em;color:var(--card-ink-2);margin-top:.1em}
@@ -301,14 +311,14 @@
 /* The card is drawn right out of the pocket and then settles forward, in
    front of the envelope, the way it ends up in your hand.
 
-   Two stages rather than one, because the pocket lip sits at translateZ(3px)
-   and the card starts behind it at 2px. Coming forward and rising at the
-   same time would have the card cross the lip while still inside it, which
-   reads as paper passing through paper. So it clears first, at its original
-   depth, and only then comes toward the viewer. */
+   Two stages rather than one: while it is in the pocket the card is in the
+   pocket's own plane, and the lip is painted over it. Coming forward and
+   rising at the same time would have the card cross the lip while still
+   inside it, which reads as paper passing through paper. So it clears
+   first, at pocket depth, and only then comes toward the viewer. */
 @keyframes card-out{
-  0%   {transform:translateZ(2px)  translateY(0)     rotate(90deg)}
-  50%  {transform:translateZ(2px)  translateY(-76%)  rotate(90deg)}  /* drawn out, still sideways */
+  0%   {transform:translateZ(3px)  translateY(0)     rotate(90deg)}
+  50%  {transform:translateZ(3px)  translateY(-76%)  rotate(90deg)}  /* drawn out, still sideways */
   100% {transform:var(--card-rest)}                                  /* turned upright, in front */
 }
 .scene.play .env-card{

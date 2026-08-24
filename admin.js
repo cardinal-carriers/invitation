@@ -225,10 +225,35 @@ function replyRow(r){
     who.append(n);
   }
 
+  /* The pill is also the control. A guest who telephones to say they can no
+     longer come has told the host, not the invitation, and the host should
+     not have to ask them to go and edit it — so the answer is editable here,
+     in the place it is read. Owner only: a watcher watches.
+
+     No confirmation. It is one click to change and one click to change back,
+     and the list repaints from the snapshot either way. */
   const side = document.createElement('div');
-  const pill = document.createElement('span');
-  pill.className = `pill pill--${r.attending ? 'yes' : 'no'}`;
+  const pill = document.createElement(isOwner ? 'button' : 'span');
+  pill.className = `pill pill--${r.attending ? 'yes' : 'no'}`
+    + (isOwner ? ' pill--set' : '');
   pill.textContent = r.attending ? `${1 + (r.others?.length || 0)} coming` : 'Can’t make it';
+  if (isOwner) {
+    pill.type = 'button';
+    pill.title = r.attending ? 'Mark as can’t make it' : 'Mark as coming';
+    pill.setAttribute('aria-label',
+      `${r.name}: ${r.attending ? 'coming' : 'can’t make it'}. Change this.`);
+    pill.onclick = async () => {
+      pill.disabled = true;
+      try {
+        await updateDoc(doc(db, 'rsvps', r.id),
+          { attending: !r.attending, updatedAt: serverTimestamp() });
+        toast(r.attending ? `${r.name} can’t make it` : `${r.name} is coming`);
+      } catch {
+        toast('That didn’t change', false);
+        pill.disabled = false;
+      }
+    };
+  }
   side.append(pill);
 
   /* A guest who changes their mind writes over their own reply, so the row
@@ -269,7 +294,8 @@ function replyRow(r){
 /*  3. The editor. Fields map 1:1 to events/shower. One Save, no autosave.   */
 /* ======================================================================== */
 const TEXT = ['inviteLine','occasionLine','honouree','hosts','locationName','address',
-              'hostNote','postmarkCity','postmarkRegion','returnLine1','returnLine2'];
+              'hostNote','postmarkCity','postmarkRegion','returnLine1','returnLine2',
+              'registryUrl'];
 const DEFAULT_INVITE_LINE = 'You\u2019re invited to join us for';
 let wax = '#B4736C', die = 'm-pram';
 let stampCol = '#B93A2E', stampArtId = 'pooh';
@@ -321,6 +347,15 @@ $('editor').addEventListener('submit', async e => {
   const patch = { waxColor: wax, sealDie: die, stampColor: stampCol,
                   stampArt: stampArtId, updatedAt: serverTimestamp() };
   TEXT.forEach(k => patch[k] = $('f-' + k).value.trim());
+
+  /* Nobody types the scheme. Without one the browser reads amazon.ca/... as a
+     path on this site and the guest lands on a 404 of our own making, so the
+     obvious reading is filled in rather than punished. The guest page still
+     shows the link only if it ends up http(s). */
+  if (patch.registryUrl && !/^[a-z][a-z0-9+.-]*:/i.test(patch.registryUrl)) {
+    patch.registryUrl = 'https://' + patch.registryUrl.replace(/^\/+/, '');
+    $('f-registryUrl').value = patch.registryUrl;
+  }
 
   const s = $('f-startsAt').value;
   patch.startsAt = s ? Timestamp.fromDate(new Date(s)) : null;
@@ -450,14 +485,25 @@ function longDate(v){
   }).formatToParts(d).map(x => [x.type, x.value]));
   return `${p.weekday}, ${p.month} ${ordinal(Number(p.day))} ${p.year}`;
 }
-function whenLine(startV, endV){
+function whenParts(startV, endV){
   const day = longDate(startV);
-  if (!day) return '';
+  if (!day) return { day:'', time:'' };
   const from = clock(startV), to = clock(endV);
-  if (!to) return `${day}, ${from}`;
+  if (!to) return { day, time: from };
   const mer = t => (t.match(/([ap])m$/) || [])[1];
   const lead = mer(from) === mer(to) ? from.replace(/\s[ap]m$/, '') : from;
-  return `${day}, ${lead} \u2013 ${to}`;
+  return { day, time: `${lead} \u2013 ${to}` };
+}
+/* One line for the host to read back, two lines on the card itself — the
+   date, then the time under it. Same split as the guest page. */
+function whenLine(startV, endV){
+  const { day, time } = whenParts(startV, endV);
+  return day ? (time ? `${day}, ${time}` : day) : '';
+}
+function whenHTML(startV, endV){
+  const { day, time } = whenParts(startV, endV);
+  if (!day) return '';
+  return esc(day) + (time ? `<span class="at">${esc(time)}</span>` : '');
 }
 
 const val = id => $('f-' + id).value.trim();
@@ -506,7 +552,7 @@ function paintPreview(){
      .set('mark.date', postmarkDate(new Date()))
      .set('card.occasion', esc(val('occasionLine')))
      .set('card.name',     esc(val('honouree')))
-     .set('card.when',  esc(whenLine($('f-startsAt').value, $('f-endsAt').value)))
+     .set('card.when',  whenHTML($('f-startsAt').value, $('f-endsAt').value))
      .set('card.where', esc(val('locationName') || val('address')) +
         (val('locationName') && val('address') ? `<span class="sub">${esc(val('address'))}</span>` : ''))
      .setDie(die);

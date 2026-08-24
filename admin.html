@@ -52,6 +52,14 @@
 .reply-row .note{font-size:var(--t-sm);color:var(--ink);margin-top:7px;padding-left:11px;
   border-left:2px solid var(--line-2);white-space:pre-wrap}
 .reply-row .when{font-size:var(--t-xs);color:var(--ink-3);white-space:nowrap;margin-top:3px}
+/* The answer is a control for the host: one click flips it. It has to look
+   pressable without becoming a button in a row that already has one, so it
+   keeps the pill's shape and gains only a cursor and a ring on hover. */
+.pill--set{cursor:pointer;font:inherit;font-size:var(--t-xs);font-weight:600;
+  transition:box-shadow .16s,filter .16s}
+.pill--set:hover,.pill--set:focus-visible{box-shadow:inset 0 0 0 1.5px currentColor;
+  filter:saturate(1.15)}
+.pill--set:disabled{opacity:.5;cursor:default}
 
 /* 3. The invitation — the preview sits above the fields, not beside them.
    The wrap is 760px and the envelope wants 300 of it; side by side would
@@ -253,6 +261,13 @@
           <label class="label" for="f-postmarkRegion">Postmark region</label>
           <input class="input" id="f-postmarkRegion" placeholder="AB &middot; Canada">
           <p class="help">The line under it.</p>
+        </div>
+        <div class="field span-2">
+          <label class="label" for="f-registryUrl">Gift registry</label>
+          <input class="input" id="f-registryUrl" type="url" inputmode="url"
+                 placeholder="amazon.ca/wedding/registry/...">
+          <p class="help">A link, on the page under the card. Leave it empty and
+             nothing is shown.</p>
         </div>
         <div class="field span-2">
           <label class="label" for="f-hostNote">Note</label>

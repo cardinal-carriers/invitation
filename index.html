@@ -5,6 +5,26 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>You're invited</title>
 <meta name="robots" content="noindex, nofollow">
+
+<!-- What the link looks like when it is forwarded. iMessage, WhatsApp and
+     Mail all read these, and without them the link shows as a bare
+     github.io URL, which reads like something to be careful of.
+
+     The picture is a still of the sealed envelope, kept deliberately
+     anonymous: no return address, no postmark date, nothing that has to
+     stay in step with the invitation. It is a file, not a render — it
+     cannot follow the event data — so it says only what will still be true
+     next month. The details are inside, which is the point of an envelope. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="You’re invited">
+<meta property="og:description" content="A sealed envelope, with your name on it. Tap to open.">
+<meta property="og:url" content="https://cardinal-carriers.github.io/invitation/">
+<meta property="og:image" content="https://cardinal-carriers.github.io/invitation/assets/og-invitation.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A sealed kraft envelope reading “You’re invited”">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#FCF7EE">
 <link rel="preload" href="fonts/caveat.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/lora.woff2" as="font" type="font/woff2" crossorigin>
@@ -86,6 +106,10 @@ body:not(.opened) .letter{padding-bottom:0}
   font-size:clamp(15px,3.5vw,17.5px);line-height:1.55;color:var(--card-ink);
   margin-top:var(--s5)}
 .line--when{margin-top:var(--s8)}
+/* The time on its own line, under the date. Spaced exactly as a wrapped
+   line would be — the point is that it always breaks here, not that it
+   looks like a new paragraph. */
+.line--when .at{display:block}
 .line--reply{font-size:clamp(13.5px,3vw,15px);color:var(--card-ink-2);margin-top:var(--s6)}
 .line a{color:inherit;font-size:inherit;text-decoration-color:color-mix(in srgb,var(--card-ink) 40%,transparent)}
 .line .sub{display:block;font-size:.94em;color:var(--card-ink-2);margin-top:2px}
@@ -104,8 +128,28 @@ body:not(.opened) .letter{padding-bottom:0}
   font-size:clamp(15px,3.5vw,17.5px);line-height:1.55;color:var(--card-ink);
   margin-top:var(--s8)}
 
-.sheet-actions{display:flex;justify-content:center;margin-top:var(--s6)}
+.sheet-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--s3);margin-top:var(--s6)}
+.sheet-actions .btn{text-decoration:none}
 body:not(.opened) .sheet-actions{display:none}
+
+/* The cue over the reply card. Same hand and same arrow as "Tap to open",
+   one size down: it is the same kind of instruction, but the envelope has
+   already done the work of getting attention. The arrow is the open-hint's
+   turned over, so it points down at the card it is asking about. */
+.reply-hint{display:flex;align-items:center;justify-content:center;gap:12px;
+  margin:var(--s10) auto var(--s5);font-family:var(--hand);font-weight:600;
+  font-size:clamp(24px,6vw,32px);line-height:1.1;color:var(--wax);
+  animation:nudge 2.4s ease-in-out infinite}
+/* The cue carries the space above the tear line while it is there, and the
+   tear line takes it back when it isn't. */
+.reply-hint + .reply-perf{margin-top:0}
+body.replied .reply-perf{margin-top:var(--s9)}
+.reply-hint svg{width:36px;height:26px;overflow:visible;flex:none;transform:scaleY(-1)}
+.reply-hint path{stroke:var(--wax);stroke-width:2;fill:none;stroke-linecap:round;
+  stroke-linejoin:round}
+/* Once they have answered, the card says so and the cue is just noise. */
+body.replied .reply-hint{display:none}
+@media (prefers-reduced-motion:reduce){.open-hint,.reply-hint{animation:none}}
 
 /* --- the reply card --------------------------------------------------- */
 .reply-perf{margin:var(--s9) auto var(--s5)}
@@ -235,10 +279,22 @@ body:not(.opened) .sheet-actions{display:none}
        the flowers. -->
   <div class="sheet-actions">
     <button class="btn btn--ghost" data-icon="cal" id="cal">Add to calendar</button>
+    <!-- Shown only when the hosts have set one. A registry is an offer, not
+         an instruction, so it sits beside the calendar as one more thing a
+         guest may want, not on the card as a demand. -->
+    <a class="btn btn--ghost" data-icon="gift" id="registry"
+       target="_blank" rel="noopener noreferrer" hidden>Gift registry</a>
   </div>
 
   <!-- ============ the reply card ============ -->
   <div id="replyWrap" hidden>
+    <!-- The second of the page's two asks. The first was "tap to open"; this
+         is the one that matters, so it is set in the same hand and points the
+         same way — at the thing it is asking for, which is below it. -->
+    <p class="reply-hint">
+      <svg viewBox="0 0 34 24" aria-hidden="true"><path d="M3 21C10 22 22 19 26 4"/><path d="M21 9L26 4l2 7"/></svg>
+      Let us know you’ll be there
+    </p>
     <p class="reply-perf">Detach and reply</p>
 
     <form class="paper reply" id="reply" novalidate>
