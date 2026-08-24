@@ -55,8 +55,7 @@
 /* The answer is a control for the host: one click flips it. It has to look
    pressable without becoming a button in a row that already has one, so it
    keeps the pill's shape and gains only a cursor and a ring on hover. */
-.pill--set{cursor:pointer;font:inherit;font-size:var(--t-xs);font-weight:600;
-  transition:box-shadow .16s,filter .16s}
+.pill--set{cursor:pointer;transition:box-shadow .16s,filter .16s}
 .pill--set:hover,.pill--set:focus-visible{box-shadow:inset 0 0 0 1.5px currentColor;
   filter:saturate(1.15)}
 .pill--set:disabled{opacity:.5;cursor:default}
