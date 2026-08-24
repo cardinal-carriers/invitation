@@ -182,7 +182,19 @@ function watchReplies(){
   }, () => toast('Replies stopped updating. Reload the page.', false));
 }
 
+/* The last snapshot, kept so the filter and the search can redraw the list
+   without another read. */
+let replies = [];
+/* Not `show`: that name is already the helper that hides and reveals whole
+   sections of this page. */
+let showing = 'all';       /* all | yes | no */
+let term = '';
+
 function paintReplies(all){
+  replies = all;
+
+  /* The tally is the whole party's, always. Filtering the list is a way of
+     looking; it is not a claim about how many people are coming. */
   const yes = all.filter(r => r.attending);
   const heads = yes.reduce((n, r) => n + 1 + (r.others?.length || 0), 0);
   $('heads').textContent = heads;
@@ -192,14 +204,53 @@ function paintReplies(all){
     `<span><b>${all.length}</b> ${all.length === 1 ? 'reply' : 'replies'}</span>` +
     (no ? `<span><b>${no}</b> can’t make it</span>` : '');
 
+  renderList();
+}
+
+/* Search runs over everyone named in the reply, not just whoever typed it:
+   looking up "Ali" should find the reply Sarah sent with Mo Ali on it. */
+function matches(r){
+  if (showing === 'yes' && !r.attending) return false;
+  if (showing === 'no'  &&  r.attending) return false;
+  if (!term) return true;
+  return [r.name, ...(r.others || [])]
+    .some(n => String(n || '').toLowerCase().includes(term));
+}
+
+function renderList(){
   const list = $('replies');
   list.textContent = '';
-  if (!all.length) {
+
+  if (!replies.length) {
     list.innerHTML = `<div class="empty"><p>No replies yet. They’ll appear here as they come in.</p></div>`;
     return;
   }
-  all.forEach(r => list.append(replyRow(r)));
+  const rows = replies.filter(matches);
+  if (!rows.length) {
+    /* Say which of the two things came up empty, so the fix is obvious. */
+    const p = document.createElement('p');
+    p.className = 'replies-none';
+    p.textContent = term
+      ? `Nobody matching “${term}”${showing === 'all' ? '' : ' in this list'}.`
+      : (showing === 'yes' ? 'Nobody has said yes yet.' : 'Nobody has said no.');
+    list.append(p);
+    return;
+  }
+  rows.forEach(r => list.append(replyRow(r)));
 }
+
+$('replies').closest('.desk').querySelectorAll('.seg button').forEach(b => {
+  b.onclick = () => {
+    showing = b.dataset.show;
+    b.parentElement.querySelectorAll('button')
+      .forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    renderList();
+  };
+});
+$('replySearch').addEventListener('input', e => {
+  term = e.target.value.trim().toLowerCase();
+  renderList();
+});
 
 function replyRow(r){
   const el = document.createElement('div');

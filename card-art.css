@@ -40,5 +40,5 @@
 /* Both cards, the letter and the one inside the envelope. Each is a local
    override of the token its own background rules already use, so every
    gradient and texture built on top of it follows. */
-.sheet{--paper:var(--card-cream)}
+.sheet,.registry{--paper:var(--card-cream)}
 .env-card{--card:var(--card-cream)}

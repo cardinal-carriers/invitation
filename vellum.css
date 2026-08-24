@@ -159,7 +159,13 @@ table{border-collapse:collapse;width:100%}
 .display{font-size:var(--t-display);line-height:1.04;letter-spacing:-.03em}
 .h1{font-size:var(--t-h1)}
 .h2{font-size:var(--t-h2)}
-.h3{font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em}
+.h3{font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em;word-spacing:-.18em}
+
+/* Lora's word space grows with weight and its letters do not: .33em at 400,
+   .51em at 600, .60em at 700, by which point a space is as wide as an n. Set
+   heavy it reads as a double space between every word, which is what it
+   looked like. Anything using the display face above 400 with more than one
+   word pulls the space back to what it is at 400. */
 
 /* The label is the workhorse of the host app: every field, column and
    section is named by one. Small caps, wide tracking, like a filing tab. */
