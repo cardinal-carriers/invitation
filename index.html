@@ -144,6 +144,10 @@ body:not(.opened) .sheet-actions{display:none}
    tear line takes it back when it isn't. */
 .reply-hint + .reply-perf{margin-top:0}
 body.replied .reply-perf{margin-top:var(--s9)}
+/* A blank filled in wrong. The rule turns the same red the card uses for a
+   declined reply, and goes back the moment they start typing. */
+.ruled.bad{border-bottom-color:var(--no)}
+.ruled.bad:focus{border-bottom-color:var(--no);box-shadow:0 1.5px 0 var(--no)}
 .reply-hint svg{width:36px;height:26px;overflow:visible;flex:none;transform:scaleY(-1)}
 .reply-hint path{stroke:var(--wax);stroke-width:2;fill:none;stroke-linecap:round;
   stroke-linejoin:round}
@@ -310,9 +314,11 @@ body.replied .reply-hint{display:none}
         <p class="rsvp-mark">RSVP</p>
 
         <div class="blank">
-          <label class="sr" for="guestName">Your name</label>
+          <label class="sr" for="guestName">Your first and last name</label>
+          <!-- The placeholder carries the requirement. Being told what is
+               wanted before typing beats being corrected after. -->
           <input class="ruled" id="guestName" name="name" type="text" maxlength="80"
-                 autocomplete="name" placeholder="Your name">
+                 autocomplete="name" placeholder="First and last name">
         </div>
 
         <!-- No heading here. "Add someone" is the whole instruction, and the

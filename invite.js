@@ -279,7 +279,8 @@ function addOther(focus){
   const row = document.createElement('div');
   row.className = 'other-row blank';
   row.innerHTML = `
-    <input class="ruled" type="text" maxlength="80" placeholder="Their name" aria-label="Their name">
+    <input class="ruled" type="text" maxlength="80" placeholder="First and last name"
+           aria-label="Their first and last name">
     <button class="rm" type="button" aria-label="Remove">${icon('x')}</button>`;
   row.querySelector('.rm').onclick = () => { row.remove(); syncAdd(); };
   rows.append(row);
@@ -328,13 +329,39 @@ function keepSlot(s){
   try { localStorage.setItem(SLOT, JSON.stringify(s)); } catch {}
 }
 
+/* Two words. The hosts read this list against the people they invited, and
+   "Sarah" is not a match when two Sarahs are coming. An initial counts —
+   "J Okonkwo" is a name someone actually goes by — so the test is two of
+   something, not two long enoughs. */
+const isFullName = s => s.trim().split(/\s+/).length >= 2;
+
+/* Say which blank is wrong as well as what is wrong with it. A toast alone
+   leaves them looking for the one they missed. */
+function reject(el, msg){
+  el.classList.add('bad');
+  el.focus({ preventScroll: true });
+  el.scrollIntoView({ block:'center',
+    behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  toast(msg, false);
+}
+form.addEventListener('input', e => e.target.classList?.remove('bad'));
+
 async function post(attending){
   const nameEl = $('guestName');
   const name = nameEl.value.trim();
-  if (!name) { nameEl.focus(); toast('Add your name first', false); return; }
+  if (!name) { reject(nameEl, 'Add your name first'); return; }
+  if (!isFullName(name)) { reject(nameEl, 'First and last name, please'); return; }
 
-  const others = [...rows.querySelectorAll('input')]
-    .map(i => i.value.trim()).filter(Boolean).slice(0, MAX_OTHERS);
+  /* Blank rows are somebody who changed their mind about adding a name, not
+     an error. Filled-in ones have to be whole. */
+  const others = [];
+  for (const input of rows.querySelectorAll('input')) {
+    const v = input.value.trim();
+    if (!v) continue;
+    if (!isFullName(v)) { reject(input, 'First and last name for everyone with you'); return; }
+    others.push(v);
+  }
+  others.splice(MAX_OTHERS);
   const note = $('note').value.trim();
 
   /* PATCH, not POST: it writes the named document whether or not it is

@@ -305,7 +305,28 @@
 .scene.play .back{visibility:visible}
 .scene.play .env{transform:translateY(-2.4%)}
 .scene.play .env-shadow{transform:scale(.9);opacity:.7}
-.scene.play .flap{transform:translateZ(-2px) rotateX(-172deg)}
+/* The flap lifts TOWARD you before it folds away, and that is a keyframe
+   rather than a transition because the two halves need different signs.
+
+   Rotating straight to -172 is what an envelope does in the world, but not
+   what it does here: the card fills the envelope to its top edge, so a flap
+   swinging back is behind the card from the first degree and simply vanishes
+   — then the pocket's gingham comes into view behind it and reads as the
+   flap coming back. Lifting toward the viewer keeps it in sight for the
+   whole of the visible half of the turn.
+
+   The sign flips at 86 degrees, where the flap is a hairline two pixels tall
+   and +86 and -86 are the same picture, so the jump cannot be seen. Past it
+   the flap is edge-on and then behind the card, which is where a flap that
+   has been folded back belongs — and the settled envelope looks exactly as
+   it did before. */
+@keyframes flap-open{
+  0%      {transform:translateZ(3px)  rotateX(0deg)}
+  46%     {transform:translateZ(3px)  rotateX(86deg)}
+  46.001% {transform:translateZ(3px)  rotateX(-86deg)}
+  100%    {transform:translateZ(-2px) rotateX(-172deg)}
+}
+.scene.play .flap{animation:flap-open var(--dFlap) var(--eFlap) var(--tFlap) both}
 .scene.play .seal{opacity:0;transform:translateZ(4px) rotate(-24deg) scale(.34)}
 
 /* The card is drawn right out of the pocket and then settles forward, in
@@ -340,10 +361,16 @@
    all, which is one dependency too many for a state that just needs to be
    true on the first frame. */
 .scene.noanim.play .env-card{animation:none!important;transform:var(--card-rest)!important}
+/* Same for the flap: an animation is not a transition, so the rule above
+   that kills transitions does not touch it, and showOpen() would sit and
+   play the whole opening instead of being open. */
+.scene.noanim.play .flap{animation:none!important;
+  transform:translateZ(-2px) rotateX(-172deg)!important}
 
 /* Reduced motion: no sequence at all. The envelope is simply shown open,
    card out, on load. The guest still gets the reveal, just not the theatre. */
 @media (prefers-reduced-motion:reduce){
   .scene *,.scene::before{transition-duration:.001s!important;transition-delay:0s!important}
   .scene.play .env-card{animation:none;transform:var(--card-rest)}
+  .scene.play .flap{animation:none;transform:translateZ(-2px) rotateX(-172deg)}
 }
