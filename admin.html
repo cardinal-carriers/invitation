@@ -281,11 +281,25 @@
           <p class="help">The line under it.</p>
         </div>
         <div class="field span-2">
-          <label class="label" for="f-registryUrl">Gift registry</label>
+          <label class="label" for="f-registryName">Gift registry</label>
+          <input class="input" id="f-registryName" placeholder="Amazon">
+          <label class="sr" for="f-registryUrl">Gift registry address</label>
           <input class="input" id="f-registryUrl" type="url" inputmode="url"
-                 placeholder="amazon.ca/wedding/registry/...">
-          <p class="help">A link, on the page under the card. Leave it empty and
-             nothing is shown.</p>
+                 placeholder="amazon.ca/wedding/registry/..."
+                 style="margin-top:var(--s3)">
+          <p class="help">The shop's name and the link, on the page under the
+             card. The name is what the button says; left blank it says “Open
+             the registry”. Leave the link blank and nothing is shown.</p>
+        </div>
+        <div class="field span-2">
+          <label class="label" for="f-registryName2">Second registry</label>
+          <input class="input" id="f-registryName2" placeholder="West Coast Kids">
+          <label class="sr" for="f-registryUrl2">Second registry address</label>
+          <input class="input" id="f-registryUrl2" type="url" inputmode="url"
+                 placeholder="westcoastkids.ca/registry/..."
+                 style="margin-top:var(--s3)">
+          <p class="help">A second list at another shop. It gets its own button
+             under the first.</p>
         </div>
         <div class="field span-2">
           <label class="label" for="f-hostNote">Note</label>

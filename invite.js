@@ -164,7 +164,10 @@ function render(doc){
   const when  = whenHTML(EV.startsAt, EV.endsAt);
   const place = [EV.locationName, EV.address].filter(Boolean).join(', ');
 
-  document.title = `${EV.occasionLine || 'You’re invited'}${hosts ? ' · ' + hosts : ''}`;
+  /* The occasion alone. It already names the hosts — "Jillian & Derrick's
+     Baby Shower!" — so appending them again read as a stutter in the tab and
+     in every link preview that falls back to the title. */
+  document.title = EV.occasionLine || 'You’re invited';
   if (EV.waxColor)   document.documentElement.style.setProperty('--wax', EV.waxColor);
   if (EV.stampColor) document.documentElement.style.setProperty('--stamp', EV.stampColor);
 
@@ -224,18 +227,18 @@ function render(doc){
     where.append(sub);
   }
 
-  /* Only http(s). The hosts are the only people who can write this field,
+  /* Up to two lists — the hosts keep one at each shop. Each is shown only if
+     it is there, so one registry looks exactly as it always did and neither
+     leaves an empty slot behind.
+
+     Only http(s). The hosts are the only people who can write these fields,
      but a link on a page thirty people are about to open is not the place to
      take a URL scheme on trust. */
-  const reg = String(EV.registryUrl || '').trim();
-  if (/^https?:\/\//i.test(reg)) {
-    $('registry').href = reg;
-    /* The bare host, so a guest can see it is the shop they expect before
-       they leave the invitation for it. */
-    try { $('registryHost').textContent = new URL(reg).hostname.replace(/^www\./, ''); }
-    catch { $('registryHost').textContent = ''; }
-    $('registryBox').hidden = false;
-  }
+  const shown = [
+    [EV.registryUrl,  EV.registryName],
+    [EV.registryUrl2, EV.registryName2]
+  ].map(([url, name], i) => registrySlot(i + 1, url, name)).some(Boolean);
+  if (shown) $('registryBox').hidden = false;
 
   if (EV.replyBy) $('dReply').textContent = shortDate(EV.replyBy);
   else $('dReplyRow').hidden = true;
@@ -262,6 +265,27 @@ function render(doc){
     env.showOpen();
     document.body.classList.add('opened');
   }
+}
+
+/** Fill one of the two registry slots. Returns true if it was shown.
+
+    The button carries the shop's name when the hosts gave one — with two
+    lists on the card, "Open the registry" twice tells a guest nothing about
+    which is which. The bare hostname is printed underneath either way, so a
+    guest can see where the link goes before they leave the invitation for
+    it. */
+function registrySlot(n, url, name){
+  const href = String(url || '').trim();
+  if (!/^https?:\/\//i.test(href)) return false;
+  const a = $('registry' + n);
+  a.href = href;
+  /* The label is its own span so the gift icon, which is hydrated into the
+     same anchor, is not written over. */
+  $('registryLabel' + n).textContent = String(name || '').trim() || 'Open the registry';
+  try { $('registryHost' + n).textContent = new URL(href).hostname.replace(/^www\./, ''); }
+  catch { $('registryHost' + n).textContent = ''; }
+  $('registryOne' + n).hidden = false;
+  return true;
 }
 
 /* The skip link points at a letter that is not on the page yet. Open the

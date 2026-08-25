@@ -344,7 +344,7 @@ function replyRow(r){
 /* ======================================================================== */
 const TEXT = ['inviteLine','occasionLine','honouree','hosts','locationName','address',
               'hostNote','postmarkCity','postmarkRegion','returnLine1','returnLine2',
-              'registryUrl'];
+              'registryName','registryUrl','registryName2','registryUrl2'];
 const DEFAULT_INVITE_LINE = 'You\u2019re invited to join us for';
 let wax = '#B4736C', die = 'm-pram';
 let stampCol = '#B93A2E', stampArtId = 'pooh';
@@ -401,10 +401,12 @@ $('editor').addEventListener('submit', async e => {
      path on this site and the guest lands on a 404 of our own making, so the
      obvious reading is filled in rather than punished. The guest page still
      shows the link only if it ends up http(s). */
-  if (patch.registryUrl && !/^[a-z][a-z0-9+.-]*:/i.test(patch.registryUrl)) {
-    patch.registryUrl = 'https://' + patch.registryUrl.replace(/^\/+/, '');
-    $('f-registryUrl').value = patch.registryUrl;
-  }
+  ['registryUrl', 'registryUrl2'].forEach(k => {
+    if (patch[k] && !/^[a-z][a-z0-9+.-]*:/i.test(patch[k])) {
+      patch[k] = 'https://' + patch[k].replace(/^\/+/, '');
+      $('f-' + k).value = patch[k];
+    }
+  });
 
   const s = $('f-startsAt').value;
   patch.startsAt = s ? Timestamp.fromDate(new Date(s)) : null;

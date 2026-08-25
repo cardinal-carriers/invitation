@@ -144,7 +144,7 @@
    V and lies over the pocket front, which is where the gum is on a real
    envelope and why a sealed one has a tongue showing below the seam. */
 .flap{position:absolute;left:-1px;right:-1px;top:-1px;height:62%;transform-style:preserve-3d;
-  transform-origin:top center;transform:translateZ(3px) rotateX(0deg);
+  transform-origin:50% 1px;transform:translateZ(3px) rotateX(0deg);
   transition:transform var(--dFlap) var(--eFlap) var(--tFlap)}
 .fside{position:absolute;inset:0;backface-visibility:hidden}
 /* Passing through vertical, neither face of the flap points at the viewer, so

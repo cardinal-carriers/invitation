@@ -37,8 +37,12 @@
   --card-ink:#666A57;      /* body              5.25:1 */
   --card-ink-2:#6E7260;    /* reply-by          4.66:1 */
 }
-/* Both cards, the letter and the one inside the envelope. Each is a local
-   override of the token its own background rules already use, so every
-   gradient and texture built on top of it follows. */
-.sheet,.registry{--paper:var(--card-cream)}
+/* Every sheet of stationery on the guest page — the letter, the registry and
+   the reply card — plus the one inside the envelope. Each is a local override
+   of the token its own background rules already use, so every gradient and
+   texture built on top of it follows.
+
+   The reply card was left on vellum's --paper and read as a whiter sheet
+   stapled under two cream ones. */
+.sheet,.registry,.reply{--paper:var(--card-cream)}
 .env-card{--card:var(--card-cream)}
