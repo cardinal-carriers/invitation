@@ -69,7 +69,14 @@
 
 .flip{position:absolute;inset:0;transform-style:preserve-3d;
   transition:transform var(--dFlip) var(--eFlip) var(--tFlip)}
-.face{position:absolute;inset:0;border-radius:.6em;transform-style:preserve-3d;
+/* Square at the top, rounded at the foot. The top edge is the FOLD the flap
+   turns on, and a fold has a corner, not a radius: round it and the flap —
+   which folds back past that same corner — either steps in from the side
+   edge or pinches it to a waist, which is what made the corner read as two
+   pieces of paper rather than one. Everything on this envelope that reaches
+   the top edge is square there: both faces, the panel, the pocket, the lip
+   and the flap itself. The foot keeps .6em, because those corners are cut. */
+.face{position:absolute;inset:0;border-radius:0 0 .6em .6em;transform-style:preserve-3d;
   transition:visibility 0s calc(var(--tFlip) + var(--dFlip)/2)}
 .front{transform:translateZ(1px);
   background-image:var(--fibre),var(--grain),var(--fleck),
@@ -79,7 +86,32 @@
   box-shadow:0 2em 3.4em -1.6em rgba(120,95,65,.55)}
 .back{transform:rotateY(180deg) translateZ(1px);visibility:hidden}
 
-.panel-base{position:absolute;inset:0;border-radius:.6em;
+/* ---- the paper's thickness ----
+   Two slabs standing on the envelope's long edges, spanning the whole depth
+   the object occupies — from the front face at +1 to the seal at -5, so six
+   pixels centred on -2.
+
+   Without them the envelope is two sheets and a gap. Turning past edge-on
+   both faces collapse to nothing and for a frame or two you look straight
+   through the middle of it: the page shows, and so does the edge of the card
+   inside, four pixels off to one side where perspective throws it. This is
+   the third side of the box. At edge-on it is the only thing you see, which
+   is what an envelope turning in your hand actually shows you; at rest it is
+   exactly edge-on itself and takes no width at all; in between it is the
+   sliver of cut paper down the leading edge.
+
+   Rounded at the foot like everything else — at six pixels wide the radius
+   scales itself down to a half-round end, which is all that is wanted: it
+   keeps the slab from squaring off the corner it stands on. */
+.edge{position:absolute;top:0;bottom:0;width:6px;border-radius:0 0 .6em .6em;
+  background:linear-gradient(90deg,
+    color-mix(in srgb,var(--env) 64%,var(--env-dk)),
+    color-mix(in srgb,var(--env) 99%,#fff) 44%,
+    color-mix(in srgb,var(--env) 84%,var(--env-dk)))}
+.edge-l{left:0; transform:translateX(-3px) translateZ(-2px) rotateY(90deg)}
+.edge-r{right:0;transform:translateX(3px)  translateZ(-2px) rotateY(90deg)}
+
+.panel-base{position:absolute;inset:0;border-radius:0 0 .6em .6em;
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(165deg,color-mix(in srgb,var(--env) 92%,#fff),color-mix(in srgb,var(--env) 86%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp);
@@ -89,10 +121,17 @@
 /* The throat: the lined interior you see once the card is out. Gingham to
    its edges — this is the pocket, not the flap. Only the flap carries a
    margin of kraft, because only the flap has a liner laid into it. */
-.throat{position:absolute;inset:0;transform:translateZ(1px);border-radius:.6em .6em 0 0;
+.throat{position:absolute;inset:0;transform:translateZ(1px);
   clip-path:polygon(0 0,100% 0,50% 58%);
   background-image:var(--gingham);background-size:var(--gingham-sz);
   background-repeat:repeat,repeat,no-repeat;
+  /* Half a check up, so the fold lands on the MIDDLE of a stripe. The flap's
+     liner is the same cloth folded back on itself, and a fold mirrors what it
+     folds: the check only carries across if the mirror line is an axis of the
+     pattern. On a stripe boundary it isn't, and the two halves meet in a band
+     of double width — which is what made the top and bottom look out of step.
+     The liner is offset to match, at .fside.inner::before. */
+  background-position:0 0,0 -.31em,0 0;
   /* Deeper than the flap: this is the inside of the pocket, in shadow. */
   filter:brightness(.86)}
 
@@ -143,8 +182,11 @@
 /* 62%, against a pocket notch that stops at 57.4%: the flap reaches past the
    V and lies over the pocket front, which is where the gum is on a real
    envelope and why a sealed one has a tongue showing below the seam. */
-.flap{position:absolute;left:-1px;right:-1px;top:-1px;height:62%;transform-style:preserve-3d;
-  transform-origin:50% 1px;transform:translateZ(3px) rotateX(0deg);
+/* Flush with the envelope's own sides, not a pixel proud of them. It used to
+   sit at inset -1px to hide the panel's border, and folded back that pixel
+   showed as a lip of paper overhanging each side of the top corner. */
+.flap{position:absolute;left:0;right:0;top:0;height:62%;transform-style:preserve-3d;
+  transform-origin:50% 0;transform:translateZ(3px) rotateX(0deg);
   transition:transform var(--dFlap) var(--eFlap) var(--tFlap)}
 .fside{position:absolute;inset:0;backface-visibility:hidden}
 /* Passing through vertical, neither face of the flap points at the viewer, so
@@ -160,11 +202,15 @@
    edges of a 1.44:1 envelope with a 62% flap. Both faces and the backing use
    the same curve, the liner face mirrored, because they are one piece of
    paper. Change the aspect or the flap's height and they all have to be
-   worked out again. */
+   worked out again.
+
+   The two upper corners are square and land exactly on the envelope's, so the
+   sloping edge is the continuation of the side edge and the outline crosses
+   the fold without a step. .323% is not an inset: it is where the FACE's edge
+   falls inside this box, which stands .13em wider on each side. */
 .flap::before{content:'';position:absolute;inset:0;
-  clip-path:polygon(1.813% 0,98.187% 0,99.195% .92%,
-    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%,
-    .805% .92%);
+  clip-path:polygon(.323% 0,99.677% 0,
+    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%);
   background:color-mix(in srgb,var(--env) 70%,var(--env-dk));
   /* Held a hair proud of the faces at the sides and the point, so a line of
      darker paper shows round the flap's edge. That line is the shadow: a
@@ -172,28 +218,16 @@
      filtered result and the shadow lies outside the clip, so it is thrown
      away before it is ever drawn. Not proud at the top — that edge is the
      fold, and there is nothing there to cast onto. */
-  inset:0 -.13em -.13em;
-  /* Rounded, or this layer squares off the two top corners of the whole
-     envelope: it is the widest thing on the back, and a sharp corner on it
-     is painted over the panel's rounded one. .73em rather than .6em because
-     it stands .13em outside the faces, and an offset outline has to be
-     concentric with what it outlines. */
-  border-radius:.73em .73em 0 0}
-/* The two upper corners are cut back to the envelope's own rounded corner.
-   border-radius cannot do it here and nowhere else on the back could: the
-   face is clipped to a TRIANGLE whose apexes land on the box corners, so
-   what the rounding is handed is a point, and a point has no corner to take
-   off. Left alone, those points stood a few pixels outside the pocket's
-   rounded corners underneath and squared off the whole back.
-
-   The cut is the chord of the .6em arc, from where the arc leaves the top
-   edge to where it crosses the slope — 1.5% of the width along the top, and
-   0.92% of the flap's height down the slope. The arc's own bow across that
-   span is a third of a pixel, so the straight line is the curve. */
-.fside.outer{clip-path:polygon(1.5% 0,98.5% 0,99.515% .927%,
-    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%,
-    .485% .927%);
-  border-radius:.6em .6em 0 0;
+  inset:0 -.13em -.13em}
+/* Corner to corner along the fold, and the slopes run all the way up into
+   those corners. They used to be chamfered back to the envelope's rounded
+   corner, which is right for a flap lying shut over a rounded box and wrong
+   for one folded back: past the fold the chamfer is on the OUTSIDE of the
+   outline, and it read as the flap being a separate piece stuck on a step
+   above the envelope's edge. Both corners are square now, top and body
+   alike, and the two edges are one line. */
+.fside.outer{clip-path:polygon(0 0,100% 0,
+    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(180deg,color-mix(in srgb,var(--env) 96%,#fff),color-mix(in srgb,var(--env) 88%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
@@ -202,12 +236,11 @@
    sheet laid on top of it — which is how a lined envelope is actually made,
    and why there is a margin of kraft showing all round the gingham rather
    than gingham running to the folded edge. */
-/* Mirrored, corner cuts included: folded back, this face's two corners are
-   the ones lying on the envelope's top edge, over the same rounded corners. */
-.fside.inner{transform:rotateX(180deg);border-radius:0 0 .6em .6em;
-  clip-path:polygon(1.5% 100%,98.5% 100%,99.515% 99.073%,
-    51.13% 2.27%,50.6% 1.54%,50% 1.29%,49.4% 1.54%,48.87% 2.27%,
-    .485% 99.073%);
+/* The same shape mirrored: this face is flipped about its own centre, so its
+   fold edge is the one at the bottom. */
+.fside.inner{transform:rotateX(180deg);
+  clip-path:polygon(0 100%,100% 100%,
+    51.13% 2.27%,50.6% 1.54%,50% 1.29%,49.4% 1.54%,48.87% 2.27%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(0deg,color-mix(in srgb,var(--env) 88%,var(--env-dk)),
                          color-mix(in srgb,var(--env) 97%,#fff));
@@ -228,10 +261,15 @@
 .fside.inner::before{content:'';position:absolute;inset:0;
   clip-path:polygon(3.87% 100%,96.13% 100%,50% 7.66%);
   background-image:
-    linear-gradient(0deg,rgba(48,36,20,.55) 0,rgba(48,36,20,.16) 9%,rgba(48,36,20,0) 22%),
+    linear-gradient(0deg,rgba(48,36,20,.40) 0,rgba(48,36,20,.12) 9%,rgba(48,36,20,0) 22%),
     var(--gingham);
   background-size:100% 100%,var(--gingham-sz);
   background-repeat:no-repeat,repeat,repeat,no-repeat;
+  /* Anchored to the fold, which on this mirrored face is the BOTTOM edge, and
+     then taken half a check off it so the fold sits on the middle of a stripe
+     — the same phase the throat is set to, so the check runs across the fold
+     as one cloth instead of two. */
+  background-position:0 0,0 0,0 calc(100% - .31em),0 0;
   box-shadow:0 .06em .14em rgba(48,36,20,.18)}
 /* No lick strip. It was a clip-path chevron drawn on a face that is then
    rotated in 3D, so its two arms never met the flap's edges at the same
@@ -268,15 +306,15 @@
    filled them in. A clip on the parent catches the filtered result, which is
    the only place it can be caught. */
 .pocket{position:absolute;inset:0;transform:translateZ(3px);
-  clip-path:inset(0 round .6em)}
-.lip{position:absolute;inset:0;border-radius:.6em;
+  clip-path:inset(0 round 0 0 .6em .6em)}
+.lip{position:absolute;inset:0;border-radius:0 0 .6em .6em;
   clip-path:polygon(0 0,50% 57.4%,100% 0,100% 100%,0 100%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(168deg,color-mix(in srgb,var(--env) 99%,#fff),color-mix(in srgb,var(--env) 83%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp);
   filter:drop-shadow(0 -.16em .3em rgba(60,38,20,.42))}
 /* bottom flap, folded up over the two side flaps, so it sits slightly proud */
-.botflap{position:absolute;inset:0;border-radius:.6em;pointer-events:none;
+.botflap{position:absolute;inset:0;border-radius:0 0 .6em .6em;pointer-events:none;
   clip-path:polygon(0 100%,50% 58%,100% 100%);
   background:linear-gradient(190deg,rgba(255,255,255,.12),rgba(255,255,255,0) 42%,rgba(107,86,54,.07))}
 /* the folds themselves: a lit side and a shaded side, as a real crease has */
@@ -332,7 +370,15 @@
 
    The shadow it carries is set in the keyframes rather than transitioned
    into place — see card-out, which has to steer it. */
+/* Hidden outright until the flap starts to lift, rather than merely covered.
+   Sealed, the flap and the lip between them hide every millimetre of it, so
+   nothing is lost — but "covered" is only true face-on. Turning the envelope
+   past about 85 degrees, the four pixels of depth between the card and the
+   pocket front project sideways at full strength and the card's edge clears
+   the paper as a bright line beside it. There is nothing to see inside a
+   sealed envelope, so until it is opened there is nothing rendered. */
 .env-card{position:absolute;left:15.3%;top:-22%;width:69.4%;height:144%;overflow:hidden;
+  visibility:hidden;transition:visibility 0s var(--tFlap);
   transform:translateZ(2px) translateY(0) rotate(90deg);
   background-image:var(--grain),linear-gradient(168deg,var(--card),color-mix(in srgb,var(--card) 96%,#C9B79A));
   background-size:170px 170px,auto;background-repeat:repeat,no-repeat;
@@ -448,7 +494,7 @@
   100% {transform:var(--card-rest);                                  /* turned upright, in front */
         box-shadow:0 1.4em 2.6em -1.2em rgba(90,60,40,.7)}
 }
-.scene.play .env-card{
+.scene.play .env-card{visibility:visible;
   animation:card-out calc(var(--dCard)*2.05) var(--eCard) var(--tCard) both;
   box-shadow:0 1.4em 2.6em -1.2em rgba(90,60,40,.7)}
 

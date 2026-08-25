@@ -142,6 +142,13 @@ function markup(o, n){
         ${sealSVG(o.die, n)}
       </div>
 
+      <!-- The paper's thickness, standing on the two long edges. Siblings of
+           the faces rather than children of either, because the edge belongs
+           to neither side: it is what you see when the envelope is turned so
+           that no side is facing you. -->
+      <div class="edge edge-l"></div>
+      <div class="edge edge-r"></div>
+
     </div>
   </div>`;
 }
