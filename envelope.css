@@ -240,10 +240,51 @@
 /* Flush with the envelope's own sides, not a pixel proud of them. It used to
    sit at inset -1px to hide the panel's border, and folded back that pixel
    showed as a lip of paper overhanging each side of the top corner. */
-.flap{position:absolute;left:0;right:0;top:0;height:62%;transform-style:preserve-3d;
+/* The flap is ONE sheet of paper, and it is now one layer.
+
+   It used to be a 3D rendering context of its own — preserve-3d, with the
+   backing and the two faces inside it and the faces turned back to back with
+   backface-visibility. All three sat at exactly z=0, which is a three-way tie,
+   and WebKit resolves a tie between composited layers in a 3D context by
+   sorting whole layers on depth: no per-pixel test, and nothing that promises
+   document order. So the tie was re-broken on every frame the flap turned,
+   and the flap strobed between its face and the dark kraft behind it. On iOS
+   only — every browser there is WebKit, and Blink and Gecko happen to keep
+   document order for the tie.
+
+   The tie is new. `.fside.outer` had no transform until the raster fix three
+   commits back gave it `rotate(180deg)`; before that it was painted flat into
+   its parent and there were only two layers in the contest, not three.
+
+   Nothing here needs depth. A flap has no internal thickness — the faces are
+   the two sides of one sheet and the backing is that sheet's cut edge — so
+   the fix is not to prise the three apart by a pixel, it is to stop asking a
+   depth sort about them at all. `flat` puts all three in one layer, painted in
+   document order, which IS defined. The flap as a whole is still turned in 3D
+   by its own transform, inside the back face's context, exactly as before.
+
+   The transforms survive flattening unchanged: dropping the z row of
+   rotateX(180deg) leaves scaleY(-1), which is the mirror the inner face was
+   already drawing, and rotate(180deg) is 2D to begin with. */
+.flap{position:absolute;left:0;right:0;top:0;height:62%;transform-style:flat;
   transform-origin:50% 0;transform:translateZ(3px) rotateX(0deg);
   transition:transform var(--dFlap) var(--eFlap) var(--tFlap)}
-.fside{position:absolute;inset:0;backface-visibility:hidden}
+/* Which face is showing is now said outright, in the keyframes, rather than
+   left to backface-visibility — which means nothing once the parent is flat,
+   and which was the other half of the iOS problem: it is decided from the sign
+   of a transformed normal, and the flap spends the middle of its swing where
+   that normal's z is a hundredth of a unit from zero.
+
+   Shut, it is the outer face. The swap happens at the same instant the swing
+   changes sign, 46%, where the flap is a two-pixel hairline and +86 and -86
+   are the same picture — so it is hidden inside the jump that is already
+   there. Backface-visibility would have swapped a little later, at a true 90
+   degrees; both moments are inside the hairline, and this one is a number
+   rather than a rounding. */
+.fside{position:absolute;inset:0}
+.fside.inner{visibility:hidden}
+@keyframes fside-out{0%,46%{visibility:visible} 46.001%,100%{visibility:hidden}}
+@keyframes fside-in {0%,46%{visibility:hidden}  46.001%,100%{visibility:visible}}
 /* Passing through vertical, neither face of the flap points at the viewer, so
    both are hidden and whatever is behind them shows for a frame as a hairline
    along the fold — which was the green line, the gingham liner seen edge-on.
@@ -624,6 +665,10 @@
   100%{opacity:0}
 }
 .scene.play .flap{animation:flap-open var(--dFlap) var(--eFlap) var(--tFlap) both}
+/* Same beat as the flap, so the face can only ever change hands on the frame
+   the swing changes sign. */
+.scene.play .fside.outer{animation:fside-out var(--dFlap) var(--eFlap) var(--tFlap) both}
+.scene.play .fside.inner{animation:fside-in  var(--dFlap) var(--eFlap) var(--tFlap) both}
 .scene.play .fside.inner::after{
   animation:liner-lit var(--dFlap) var(--eFlap) var(--tFlap) both}
 
@@ -688,6 +733,11 @@
 .scene.noanim.play .flap{animation:none!important;
   transform:translateZ(-2px) rotateX(-172deg)!important}
 .scene.noanim.play .fside.inner::after{animation:none!important}
+/* Folded back, so it is the inner face that is showing. Stated, because the
+   face is no longer chosen by backface-visibility but by an animation, and
+   this is the state that never runs one. */
+.scene.noanim.play .fside.outer{animation:none!important;visibility:hidden!important}
+.scene.noanim.play .fside.inner{animation:none!important;visibility:visible!important}
 /* Nothing is turning, so there is no edge to see. Left to run, the slab
    would fade up and down the sides of an envelope that is sitting still. */
 .scene.noanim .edge{animation:none!important;opacity:0!important}
@@ -699,5 +749,7 @@
   .scene.play .env-card{animation:none;transform:var(--card-rest)}
   .scene.play .flap{animation:none;transform:translateZ(-2px) rotateX(-172deg)}
   .scene.play .fside.inner::after{animation:none}
+  .scene.play .fside.outer{animation:none;visibility:hidden}
+  .scene.play .fside.inner{animation:none;visibility:visible}
   .scene.play .edge,.scene.flipped .edge{animation:none;opacity:0}
 }
