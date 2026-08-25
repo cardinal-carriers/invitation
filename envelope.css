@@ -69,14 +69,22 @@
 
 .flip{position:absolute;inset:0;transform-style:preserve-3d;
   transition:transform var(--dFlip) var(--eFlip) var(--tFlip)}
-/* Square at the top, rounded at the foot. The top edge is the FOLD the flap
-   turns on, and a fold has a corner, not a radius: round it and the flap —
-   which folds back past that same corner — either steps in from the side
-   edge or pinches it to a waist, which is what made the corner read as two
-   pieces of paper rather than one. Everything on this envelope that reaches
-   the top edge is square there: both faces, the panel, the pocket, the lip
-   and the flap itself. The foot keeps .6em, because those corners are cut. */
-.face{position:absolute;inset:0;border-radius:0 0 .6em .6em;transform-style:preserve-3d;
+/* ---- the top corners are rounded shut and square open ----
+   A shut envelope is a rounded rectangle and should look like one. A folded-
+   back flap is the side edge continued past the fold, and a radius at the
+   fold breaks that line: round both and the outline pinches to a waist,
+   chamfer the flap and it steps away from the edge. Either way the corner
+   reads as two pieces of paper rather than one.
+
+   So the top corners are both, in turn. They change over at the one instant
+   nobody can see them — the moment the flap starts to lift, when it is still
+   lying flat across them — by way of transitions that take no time at all
+   and wait exactly as long as the flap does. The base rules below are the
+   shut shapes; the open ones live with the rest of the playback, at the
+   foot of this file.
+
+   The front never has a flap over it and keeps its four corners throughout. */
+.face{position:absolute;inset:0;border-radius:.6em;transform-style:preserve-3d;
   transition:visibility 0s calc(var(--tFlip) + var(--dFlip)/2)}
 .front{transform:translateZ(1px);
   background-image:var(--fibre),var(--grain),var(--fleck),
@@ -100,10 +108,10 @@
    exactly edge-on itself and takes no width at all; in between it is the
    sliver of cut paper down the leading edge.
 
-   Rounded at the foot like everything else — at six pixels wide the radius
-   scales itself down to a half-round end, which is all that is wanted: it
-   keeps the slab from squaring off the corner it stands on. */
-.edge{position:absolute;top:0;bottom:0;width:6px;border-radius:0 0 .6em .6em;
+   Rounded at both ends — at six pixels wide the radius scales itself down to
+   a half-round cap, which is all that is wanted: it keeps the slab from
+   standing out past the corners it runs between. */
+.edge{position:absolute;top:0;bottom:0;width:6px;border-radius:.6em;
   background:linear-gradient(90deg,
     color-mix(in srgb,var(--env) 64%,var(--env-dk)),
     color-mix(in srgb,var(--env) 99%,#fff) 44%,
@@ -111,7 +119,8 @@
 .edge-l{left:0; transform:translateX(-3px) translateZ(-2px) rotateY(90deg)}
 .edge-r{right:0;transform:translateX(3px)  translateZ(-2px) rotateY(90deg)}
 
-.panel-base{position:absolute;inset:0;border-radius:0 0 .6em .6em;
+.panel-base{position:absolute;inset:0;border-radius:.6em;
+  transition:border-radius 0s var(--tFlap);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(165deg,color-mix(in srgb,var(--env) 92%,#fff),color-mix(in srgb,var(--env) 86%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp);
@@ -122,16 +131,24 @@
    its edges — this is the pocket, not the flap. Only the flap carries a
    margin of kraft, because only the flap has a liner laid into it. */
 .throat{position:absolute;inset:0;transform:translateZ(1px);
+  border-radius:.6em .6em 0 0;transition:border-radius 0s var(--tFlap);
   clip-path:polygon(0 0,100% 0,50% 58%);
   background-image:var(--gingham);background-size:var(--gingham-sz);
   background-repeat:repeat,repeat,no-repeat;
-  /* Half a check up, so the fold lands on the MIDDLE of a stripe. The flap's
-     liner is the same cloth folded back on itself, and a fold mirrors what it
-     folds: the check only carries across if the mirror line is an axis of the
-     pattern. On a stripe boundary it isn't, and the two halves meet in a band
-     of double width — which is what made the top and bottom look out of step.
-     The liner is offset to match, at .fside.inner::before. */
-  background-position:0 0,0 -.31em,0 0;
+  /* Half a check, so the fold lands on the middle of a PALE square. The
+     flap's liner is the same cloth folded back on itself, and a fold mirrors
+     what it folds: the check only carries across if the mirror line is an
+     axis of the pattern. On a stripe boundary it isn't, and the two halves
+     meet in a band of double width — which is what made the top and bottom
+     look out of step.
+
+     Both axes of the check would serve, and the pale one is the one to pick.
+     Turning through vertical the flap collapses to a sliver of exactly this
+     edge, and a green stripe lying along the fold is that sliver: it flashed
+     across the screen as a hard green line, twice, on the way past. A pale
+     square there has nothing to flash. The liner is offset to match, at
+     .fside.inner::before. */
+  background-position:0 0,0 .31em,0 0;
   /* Deeper than the flap: this is the inside of the pocket, in shadow. */
   filter:brightness(.86)}
 
@@ -204,13 +221,16 @@
    paper. Change the aspect or the flap's height and they all have to be
    worked out again.
 
-   The two upper corners are square and land exactly on the envelope's, so the
-   sloping edge is the continuation of the side edge and the outline crosses
-   the fold without a step. .323% is not an inset: it is where the FACE's edge
-   falls inside this box, which stands .13em wider on each side. */
+   The two upper corners are the chord of the envelope's .6em arc while the
+   envelope is shut, and square once it is open — see the head of this file.
+   Both shapes are written with nine vertices, doubling one up where the open
+   one has no chamfer, so the two are the same polygon and the swap is a
+   value change rather than a shape the browser has to reconcile. */
 .flap::before{content:'';position:absolute;inset:0;
-  clip-path:polygon(.323% 0,99.677% 0,
-    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%);
+  transition:clip-path 0s var(--tFlap);
+  clip-path:polygon(1.813% 0,98.187% 0,99.195% .92%,
+    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%,
+    .805% .92%);
   background:color-mix(in srgb,var(--env) 70%,var(--env-dk));
   /* Held a hair proud of the faces at the sides and the point, so a line of
      darker paper shows round the flap's edge. That line is the shadow: a
@@ -219,15 +239,17 @@
      away before it is ever drawn. Not proud at the top — that edge is the
      fold, and there is nothing there to cast onto. */
   inset:0 -.13em -.13em}
-/* Corner to corner along the fold, and the slopes run all the way up into
-   those corners. They used to be chamfered back to the envelope's rounded
-   corner, which is right for a flap lying shut over a rounded box and wrong
-   for one folded back: past the fold the chamfer is on the OUTSIDE of the
-   outline, and it read as the flap being a separate piece stuck on a step
-   above the envelope's edge. Both corners are square now, top and body
-   alike, and the two edges are one line. */
-.fside.outer{clip-path:polygon(0 0,100% 0,
-    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%);
+/* Shut, the two upper corners are cut back to the envelope's own rounded
+   corner: the chord of the .6em arc, 1.5% of the width along the top and
+   0.92% of the flap's height down the slope. The arc's own bow across that
+   span is a third of a pixel, so the straight line is the curve. Open, they
+   are square and the slopes run corner to corner — past the fold the chamfer
+   would be on the OUTSIDE of the outline, a step above the envelope's edge
+   rather than a continuation of it. */
+.fside.outer{transition:clip-path 0s var(--tFlap);
+  clip-path:polygon(1.5% 0,98.5% 0,99.515% .927%,
+    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%,
+    .485% .927%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(180deg,color-mix(in srgb,var(--env) 96%,#fff),color-mix(in srgb,var(--env) 88%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
@@ -238,9 +260,10 @@
    than gingham running to the folded edge. */
 /* The same shape mirrored: this face is flipped about its own centre, so its
    fold edge is the one at the bottom. */
-.fside.inner{transform:rotateX(180deg);
-  clip-path:polygon(0 100%,100% 100%,
-    51.13% 2.27%,50.6% 1.54%,50% 1.29%,49.4% 1.54%,48.87% 2.27%);
+.fside.inner{transform:rotateX(180deg);transition:clip-path 0s var(--tFlap);
+  clip-path:polygon(1.5% 100%,98.5% 100%,99.515% 99.073%,
+    51.13% 2.27%,50.6% 1.54%,50% 1.29%,49.4% 1.54%,48.87% 2.27%,
+    .485% 99.073%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(0deg,color-mix(in srgb,var(--env) 88%,var(--env-dk)),
                          color-mix(in srgb,var(--env) 97%,#fff));
@@ -261,15 +284,16 @@
 .fside.inner::before{content:'';position:absolute;inset:0;
   clip-path:polygon(3.87% 100%,96.13% 100%,50% 7.66%);
   background-image:
-    linear-gradient(0deg,rgba(48,36,20,.40) 0,rgba(48,36,20,.12) 9%,rgba(48,36,20,0) 22%),
+    linear-gradient(0deg,rgba(48,36,20,.55) 0,rgba(48,36,20,.16) 9%,rgba(48,36,20,0) 22%),
     var(--gingham);
   background-size:100% 100%,var(--gingham-sz);
   background-repeat:no-repeat,repeat,repeat,no-repeat;
   /* Anchored to the fold, which on this mirrored face is the BOTTOM edge, and
-     then taken half a check off it so the fold sits on the middle of a stripe
-     — the same phase the throat is set to, so the check runs across the fold
-     as one cloth instead of two. */
-  background-position:0 0,0 0,0 calc(100% - .31em),0 0;
+     then taken half a check past it, so the fold sits in the middle of a pale
+     square — the same phase the throat is set to, so the check runs across
+     the fold as one cloth instead of two, and the sliver the flap collapses
+     to on its way past vertical has no green in it. */
+  background-position:0 0,0 0,0 calc(100% + .31em),0 0;
   box-shadow:0 .06em .14em rgba(48,36,20,.18)}
 /* No lick strip. It was a clip-path chevron drawn on a face that is then
    rotated in 3D, so its two arms never met the flap's edges at the same
@@ -306,15 +330,17 @@
    filled them in. A clip on the parent catches the filtered result, which is
    the only place it can be caught. */
 .pocket{position:absolute;inset:0;transform:translateZ(3px);
-  clip-path:inset(0 round 0 0 .6em .6em)}
-.lip{position:absolute;inset:0;border-radius:0 0 .6em .6em;
+  clip-path:inset(0 round .6em);transition:clip-path 0s var(--tFlap)}
+/* No radius of its own: the pocket clips this group, and one corner treatment
+   in one place is one thing to switch when the envelope opens. */
+.lip{position:absolute;inset:0;
   clip-path:polygon(0 0,50% 57.4%,100% 0,100% 100%,0 100%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(168deg,color-mix(in srgb,var(--env) 99%,#fff),color-mix(in srgb,var(--env) 83%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp);
   filter:drop-shadow(0 -.16em .3em rgba(60,38,20,.42))}
 /* bottom flap, folded up over the two side flaps, so it sits slightly proud */
-.botflap{position:absolute;inset:0;border-radius:0 0 .6em .6em;pointer-events:none;
+.botflap{position:absolute;inset:0;pointer-events:none;
   clip-path:polygon(0 100%,50% 58%,100% 100%);
   background:linear-gradient(190deg,rgba(255,255,255,.12),rgba(255,255,255,0) 42%,rgba(107,86,54,.07))}
 /* the folds themselves: a lit side and a shaded side, as a real crease has */
@@ -459,7 +485,64 @@
   46.001% {transform:translateZ(3px)  rotateX(-86deg)}
   100%    {transform:translateZ(-2px) rotateX(-172deg)}
 }
+/* The lining comes into the light as the flap lands.
+
+   A flap swinging back is edge-on to the viewer for most of the way, and a
+   green cloth seen edge-on is a green line. Between roughly 46% and 70% of
+   the swing the whole liner — thirty-two columns of check, two hundred and
+   forty pixels of it — projects into a band a few pixels tall, and every
+   frame of it averages to the same flat sage. On screen that is not a flap
+   turning over: it is two or three hard green lines flashing across the top
+   of the envelope and vanishing.
+
+   A liner standing on edge is also a liner facing away from the light, which
+   is the way out. It comes up out of shadow instead, and by the time it is
+   flat enough to read as cloth it is lit. The band still passes across the
+   screen — it has to, the flap is turning — but it is the dark of paper on
+   edge rather than a stripe of colour.
+
+   The numbers are not taste. They are 0.30 + 0.70·|cos| of the flap's own
+   angle, sampled along the eased rotation and joined linearly — the same
+   falloff a flat surface has as it turns away from a light. Which means the
+   liner is darkest at exactly the angle where it is thinnest, and full colour
+   by the time it is wide enough to read as cloth: the shading tracks the
+   geometry instead of being a dip somebody has to notice.
+
+   Below about ten degrees off edge-on there is no shade dark enough to help:
+   a band that thin is a line whatever colour it is. There the liner is simply
+   not drawn, and the flap shows the kraft it is cut from — which is the
+   envelope's own colour, and cannot read as anything but the flap turning.
+
+   Timed off the same beat as the flap, so the two cannot drift; ends at
+   identity, which is what the settled envelope shows. */
+@keyframes liner-lit{
+  46% {opacity:0;filter:brightness(.34) saturate(.52);animation-timing-function:linear}
+  57% {opacity:0;filter:brightness(.36) saturate(.54);animation-timing-function:linear}
+  66% {opacity:1;filter:brightness(.59) saturate(.70);animation-timing-function:linear}
+  72% {opacity:1;filter:brightness(.83) saturate(.87);animation-timing-function:linear}
+  80% {opacity:1;filter:brightness(.95) saturate(.97);animation-timing-function:linear}
+  100%{opacity:1;filter:brightness(1)   saturate(1)}
+}
 .scene.play .flap{animation:flap-open var(--dFlap) var(--eFlap) var(--tFlap) both}
+.scene.play .fside.inner::before{
+  animation:liner-lit var(--dFlap) var(--eFlap) var(--tFlap) both}
+
+/* The open corners. Every one of these is a zero-length transition delayed to
+   --tFlap, so it is a jump, and it happens on the frame the flap begins to
+   move — while the flap is still lying flat over the two corners it is about
+   to uncover. Nothing here is ever seen changing. */
+.scene.play .panel-base{border-radius:0 0 .6em .6em}
+.scene.play .throat{border-radius:0}
+.scene.play .pocket{clip-path:inset(0 round 0 0 .6em .6em)}
+.scene.play .flap::before{clip-path:polygon(.323% 0,99.677% 0,99.677% 0,
+    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%,
+    .323% 0)}
+.scene.play .fside.outer{clip-path:polygon(0 0,100% 0,100% 0,
+    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%,
+    0 0)}
+.scene.play .fside.inner{clip-path:polygon(0 100%,100% 100%,100% 100%,
+    51.13% 2.27%,50.6% 1.54%,50% 1.29%,49.4% 1.54%,48.87% 2.27%,
+    0 100%)}
 .scene.play .seal{opacity:0;transform:translateZ(4px) rotate(-24deg) scale(.34)}
 
 /* The card is drawn right out of the pocket and then settles forward, in
@@ -505,8 +588,12 @@
 .scene.flipped .back{visibility:visible}
 
 /* ::before needs naming separately — `*` matches elements, not pseudo-
-   elements, so the scene's height kept easing while everything else jumped. */
-.scene.noanim,.scene.noanim *,.scene.noanim::before{transition:none!important}
+   elements, so the scene's height kept easing while everything else jumped.
+   .flap::before is named for the same reason: it carries the delayed corner
+   switch, and left out it would sit on the shut corner for two seconds after
+   showOpen() had already opened the envelope. */
+.scene.noanim,.scene.noanim *,.scene.noanim::before,
+.scene.noanim .flap::before{transition:none!important}
 /* Open, with no sequence: a returning guest, and the host's preview. The
    card's rest position is stated outright rather than reached by running the
    animation at zero length — that depends on the animation clock ticking at
@@ -515,14 +602,19 @@
 .scene.noanim.play .env-card{animation:none!important;transform:var(--card-rest)!important}
 /* Same for the flap: an animation is not a transition, so the rule above
    that kills transitions does not touch it, and showOpen() would sit and
-   play the whole opening instead of being open. */
+   play the whole opening instead of being open. The liner's light goes with
+   it, or an envelope that is already open would sit there in shadow and then
+   brighten for no reason. */
 .scene.noanim.play .flap{animation:none!important;
   transform:translateZ(-2px) rotateX(-172deg)!important}
+.scene.noanim.play .fside.inner::before{animation:none!important}
 
 /* Reduced motion: no sequence at all. The envelope is simply shown open,
    card out, on load. The guest still gets the reveal, just not the theatre. */
 @media (prefers-reduced-motion:reduce){
-  .scene *,.scene::before{transition-duration:.001s!important;transition-delay:0s!important}
+  .scene *,.scene::before,.scene .flap::before{
+    transition-duration:.001s!important;transition-delay:0s!important}
   .scene.play .env-card{animation:none;transform:var(--card-rest)}
   .scene.play .flap{animation:none;transform:translateZ(-2px) rotateX(-172deg)}
+  .scene.play .fside.inner::before{animation:none}
 }
