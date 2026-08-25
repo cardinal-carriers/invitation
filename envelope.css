@@ -14,7 +14,7 @@
 .scene{
   position:relative;width:100%;max-width:560px;margin:0 auto;container-type:inline-size;
   perspective:1800px;perspective-origin:50% 40%;
-  --u:1s;                       /* one beat. scale the whole sequence here.  */
+  --u:1.25s;                    /* one beat. scale the whole sequence here.  */
   --env:var(--kraft); --env-dk:var(--kraft-dk); --accent:var(--sage);
   /* Gingham: two half-opaque stripe sets crossing over a pale ground. Where
      one passes you get the mid tone, where both cross you get the dark — the
@@ -162,7 +162,9 @@
    paper. Change the aspect or the flap's height and they all have to be
    worked out again. */
 .flap::before{content:'';position:absolute;inset:0;
-  clip-path:polygon(0 0,100% 0,51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%);
+  clip-path:polygon(1.813% 0,98.187% 0,99.195% .92%,
+    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%,
+    .805% .92%);
   background:color-mix(in srgb,var(--env) 70%,var(--env-dk));
   /* Held a hair proud of the faces at the sides and the point, so a line of
      darker paper shows round the flap's edge. That line is the shadow: a
@@ -170,8 +172,27 @@
      filtered result and the shadow lies outside the clip, so it is thrown
      away before it is ever drawn. Not proud at the top — that edge is the
      fold, and there is nothing there to cast onto. */
-  inset:0 -.13em -.13em}
-.fside.outer{clip-path:polygon(0 0,100% 0,51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%);
+  inset:0 -.13em -.13em;
+  /* Rounded, or this layer squares off the two top corners of the whole
+     envelope: it is the widest thing on the back, and a sharp corner on it
+     is painted over the panel's rounded one. .73em rather than .6em because
+     it stands .13em outside the faces, and an offset outline has to be
+     concentric with what it outlines. */
+  border-radius:.73em .73em 0 0}
+/* The two upper corners are cut back to the envelope's own rounded corner.
+   border-radius cannot do it here and nowhere else on the back could: the
+   face is clipped to a TRIANGLE whose apexes land on the box corners, so
+   what the rounding is handed is a point, and a point has no corner to take
+   off. Left alone, those points stood a few pixels outside the pocket's
+   rounded corners underneath and squared off the whole back.
+
+   The cut is the chord of the .6em arc, from where the arc leaves the top
+   edge to where it crosses the slope — 1.5% of the width along the top, and
+   0.92% of the flap's height down the slope. The arc's own bow across that
+   span is a third of a pixel, so the straight line is the curve. */
+.fside.outer{clip-path:polygon(1.5% 0,98.5% 0,99.515% .927%,
+    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%,
+    .485% .927%);
   border-radius:.6em .6em 0 0;
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(180deg,color-mix(in srgb,var(--env) 96%,#fff),color-mix(in srgb,var(--env) 88%,var(--env-dk)));
@@ -181,8 +202,12 @@
    sheet laid on top of it — which is how a lined envelope is actually made,
    and why there is a margin of kraft showing all round the gingham rather
    than gingham running to the folded edge. */
+/* Mirrored, corner cuts included: folded back, this face's two corners are
+   the ones lying on the envelope's top edge, over the same rounded corners. */
 .fside.inner{transform:rotateX(180deg);border-radius:0 0 .6em .6em;
-  clip-path:polygon(0 100%,100% 100%,51.13% 2.27%,50.6% 1.54%,50% 1.29%,49.4% 1.54%,48.87% 2.27%);
+  clip-path:polygon(1.5% 100%,98.5% 100%,99.515% 99.073%,
+    51.13% 2.27%,50.6% 1.54%,50% 1.29%,49.4% 1.54%,48.87% 2.27%,
+    .485% 99.073%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(0deg,color-mix(in srgb,var(--env) 88%,var(--env-dk)),
                          color-mix(in srgb,var(--env) 97%,#fff));
@@ -231,18 +256,49 @@
    triangle that covers it. Cut to exactly the same line, the two shapes share
    an edge and antialiasing lets the card behind them show as a hairline down
    both diagonals on a sealed envelope. The overlap is hidden under the flap. */
-.lip{position:absolute;inset:-1px;transform:translateZ(3px);border-radius:.6em;
+/* THE POCKET. Everything that lies flat against the back below the flap, in
+   one box, at one depth.
+
+   It is clipped to the envelope's own rounded rectangle, and that is what
+   makes the back's corners match the front's. Two things were squaring them
+   off. The layers sat at inset:-1px, so the same .6em rounded a box a pixel
+   bigger and read as a tighter corner. And filter is applied AFTER clip-path
+   on the same element, so the lip's drop-shadow — which cannot be a
+   box-shadow, see below — blurred straight past its own rounded corners and
+   filled them in. A clip on the parent catches the filtered result, which is
+   the only place it can be caught. */
+.pocket{position:absolute;inset:0;transform:translateZ(3px);
+  clip-path:inset(0 round .6em)}
+.lip{position:absolute;inset:0;border-radius:.6em;
   clip-path:polygon(0 0,50% 57.4%,100% 0,100% 100%,0 100%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(168deg,color-mix(in srgb,var(--env) 99%,#fff),color-mix(in srgb,var(--env) 83%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp);
   filter:drop-shadow(0 -.16em .3em rgba(60,38,20,.42))}
-/* bottom flap, folded up over the two side flaps, so it sits slightly proud */
-.botflap{position:absolute;inset:-1px;transform:translateZ(3px);border-radius:.6em;pointer-events:none;
-  clip-path:polygon(0 100%,50% 58%,100% 100%);
+/* The bottom flap, folded up over the two side flaps, so it sits slightly
+   proud. A wallet flap: it comes to a flat edge across the middle of the
+   envelope rather than to a point, which is the commoner make and the one
+   the host asked for.
+
+   The two ends of that edge are filleted, because a flap that has been
+   through a die is round where it turns — the same five-point approximation
+   of an arc the tongue's point uses. The arc is 5% of the envelope's height,
+   struck tangent to the flat edge and to the slope, and the percentages are
+   worked out against a 144x100 box: x is a share of the width and y of the
+   height, and the two are not the same distance.
+
+   63%, not the 58% the point stood at: the pocket's own V closes at 57.4%
+   and the tongue reaches 61.2%, so anything higher would draw this flap's
+   edge across the lining, where a flap tucked behind the pocket cannot be
+   seen. */
+.botflap{position:absolute;inset:0;border-radius:.6em;pointer-events:none;
+  clip-path:polygon(0 100%,
+    23.978% 64.513%,24.508% 63.871%,25.117% 63.394%,25.775% 63.101%,26.466% 63%,
+    73.534% 63%,74.225% 63.101%,74.883% 63.394%,75.492% 63.871%,76.022% 64.513%,
+    100% 100%);
   background:linear-gradient(190deg,rgba(255,255,255,.12),rgba(255,255,255,0) 42%,rgba(107,86,54,.07))}
 /* the folds themselves: a lit side and a shaded side, as a real crease has */
-.creases{position:absolute;inset:0;width:100%;height:100%;transform:translateZ(3px);
+.creases{position:absolute;inset:0;width:100%;height:100%;
   pointer-events:none;overflow:visible}
 .creases path{fill:none;stroke-width:1;vector-effect:non-scaling-stroke}
 .cr-lo{stroke:rgba(96,72,42,.30)}

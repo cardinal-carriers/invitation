@@ -125,12 +125,24 @@ function markup(o, n){
           <div class="cnote" data-f="card.note">${o.card.note}</div>
           <div class="cband"></div>
         </div>
-        <div class="lip"></div>
-        <div class="botflap"></div>
-        <svg class="creases" viewBox="0 0 144 100" preserveAspectRatio="none" aria-hidden="true">
-          <path class="cr-hi" d="M0 100.7 L72 58.7"/><path class="cr-lo" d="M0 100 L72 58"/>
-          <path class="cr-hi" d="M144 100.7 L72 58.7"/><path class="cr-lo" d="M144 100 L72 58"/>
-        </svg>
+        <!-- The pocket: everything that lies flat against the back below the
+             flap. It is one wrapper rather than three siblings so the three
+             share a depth exactly instead of being set to the same number in
+             three places, and so the group can be clipped to the envelope's
+             own rounded rectangle -- see .pocket. -->
+        <div class="pocket">
+          <div class="lip"></div>
+          <div class="botflap"></div>
+          <!-- The bottom flap's two folds and the flat edge between them, as one
+               line each side of the crease: a lit one and a shaded one, the way
+               a real fold reads. The viewBox is the envelope's own 1.44:1, so
+               preserveAspectRatio="none" still scales evenly and the filleted
+               ends stay circular. Same numbers as .botflap's clip-path. -->
+          <svg class="creases" viewBox="0 0 144 100" preserveAspectRatio="none" aria-hidden="true">
+            <path class="cr-hi" d="M0 100.7 L34.528 65.213 A5 5 0 0 1 38.111 63.7 L105.889 63.7 A5 5 0 0 1 109.472 65.213 L144 100.7"/>
+            <path class="cr-lo" d="M0 100 L34.528 64.513 A5 5 0 0 1 38.111 63 L105.889 63 A5 5 0 0 1 109.472 64.513 L144 100"/>
+          </svg>
+        </div>
         <div class="flap"><div class="fside outer"></div><div class="fside inner"></div></div>
         ${sealSVG(o.die, n)}
       </div>
