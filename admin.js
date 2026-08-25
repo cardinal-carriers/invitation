@@ -190,19 +190,28 @@ let replies = [];
 let showing = 'all';       /* all | yes | no */
 let term = '';
 
+/* Everyone a reply speaks for: whoever sent it, plus anyone they named. */
+const heads = rs => rs.reduce((n, r) => n + 1 + (r.others?.length || 0), 0);
+
 function paintReplies(all){
   replies = all;
 
   /* The tally is the whole party's, always. Filtering the list is a way of
      looking; it is not a claim about how many people are coming. */
   const yes = all.filter(r => r.attending);
-  const heads = yes.reduce((n, r) => n + 1 + (r.others?.length || 0), 0);
-  $('heads').textContent = heads;
+  $('heads').textContent = heads(yes);
 
-  const no = all.length - yes.length;
+  /* People, not replies. One reply that says no on behalf of four is four
+     who are not coming, exactly as one that says yes on behalf of four is
+     four who are — the two sides of the tally have to be counted the same
+     way or they do not add up to the guest list. It used to be
+     `all.length - yes.length`, which is a count of ANSWERS, so a couple
+     declining together came out as one. */
+  const no = all.filter(r => !r.attending);
+  const noHeads = heads(no);
   $('tallyNotes').innerHTML =
     `<span><b>${all.length}</b> ${all.length === 1 ? 'reply' : 'replies'}</span>` +
-    (no ? `<span><b>${no}</b> can’t make it</span>` : '');
+    (noHeads ? `<span><b>${noHeads}</b> can’t make it</span>` : '');
 
   renderList();
 }
