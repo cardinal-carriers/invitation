@@ -121,12 +121,14 @@
    exactly edge-on itself and takes no width at all; in between it is the
    sliver of cut paper down the leading edge.
 
-   Its ends are drawn off over the last .6em — a half-ellipse three pixels by
-   the corner radius — because that is where the envelope's corner starts
-   curving away and there is no longer a straight edge for it to stand on.
-   Cut square it stood a hair outside the two rounded corners, in open air,
-   and drew the pair of stray kraft ticks that used to sit past the top and
-   bottom of each side.
+   It stops .45em short at each end and is drawn off over that distance,
+   because the envelope's corner starts curving away there and this slab
+   cannot curve with it: it stands on the straight part of the edge only.
+   Run to the ends it sat a few pixels outside the two rounded corners, in
+   open air, and drew a kraft spike past the top and bottom of each side for
+   as long as the envelope was anywhere near flat. .45em is where the corner
+   arc has come within a quarter-pixel of the side, so there is nothing left
+   to stand outside of.
 
    And it is only there while the envelope is actually turning. Edge-on is
    not the same as invisible: the viewer is at the middle of the envelope,
@@ -136,7 +138,7 @@
    perfectly flat. It fades up while the turn is a couple of degrees along
    and back down before the turn lands, both of which are angles at which it
    projects to nothing anyway. */
-.edge{position:absolute;top:0;bottom:0;width:6px;border-radius:3px/.6em;
+.edge{position:absolute;top:.45em;bottom:.45em;width:6px;border-radius:3px/.45em;
   opacity:0;
   background:linear-gradient(90deg,
     color-mix(in srgb,var(--env) 64%,var(--env-dk)),
@@ -262,11 +264,26 @@
      fold, and there is nothing there to cast onto. */
   inset:0 -.13em -.13em}
 /* 1.5% of the width is .6em: the corner radius, and so the point where the
-   body's arc runs out. The slope starts there. */
-.fside.outer{clip-path:polygon(1.5% 0,98.5% 0,
-    51.13% 97.73%,50.6% 98.46%,50% 98.71%,49.4% 98.46%,48.87% 97.73%);
+   body's arc runs out. The slope starts there.
+
+   Drawn upside down, and turned back the right way up. That is not a whim.
+   A clipped element that is being rotated steeply in 3D loses a few rows off
+   the TOP of its own raster — a couple of pixels at forty degrees, thirty by
+   eighty, and at some angles the whole face — and drawn the right way up the
+   top of this face's raster is the fold, so the loss was a strip of lining
+   and card showing along the very top of the envelope while the flap lifted.
+   A green line, on the card, for about a fifth of a second.
+
+   Turned end for end, the top of the raster is the flap's POINT instead, and
+   the point is the one edge where the lining is supposed to be coming into
+   view anyway: whatever is lost there was already going to be lining. The
+   clip is the same shape mirrored — which is to say the inner face's — and
+   the paper's gradient is reversed so it still runs light at the fold. */
+.fside.outer{transform:rotate(180deg);
+  clip-path:polygon(1.5% 100%,98.5% 100%,
+    51.13% 2.27%,50.6% 1.54%,50% 1.29%,49.4% 1.54%,48.87% 2.27%);
   background-image:var(--fibre),var(--grain),var(--fleck),
-    linear-gradient(180deg,color-mix(in srgb,var(--env) 96%,#fff),color-mix(in srgb,var(--env) 88%,var(--env-dk)));
+    linear-gradient(0deg,color-mix(in srgb,var(--env) 96%,#fff),color-mix(in srgb,var(--env) 88%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp)}
 /* pre-mirrored clip-path, because the face is flipped about its own centre */
 /* The inside of the flap is the envelope's own paper, and the liner is a
