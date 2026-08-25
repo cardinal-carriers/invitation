@@ -65,6 +65,13 @@
    hidden. Tapping the envelope is the designed path; scrolling is the
    one that always works, including with JavaScript off.
    ------------------------------------------------------------------ */
+/* The letter below the envelope is hidden until it has been opened, so the
+   page grows past the viewport at the end of the sequence and a scrollbar
+   arrives — which on a classic scrollbar takes its width out of the layout
+   and shifts everything that is centred, mid-animation. The gutter is
+   reserved from the first paint instead, so nothing moves when the letter
+   appears. */
+html{scrollbar-gutter:stable}
 body{background-image:
   radial-gradient(circle at 18% 12%,rgba(216,155,148,.09),transparent 44%),
   radial-gradient(circle at 84% 26%,rgba(159,186,203,.10),transparent 42%),
