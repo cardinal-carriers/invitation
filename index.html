@@ -24,7 +24,29 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="A sealed kraft envelope reading “You’re invited”">
+<meta property="og:site_name" content="Cardinal Carriers">
+
+<!-- The same card, for readers that do not speak Open Graph. Apple Mail
+     builds its preview with the same framework iMessage uses, so the tags
+     above already cover it; what these add is everybody else. A plain
+     description is the oldest and most widely honoured fallback of the lot
+     and this page had none, so a client that missed og:description had
+     nothing at all to print under the title. image_src is the pre-Open-Graph
+     way of naming a thumbnail and is still what some webmail reaches for
+     first, and the twitter:* pair is spelled out rather than left to fall
+     back to og:, because more than one reader takes twitter:card as a
+     promise that the rest of that set is there.
+
+     Gmail and desktop Outlook do not unfurl a link in the body of a message
+     at all. Nothing in the page can change that. -->
+<meta name="description" content="A sealed envelope, with your name on it. Tap to open.">
+<link rel="canonical" href="https://cardinal-carriers.github.io/invitation/">
+<link rel="image_src" href="https://cardinal-carriers.github.io/invitation/assets/og-invitation.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="You’re invited">
+<meta name="twitter:description" content="A sealed envelope, with your name on it. Tap to open.">
+<meta name="twitter:image" content="https://cardinal-carriers.github.io/invitation/assets/og-invitation.jpg">
+<meta name="twitter:image:alt" content="A sealed kraft envelope reading “You’re invited”">
 <meta name="theme-color" content="#FCF7EE">
 <link rel="preload" href="fonts/caveat.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/lora.woff2" as="font" type="font/woff2" crossorigin>
@@ -132,11 +154,14 @@ body:not(.opened) .letter{padding-bottom:0}
 .sheet-actions .btn{text-decoration:none}
 body:not(.opened) .sheet-actions{display:none}
 
-/* The cue over the reply card. Same hand and same arrow as "Tap to open",
-   one size down: it is the same kind of instruction, but the envelope has
-   already done the work of getting attention. The arrow is the open-hint's
-   turned over, so it points down at the card it is asking about. */
-.reply-hint{display:flex;align-items:center;justify-content:center;gap:12px;
+/* The cue over a card. Same hand and same arrow as "Tap to open", one size
+   down: it is the same kind of instruction, but the envelope has already
+   done the work of getting attention. The arrow is the open-hint's turned
+   over, so it points down at the card it is asking about.
+
+   Two cards carry one now — the reply and the registry — so this is a class
+   rather than a rule about one of them. */
+.cue{display:flex;align-items:center;justify-content:center;gap:12px;
   margin:var(--s10) auto var(--s6);font-family:var(--hand);font-weight:600;
   font-size:clamp(24px,6vw,32px);line-height:1.1;color:var(--wax);
   animation:nudge 2.4s ease-in-out infinite}
@@ -144,9 +169,10 @@ body:not(.opened) .sheet-actions{display:none}
    two faces of type as the invitation — the script for the heading, the
    serif for everything under it. It was a kraft box, and a kraft box on a
    page of stationery reads as an advertisement someone stapled on. */
-.registry{max-width:560px;margin:var(--s9) auto 0;
+/* The cue above it owns the space over the card, the way the reply's does. */
+.registry{max-width:560px;margin:0 auto;
   padding:var(--s8) clamp(24px,6vw,56px) var(--s7);text-align:center}
-body:not(.opened) .registry{display:none}
+body:not(.opened) #registryWrap{display:none}
 /* Headed exactly as the reply card is headed: the same serif, the same size,
    the same letterspaced caps. The two blocks sit one under the other, and a
    script heading over one and a printed mark over the other read as two
@@ -167,13 +193,13 @@ body:not(.opened) .registry{display:none}
    declined reply, and goes back the moment they start typing. */
 .ruled.bad{border-bottom-color:var(--no)}
 .ruled.bad:focus{border-bottom-color:var(--no);box-shadow:0 1.5px 0 var(--no)}
-.reply-hint svg{width:36px;height:26px;overflow:visible;flex:none;transform:scaleY(-1)}
-.reply-hint path{stroke:var(--wax);stroke-width:2;fill:none;stroke-linecap:round;
+.cue svg{width:36px;height:26px;overflow:visible;flex:none;transform:scaleY(-1)}
+.cue path{stroke:var(--wax);stroke-width:2;fill:none;stroke-linecap:round;
   stroke-linejoin:round}
 /* Once they have answered, the card says so and the cue is just noise. */
-body.replied .reply-hint{display:none}
+body.replied .cue--reply{display:none}
 body.replied #reply{margin-top:var(--s10)}
-@media (prefers-reduced-motion:reduce){.open-hint,.reply-hint{animation:none}}
+@media (prefers-reduced-motion:reduce){.open-hint,.cue{animation:none}}
 
 /* --- the reply card --------------------------------------------------- */
 /* The REPLIED cancellation runs off the edge of the card, so the card has to
@@ -304,37 +330,12 @@ body.replied #reply{margin-top:var(--s10)}
     <button class="btn btn--ghost" data-icon="cal" id="cal">Add to calendar</button>
   </div>
 
-  <!-- ============ the registry ============
-       Shown only when the hosts have set one. It sits under the card rather
-       than on it — the printed invitation says nothing about gifts — but it
-       is a block of its own, because as one more ghost button beside Add to
-       calendar nobody found it.
-
-       The address is printed under the button. A link on a page thirty
-       people are about to open should say where it goes before it is
-       tapped. -->
-  <aside class="paper registry" id="registryBox" hidden>
-    <p class="registry-hd">Gift registry</p>
-    <div class="registry-list">
-      <div class="registry-one" id="registryOne1" hidden>
-        <a class="btn btn--wax btn--lg" data-icon="gift" id="registry1"
-           target="_blank" rel="noopener noreferrer"><span id="registryLabel1">Open the registry</span></a>
-        <p class="registry-host" id="registryHost1"></p>
-      </div>
-      <div class="registry-one" id="registryOne2" hidden>
-        <a class="btn btn--wax btn--lg" data-icon="gift" id="registry2"
-           target="_blank" rel="noopener noreferrer"><span id="registryLabel2">Open the registry</span></a>
-        <p class="registry-host" id="registryHost2"></p>
-      </div>
-    </div>
-  </aside>
-
   <!-- ============ the reply card ============ -->
   <div id="replyWrap" hidden>
     <!-- The second of the page's two asks. The first was "tap to open"; this
          is the one that matters, so it is set in the same hand and points the
          same way — at the thing it is asking for, which is below it. -->
-    <p class="reply-hint">
+    <p class="cue cue--reply">
       <svg viewBox="0 0 34 24" aria-hidden="true"><path d="M3 21C10 22 22 19 26 4"/><path d="M21 9L26 4l2 7"/></svg>
       Let us know you’ll be there
     </p>
@@ -381,6 +382,39 @@ body.replied #reply{margin-top:var(--s10)}
     </form>
 
     <p class="posted-line" id="postedLine"></p>
+  </div>
+
+  <!-- ============ the registry ============
+       Shown only when the hosts have set one. It is not on the printed card
+       — the invitation says nothing about gifts — and it comes after the
+       reply rather than before it, because the reply is the one thing the
+       hosts actually need back and it should not be reached past a row of
+       shopping links.
+
+       The address is printed under each button. A link on a page thirty
+       people are about to open should say where it goes before it is
+       tapped. -->
+  <div id="registryWrap" hidden>
+    <p class="cue cue--gift">
+      <svg viewBox="0 0 34 24" aria-hidden="true"><path d="M3 21C10 22 22 19 26 4"/><path d="M21 9L26 4l2 7"/></svg>
+      Need a gift idea?
+    </p>
+
+    <aside class="paper registry" id="registryBox">
+      <p class="registry-hd">Gift registry</p>
+      <div class="registry-list">
+        <div class="registry-one" id="registryOne1" hidden>
+          <a class="btn btn--wax btn--lg" data-icon="gift" id="registry1"
+             target="_blank" rel="noopener noreferrer"><span id="registryLabel1">Open the registry</span></a>
+          <p class="registry-host" id="registryHost1"></p>
+        </div>
+        <div class="registry-one" id="registryOne2" hidden>
+          <a class="btn btn--wax btn--lg" data-icon="gift" id="registry2"
+             target="_blank" rel="noopener noreferrer"><span id="registryLabel2">Open the registry</span></a>
+          <p class="registry-host" id="registryHost2"></p>
+        </div>
+      </div>
+    </aside>
   </div>
 
   <section class="desk notice" id="notice" hidden>

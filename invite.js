@@ -238,7 +238,7 @@ function render(doc){
     [EV.registryUrl,  EV.registryName],
     [EV.registryUrl2, EV.registryName2]
   ].map(([url, name], i) => registrySlot(i + 1, url, name)).some(Boolean);
-  if (shown) $('registryBox').hidden = false;
+  if (shown) $('registryWrap').hidden = false;
 
   if (EV.replyBy) $('dReply').textContent = shortDate(EV.replyBy);
   else $('dReplyRow').hidden = true;
