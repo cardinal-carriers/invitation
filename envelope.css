@@ -275,27 +275,9 @@
     linear-gradient(168deg,color-mix(in srgb,var(--env) 99%,#fff),color-mix(in srgb,var(--env) 83%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp);
   filter:drop-shadow(0 -.16em .3em rgba(60,38,20,.42))}
-/* The bottom flap, folded up over the two side flaps, so it sits slightly
-   proud. A wallet flap: it comes to a flat edge across the middle of the
-   envelope rather than to a point, which is the commoner make and the one
-   the host asked for.
-
-   The two ends of that edge are filleted, because a flap that has been
-   through a die is round where it turns — the same five-point approximation
-   of an arc the tongue's point uses. The arc is 5% of the envelope's height,
-   struck tangent to the flat edge and to the slope, and the percentages are
-   worked out against a 144x100 box: x is a share of the width and y of the
-   height, and the two are not the same distance.
-
-   63%, not the 58% the point stood at: the pocket's own V closes at 57.4%
-   and the tongue reaches 61.2%, so anything higher would draw this flap's
-   edge across the lining, where a flap tucked behind the pocket cannot be
-   seen. */
+/* bottom flap, folded up over the two side flaps, so it sits slightly proud */
 .botflap{position:absolute;inset:0;border-radius:.6em;pointer-events:none;
-  clip-path:polygon(0 100%,
-    23.978% 64.513%,24.508% 63.871%,25.117% 63.394%,25.775% 63.101%,26.466% 63%,
-    73.534% 63%,74.225% 63.101%,74.883% 63.394%,75.492% 63.871%,76.022% 64.513%,
-    100% 100%);
+  clip-path:polygon(0 100%,50% 58%,100% 100%);
   background:linear-gradient(190deg,rgba(255,255,255,.12),rgba(255,255,255,0) 42%,rgba(107,86,54,.07))}
 /* the folds themselves: a lit side and a shaded side, as a real crease has */
 .creases{position:absolute;inset:0;width:100%;height:100%;
