@@ -336,6 +336,24 @@
      to on its way past vertical has no green in it. */
   background-position:0 0,0 0,0 calc(100% + .31em),0 0;
   box-shadow:0 .06em .14em rgba(48,36,20,.18)}
+/* The shade the inner face turns through, as a flat sheet of the envelope's
+   own darkest kraft laid over the whole face and faded off. It is clipped to
+   the face by the face's own clip-path, so it covers the liner and the margin
+   of kraft around it alike — which is right: the whole panel is turning away
+   from the light, not just the cloth on it.
+
+   It exists so that nothing has to be REPAINTED while the flap swings. The
+   shading used to be a filter on the liner, and a filter cannot be handed to
+   the compositor when its element is clipped and sits under a 3D-transformed,
+   backface-hidden ancestor: every frame the gingham, its four background
+   layers and its box-shadow were rastered again, at a projected size that
+   changes each frame. On a 120Hz phone that is not a shade coming up, it is
+   a flap flickering. A solid fill changing only its alpha costs a triangle.
+
+   Zero at rest, so an envelope that is simply shown open — noanim, reduced
+   motion — has no shade on it without a rule having to say so. */
+.fside.inner::after{content:'';position:absolute;inset:0;opacity:0;
+  background:color-mix(in srgb,var(--env-dk) 82%,#221708)}
 /* No lick strip. It was a clip-path chevron drawn on a face that is then
    rotated in 3D, so its two arms never met the flap's edges at the same
    angle and it read as a crooked scribble. A liner this clean does not need
@@ -567,34 +585,46 @@
    The numbers are not taste. They are 0.30 + 0.70·|cos| of the flap's own
    angle, sampled along the eased rotation and joined linearly — the same
    falloff a flat surface has as it turns away from a light. Which means the
-   liner is darkest at exactly the angle where it is thinnest, and full colour
-   by the time it is wide enough to read as cloth: the shading tracks the
-   geometry instead of being a dip somebody has to notice.
+   face is darkest at exactly the angle where the liner on it is thinnest, and
+   full colour by the time it is wide enough to read as cloth: the shading
+   tracks the geometry instead of being a dip somebody has to notice.
 
    Below about ten degrees off edge-on there is no shade dark enough to help:
-   a band that thin is a line whatever colour it is. There the liner is simply
-   not drawn, and the flap shows the kraft it is cut from — which is the
+   a band that thin is a line whatever colour it is. There the shade is all
+   but solid, and the flap shows the kraft it is cut from — which is the
    envelope's own colour, and cannot read as anything but the flap turning.
 
-   It comes back over the whole of the rest of the swing rather than all at
-   once. Switched on the moment it was thick enough to survive, the lit strip
-   above the fold arrived as one hard green line with the shadowed part of the
-   liner still dark beneath it — the last of the three. Ramped, there is no
-   frame at which anything appears; there is only a lining that is already
-   there, coming up.
+   It clears over the whole of the rest of the swing rather than all at once.
+   Lifted the moment the liner was thick enough to survive, the lit strip
+   above the fold arrived as one hard green line with the shadowed part still
+   dark beneath it — the last of the three. Ramped, there is no frame at which
+   anything appears; there is only a lining that is already there, coming up.
 
-   Timed off the same beat as the flap, so the two cannot drift; ends at
-   identity, which is what the settled envelope shows. */
+   What is animated is the alpha of one flat fill, and nothing else. Those
+   same brightnesses used to be a filter on the liner itself, which is the
+   costliest possible way to say this: the liner is clipped, and it hangs
+   under a backface-hidden face inside a 3D-transformed flap, so the filter
+   could not be handed to the compositor and its four background layers and
+   box-shadow were rastered again on every frame of the swing. Here the shade
+   is the opacity of a solid colour, which is a value the compositor can
+   interpolate on its own without touching the paper underneath.
+
+   These are the earlier brightnesses solved for that fill: the shade is 82%
+   of the way from the kraft to black, so covering at alpha a leaves about
+   1 − 0.85a of the light, and a = (1 − b)/0.85.
+
+   Timed off the same beat as the flap, so the two cannot drift; ends clear,
+   which is what the settled envelope shows. */
 @keyframes liner-lit{
-  46% {opacity:0; filter:brightness(.34) saturate(.52);animation-timing-function:linear}
-  58% {opacity:0; filter:brightness(.36) saturate(.54);animation-timing-function:linear}
-  66% {opacity:.33;filter:brightness(.59) saturate(.70);animation-timing-function:linear}
-  74% {opacity:.67;filter:brightness(.89) saturate(.91);animation-timing-function:linear}
-  82% {opacity:1; filter:brightness(.97) saturate(.98);animation-timing-function:linear}
-  100%{opacity:1; filter:brightness(1)   saturate(1)}
+  46% {opacity:.78;animation-timing-function:linear}
+  58% {opacity:.75;animation-timing-function:linear}
+  66% {opacity:.48;animation-timing-function:linear}
+  74% {opacity:.13;animation-timing-function:linear}
+  82% {opacity:.035;animation-timing-function:linear}
+  100%{opacity:0}
 }
 .scene.play .flap{animation:flap-open var(--dFlap) var(--eFlap) var(--tFlap) both}
-.scene.play .fside.inner::before{
+.scene.play .fside.inner::after{
   animation:liner-lit var(--dFlap) var(--eFlap) var(--tFlap) both}
 
 .scene.play .seal{opacity:0;transform:translateZ(4px) rotate(-24deg) scale(.34)}
@@ -657,7 +687,7 @@
    brighten for no reason. */
 .scene.noanim.play .flap{animation:none!important;
   transform:translateZ(-2px) rotateX(-172deg)!important}
-.scene.noanim.play .fside.inner::before{animation:none!important}
+.scene.noanim.play .fside.inner::after{animation:none!important}
 /* Nothing is turning, so there is no edge to see. Left to run, the slab
    would fade up and down the sides of an envelope that is sitting still. */
 .scene.noanim .edge{animation:none!important;opacity:0!important}
@@ -668,6 +698,6 @@
   .scene *,.scene::before{transition-duration:.001s!important;transition-delay:0s!important}
   .scene.play .env-card{animation:none;transform:var(--card-rest)}
   .scene.play .flap{animation:none;transform:translateZ(-2px) rotateX(-172deg)}
-  .scene.play .fside.inner::before{animation:none}
+  .scene.play .fside.inner::after{animation:none}
   .scene.play .edge,.scene.flipped .edge{animation:none;opacity:0}
 }
