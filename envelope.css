@@ -379,16 +379,29 @@
    the only place it can be caught. */
 .pocket{position:absolute;inset:0;transform:translateZ(3px);
   clip-path:inset(0 round .6em)}
-/* No radius of its own: the pocket clips this group, and one corner treatment
-   in one place is one thing to switch when the envelope opens. */
-.lip{position:absolute;inset:0;
+/* Its own radius, not just the pocket's clip.
+
+   This element carries a FILTER, and a filter is rendered into a surface of
+   its own before the parent's clip-path is applied to it. Whether that clip
+   still reaches the result depends on the compositing path the browser
+   happens to take — and it does not always. Where it did not, the lip's
+   square corner painted over the panel's rounded one and the whole envelope
+   came out with square corners in the opened state. Software rasterisation
+   applies the clip and looks right, which is why comparing headless
+   screenshots of the two engines showed nothing.
+
+   The clip on .pocket stays: it is what stops the drop-shadow blurring past
+   the corner. But the SHAPE is stated here as well, so the corner does not
+   depend on which pass gets to it. */
+.lip{position:absolute;inset:0;border-radius:.6em;
   clip-path:polygon(0 0,1.5% 0,50% 57.4%,98.5% 0,100% 0,100% 100%,0 100%);
   background-image:var(--fibre),var(--grain),var(--fleck),
     linear-gradient(168deg,color-mix(in srgb,var(--env) 99%,#fff),color-mix(in srgb,var(--env) 83%,var(--env-dk)));
   background-size:var(--pap-sz);background-repeat:var(--pap-rp);
   filter:drop-shadow(0 -.16em .3em rgba(60,38,20,.42))}
-/* bottom flap, folded up over the two side flaps, so it sits slightly proud */
-.botflap{position:absolute;inset:0;pointer-events:none;
+/* bottom flap, folded up over the two side flaps, so it sits slightly proud.
+   Its own radius too, for the same reason as the lip's. */
+.botflap{position:absolute;inset:0;border-radius:.6em;pointer-events:none;
   clip-path:polygon(0 100%,50% 58%,100% 100%);
   background:linear-gradient(190deg,rgba(255,255,255,.12),rgba(255,255,255,0) 42%,rgba(107,86,54,.07))}
 /* the folds themselves: a lit side and a shaded side, as a real crease has */
