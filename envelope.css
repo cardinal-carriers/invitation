@@ -323,14 +323,22 @@
    so from 91 to about 105 degrees the card's cream edge cleared the pocket
    front and drew a bright hairline down one side. That was the flash of
    white during the turn. Coplanar, there is no gap to project. */
+/* translateZ is 2px, not 3. Everything lying flat against the back sits at 3
+   and paints in document order, which settles it for layers that never move
+   — but the card moves, and a moving layer at exactly the pocket's depth
+   hands the renderer a tie to break on every frame. 2 puts the card where it
+   actually is: in front of the pocket's inside back at 1, behind its front
+   at 3, and in no doubt about either.
+
+   The shadow it carries is set in the keyframes rather than transitioned
+   into place — see card-out, which has to steer it. */
 .env-card{position:absolute;left:15.3%;top:-22%;width:69.4%;height:144%;overflow:hidden;
-  transform:translateZ(3px) translateY(0) rotate(90deg);
+  transform:translateZ(2px) translateY(0) rotate(90deg);
   background-image:var(--grain),linear-gradient(168deg,var(--card),color-mix(in srgb,var(--card) 96%,#C9B79A));
   background-size:170px 170px,auto;background-repeat:repeat,no-repeat;
   border:1px solid color-mix(in srgb,var(--card) 88%,#C9B79A);border-radius:.5em;
   display:flex;flex-direction:column;
-  padding:3.569em 2.776em 0;text-align:center;color:var(--card-ink);
-  transition:box-shadow var(--dCard) ease var(--tCard)}
+  padding:3.569em 2.776em 0;text-align:center;color:var(--card-ink)}
 .env-card .ci{position:absolute;inset:.6em;border:1.4px dashed color-mix(in srgb,var(--ink) 20%,transparent);
   border-radius:.4em;pointer-events:none}
 /* Every size and space here is the letter's own figure, converted once.
@@ -416,10 +424,29 @@
    rising at the same time would have the card cross the lip while still
    inside it, which reads as paper passing through paper. So it clears
    first, at pocket depth, and only then comes toward the viewer. */
+/* The shadow is steered here, because a box-shadow is cast in the element's
+   own axes and this element spends half the sequence lying on its side. An
+   offset of `0 1.4em` means "down the card", and while the card is turned 90
+   degrees down the card is LEFT across the screen — so the shadow lay along
+   the card's left edge as it was drawn out, then swung round to the bottom
+   as the card turned upright, which reads as the light moving rather than
+   the card. `1.4em 0` under that same rotation is straight down the screen,
+   so the two ends of the move name the same direction in the world and the
+   interpolation between them holds it while the card rotates.
+
+   It also stays put for the whole of the first half. Not only because a card
+   still flat against the envelope has nothing to cast onto, but because
+   box-shadow is not a property the compositor can animate: every frame it
+   changes, this card — text, grain, a watercolour band — is rastered again.
+   Now that only happens while it is coming forward, which is the only time
+   the shadow has anything to say. */
 @keyframes card-out{
-  0%   {transform:translateZ(3px)  translateY(0)     rotate(90deg)}
-  50%  {transform:translateZ(3px)  translateY(-76%)  rotate(90deg)}  /* drawn out, still sideways */
-  100% {transform:var(--card-rest)}                                  /* turned upright, in front */
+  0%   {transform:translateZ(2px)  translateY(0)     rotate(90deg);
+        box-shadow:1.4em 0 1.6em -1.2em rgba(90,60,40,.34)}
+  50%  {transform:translateZ(2px)  translateY(-76%)  rotate(90deg);  /* drawn out, still sideways */
+        box-shadow:1.4em 0 1.6em -1.2em rgba(90,60,40,.34)}
+  100% {transform:var(--card-rest);                                  /* turned upright, in front */
+        box-shadow:0 1.4em 2.6em -1.2em rgba(90,60,40,.7)}
 }
 .scene.play .env-card{
   animation:card-out calc(var(--dCard)*2.05) var(--eCard) var(--tCard) both;
