@@ -130,14 +130,24 @@
    arc has come within a quarter-pixel of the side, so there is nothing left
    to stand outside of.
 
-   And it is only there while the envelope is actually turning. Edge-on is
-   not the same as invisible: the viewer is at the middle of the envelope,
-   not out at its edge, so a plane standing on that edge is seen very
-   slightly from the side even at rest — a sliver under a pixel wide, which
-   is enough to draw a line down both sides of a envelope that is lying
-   perfectly flat. It fades up while the turn is a couple of degrees along
-   and back down before the turn lands, both of which are angles at which it
-   projects to nothing anyway. */
+   And it is only there while the envelope is steeply turned — between about
+   forty degrees and a hundred and forty, which is the part of the turn where
+   the faces are running out of width and something has to hold the shape.
+
+   Edge-on is not the same as invisible: the viewer is at the middle of the
+   envelope, not out at its edge, so a plane standing on that edge is seen
+   very slightly from the side even at rest — a sliver under a pixel wide,
+   which is enough to draw a line down both sides of an envelope that is
+   lying perfectly flat.
+
+   Shallower than forty degrees it is worse than useless. It contributes a
+   sliver one to three pixels wide, and a sliver that thin is drawn to taste:
+   Chrome softens it away, Gecko keeps it crisp and squares off the end where
+   it stops short of the corner. Same CSS, two different-looking corners, and
+   no way to write it so they agree. Past sixty degrees, where it is five or
+   six pixels wide and shaped rather than sampled, they agree exactly — so it
+   is simply not drawn below that. The keyframe percentages are the eased
+   rotation solved for those angles, not round numbers. */
 .edge{position:absolute;top:.45em;bottom:.45em;width:6px;border-radius:3px/.45em;
   opacity:0;
   background:linear-gradient(90deg,
@@ -146,7 +156,7 @@
     color-mix(in srgb,var(--env) 84%,var(--env-dk)))}
 .edge-l{left:0; transform:translateX(-3px) translateZ(-2px) rotateY(90deg)}
 .edge-r{right:0;transform:translateX(3px)  translateZ(-2px) rotateY(90deg)}
-@keyframes edge-on{0%,3%{opacity:0} 11%,89%{opacity:1} 97%,100%{opacity:0}}
+@keyframes edge-on{0%,37%{opacity:0} 43%,57%{opacity:1} 63%,100%{opacity:0}}
 
 .panel-base{position:absolute;inset:0;border-radius:.6em;
   background-image:var(--fibre),var(--grain),var(--fleck),
